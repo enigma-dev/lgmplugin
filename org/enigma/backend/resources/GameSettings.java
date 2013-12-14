@@ -18,6 +18,7 @@ public class GameSettings extends Structure
 	public int gameId; // randomized in GmFile constructor
 	public boolean startFullscreen = false;
 	public boolean interpolate = false;
+	public boolean forceSoftwareVertexProcessing = false;
 	public boolean dontDrawBorder = false;
 	public boolean displayCursor = true;
 	public int scaling = -1;
@@ -75,7 +76,7 @@ public class GameSettings extends Structure
 	@Override
 	protected List<String> getFieldOrder()
 		{
-		return Arrays.asList("gameId","startFullscreen","interpolate","dontDrawBorder","displayCursor",
+		return Arrays.asList("gameId","startFullscreen","interpolate","forceSoftwareVertexProcessing","dontDrawBorder","displayCursor",
 				"scaling","allowWindowResize","alwaysOnTop","colorOutsideRoom","setResolution",
 				"colorDepth","resolution","frequency","dontShowButtons","useSynchronization",
 				"disableScreensavers","letF4SwitchFullscreen","letF1ShowGameInfo","letEscEndGame",
