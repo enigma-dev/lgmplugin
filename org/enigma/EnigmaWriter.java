@@ -205,6 +205,7 @@ public final class EnigmaWriter
 		og.gameId = ig.get(PGameSettings.GAME_ID);
 		og.startFullscreen = ig.get(PGameSettings.START_FULLSCREEN);
 		og.interpolate = ig.get(PGameSettings.INTERPOLATE);
+		og.forceSoftwareVertexProcessing = ig.get(PGameSettings.FORCE_SOFTWARE_VERTEX_PROCESSING);
 		og.dontDrawBorder = ig.get(PGameSettings.DONT_DRAW_BORDER);
 		og.displayCursor = ig.get(PGameSettings.DISPLAY_CURSOR);
 		og.scaling = ig.get(PGameSettings.SCALING);
