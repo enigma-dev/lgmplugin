@@ -440,6 +440,7 @@ public class EFileReader
 		 */
 		protected void put(ProjectFile gf, PropertyMap<P> p, P key, String val)
 			{
+			if (val == null) { return; }
 			Object def = p.get(key);
 			p.put(key,convert(val,def == null ? null : def.getClass()));
 			}
