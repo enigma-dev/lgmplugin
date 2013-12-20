@@ -606,6 +606,10 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		compileb.setEnabled(en);
 		}
 
+	public static String getUnixPath(String path) {
+		return path.replace("\\","/");
+	}
+	
     class CompilerThread extends Thread {
         final int mode;
         final File efi;
@@ -620,7 +624,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
         	EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
         	ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
         	System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
-        	System.out.println(DRIVER.compileEGMf(es,efi == null ? null : efi.getAbsolutePath(),mode));
+        	System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
         	setupBaseKeywords();
         	populateKeywords();
 			
