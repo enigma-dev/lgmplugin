@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
     <jar path="Enigma/enigma.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/Enigma/description.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -11,22 +11,22 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.other"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.resources"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.sub"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.util"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.file"/>
+        <file path="/Enigma/description.jardesc"/>
+        <file path="/Enigma/COPYING"/>
         <javaElement handleIdentifier="=Enigma/&lt;org.enigma.frames"/>
         <javaElement handleIdentifier="=Enigma/&lt;org.enigma.messages"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.utility"/>
-        <folder path="/Enigma/META-INF"/>
-        <file path="/Enigma/.classpath"/>
         <file path="/Enigma/.project"/>
-        <file path="/Enigma/COPYING"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.file"/>
         <file path="/Enigma/LICENSE"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.resources"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.other"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.util"/>
+        <folder path="/Enigma/META-INF"/>
         <file path="/Enigma/Makefile"/>
-        <file path="/Enigma/description.jardesc"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.utility"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.sub"/>
+        <file path="/Enigma/.classpath"/>
+        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend"/>
     </selectedElements>
 </jardesc>

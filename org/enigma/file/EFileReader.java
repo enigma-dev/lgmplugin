@@ -721,6 +721,18 @@ public class EFileReader
 				}
 			}
 			}
+		
+		@Override
+		protected void put(ProjectFile gf, PropertyMap<PPath> p, PPath key, String val)
+			{
+			if (key == PPath.BACKGROUND_ROOM)
+				{
+				putRef(gf.resMap.getList(Room.class),p,key,val.toString());
+				return;
+				}
+			super.put(gf,p,key,val);
+			}
+		
 		}
 
 	static class ScriptReader extends DataPropReader<Script,PScript>
