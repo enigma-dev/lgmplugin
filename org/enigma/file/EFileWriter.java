@@ -856,8 +856,8 @@ public class EFileWriter
 			ps.println("Progress: " + sProgress); //$NON-NLS-1$
 
 			//handle guid
-			ps.print(PGameSettings.DPLAY_GUID.name() + ": 0x");
-			byte[] dg = (byte[]) gs.get(PGameSettings.DPLAY_GUID);
+			ps.print(PGameSettings.GAME_GUID.name() + ": 0x");
+			byte[] dg = (byte[]) gs.get(PGameSettings.GAME_GUID);
 			ps.format("%032x\n",new BigInteger(1,dg));
 
 			writeProperties(ps,gs.properties);
@@ -878,7 +878,7 @@ public class EFileWriter
 
 		public static boolean allowProperty(Enum<?> prop)
 			{
-			return prop != PGameSettings.DPLAY_GUID && prop != PGameSettings.GAME_ICON
+			return prop != PGameSettings.GAME_GUID && prop != PGameSettings.GAME_ICON
 					&& prop != PGameSettings.FRONT_LOAD_BAR && prop != PGameSettings.BACK_LOAD_BAR
 					&& prop != PGameSettings.LOADING_IMAGE;
 			}

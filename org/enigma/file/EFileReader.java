@@ -1266,7 +1266,7 @@ public class EFileReader
 		protected boolean allowProperty(PGameSettings prop)
 			{
 			//			return false;
-			return prop != PGameSettings.DPLAY_GUID && prop != PGameSettings.GAME_ICON
+			return prop != PGameSettings.GAME_GUID && prop != PGameSettings.GAME_ICON
 					&& prop != PGameSettings.FRONT_LOAD_BAR && prop != PGameSettings.BACK_LOAD_BAR
 					&& prop != PGameSettings.LOADING_IMAGE;
 			}
