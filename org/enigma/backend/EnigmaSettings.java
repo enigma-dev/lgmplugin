@@ -31,6 +31,7 @@ import org.enigma.SettingsHandler.OptionGroupSetting;
 import org.enigma.SettingsHandler.OptionSetting;
 import org.enigma.TargetHandler.TargetSelection;
 import org.enigma.backend.EnigmaDriver.SyntaxError;
+import org.enigma.file.YamlParser;
 import org.enigma.file.YamlParser.YamlNode;
 import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.ResourceReference;
@@ -114,8 +115,13 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 
 	public void fromYaml(YamlNode n)
 		{
-		for (String key : options.keySet())
-			options.put(key,n.getMC(key,null));
+		for (String key : options.keySet()) {
+			//TODO: If the property was not in the file, do not add it as null, just leave it out
+			//so the default value is used.
+			String val = n.getMC(key,null);
+			if (val == null) { continue; }
+			options.put(key,val);
+		}
 
 		for (String key : targets.keySet())
 			{
@@ -139,8 +145,16 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 
 	public void fromProperties(Properties p)
 		{
-		for (String key : options.keySet())
-			options.put(key,p.getProperty(key));
+		//TODO: The content in this file may be formated slightly differently, however
+		//the file does hold the e-yaml specification header, and therefore all properties
+		//are subject to escape sequences.
+		for (String key : options.keySet()) {
+			//TODO: If the property was not in the file, do not add it as null, just leave it out
+			//so the default value is used.
+			String val = p.getProperty(key);
+			if (val == null) continue;
+			options.put(key,YamlParser.YamlContent.escape(val));
+		}
 
 		for (String key : targets.keySet())
 			{
@@ -161,6 +175,15 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 			Collections.addAll(extensions,ext.split(","));
 			}
 		}
+	
+	public String getOption(Object key) {
+		for (Entry<String,String> entry : options.entrySet()) {
+			if (entry.getKey().equals(key)) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
 
 	public void toYaml(PrintWriter out, boolean includeHeader)
 		{
@@ -169,9 +192,8 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 			out.println("%e-yaml"); //$NON-NLS-1$
 			out.println("---"); //$NON-NLS-1$
 			}
-
 		for (Entry<String,String> entry : options.entrySet())
-			out.append(entry.getKey()).append(": ").append(entry.getValue()).println(); //$NON-NLS-1$
+			out.append(entry.getKey()).append(": \"").append(entry.getValue()).append("\"").println(); //$NON-NLS-1$
 
 		out.println();
 

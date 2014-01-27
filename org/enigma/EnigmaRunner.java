@@ -122,14 +122,30 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public JMenuItem busy, run, debug, design, compile, rebuild, stop;
 	public JButton stopb, runb, debugb, compileb;
 	public JMenuItem mImport, showFunctions, showGlobals, showTypes;
-	public ResNode node = new ResNode(Messages.getString("EnigmaRunner.RESNODE_NAME"), //$NON-NLS-1$
-			ResNode.STATUS_SECONDARY,EnigmaSettings.class);
+	public ResNode node;
 	
 	public EnigmaRunner()
 		{
 		addResourceHook();
+		
+		ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
+		if (rh == null) {
+			LGM.currentFile.resMap.put(EnigmaSettings.class,
+					rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
+		}
+		node = new ResNode(Messages.getString("EnigmaRunner.RESNODE_NAME"), //$NON-NLS-1$
+				ResNode.STATUS_SECONDARY,EnigmaSettings.class, rh.getResource().reference);
+		
 		populateMenu();
 		populateTree();
+		
+		esf = new EnigmaSettingsFrame(rh.getResource());
+		esf.revertResource();
+		LGM.mdi.add(esf);
+		
+		rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
+		final String makedir = rh.getResource().getOption("make-directory");
+		
 		LGM.addReloadListener(this);
 		SubframeInformer.addSubframeListener(this);
 		applyBackground("org/enigma/enigma.png"); //$NON-NLS-1$
@@ -168,21 +184,16 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 						}
 
 					System.out.println(Messages.getString("EnigmaRunner.INITIALIZING")); //$NON-NLS-1$
+					DRIVER.libSetMakeDirectory(makedir);
 					String err = DRIVER.libInit(ec);
 					if (err != null)
-						{
+					{
 						JOptionPane.showMessageDialog(null,err);
 						ENIGMA_FAIL = true;
 						return;
-						}
-		
+					}
+
 					ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
-					if (rh == null)
-						LGM.currentFile.resMap.put(EnigmaSettings.class,
-								rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
-					esf = new EnigmaSettingsFrame(rh.getResource());
-					esf.revertResource();
-					LGM.mdi.add(esf);
 					rh.getResource().commitToDriver(DRIVER);
 					setupBaseKeywords();
 					populateKeywords();
@@ -190,6 +201,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 					ENIGMA_READY = true;
 					}
 			};
+			
 			initthread.start();
 		}
 
@@ -958,13 +970,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		populateTree();
 		
 		if (esf != null) {
-		ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
-		if (rh == null)
-			LGM.currentFile.resMap.put(EnigmaSettings.class,
-					rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
-				
-		esf.resOriginal = rh.getResource();
-		esf.revertResource(); //updates local res copy as well
+			ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
+			if (rh == null)
+				LGM.currentFile.resMap.put(EnigmaSettings.class,
+						rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
+					
+			esf.resOriginal = rh.getResource();
+			esf.revertResource(); //updates local res copy as well
 		}
 	}
 	public static ImageIcon findIcon(String loc)
