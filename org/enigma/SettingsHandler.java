@@ -101,6 +101,10 @@ public final class SettingsHandler
 		parseExtensions();
 		}
 
+	private static boolean ValueIsBoolean(String val) {
+		return !(val.startsWith("0") || val.startsWith("f") || val.startsWith("n"));
+	}
+	
 	private static void parseOptions() throws YamlException
 		{
 		optionGroups = new ArrayList<OptionGroupSetting>();
@@ -199,9 +203,11 @@ public final class SettingsHandler
 					String name = yn.getMC("id"); //$NON-NLS-1$
 					String icon = yn.getMC("icon",null); //$NON-NLS-1$
 					String desc = yn.getMC("description"); //$NON-NLS-1$
-					boolean def = yn.getBool("default",true); //$NON-NLS-1$
+					String def = yn.getMC("Default-" + TargetHandler.getOS(),"");
+					if (def == null || def.equals("")) 
+						def = yn.getMC("Default","1");
 					extensions.add(new ExtensionSetting(icon == null ? null : new File(f,icon),path,name,
-							desc,def));
+							desc,ValueIsBoolean(def)));
 					//					tm.addRow(icon == null ? null : new File(f,icon),path,name,desc);
 					}
 				catch (FileNotFoundException e)
