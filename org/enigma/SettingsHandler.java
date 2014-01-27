@@ -157,10 +157,13 @@ public final class SettingsHandler
 				OptionSetting opt;
 				try
 					{
+					String def = on.getMC("Default-" + TargetHandler.getOS(),"");
+					if (def == null || def.equals("")) 
+						def = on.getMC("Default","0");
 					opt = new OptionSetting(on.name,on.getMC("Label",null), //$NON-NLS-1$
 							on.getMC("Type",null), //$NON-NLS-1$
 							columns,on.getMC("Options",null), //$NON-NLS-1$
-							on.getMC("Default","0")); //$NON-NLS-1$ //$NON-NLS-2$
+							def); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				catch (IllegalArgumentException e)
 					{
