@@ -43,6 +43,7 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 	public String initialization = "", cleanup = ""; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public Map<String,String> options = new HashMap<String,String>();
+	public Map<String,Boolean> textoptions = new HashMap<String,Boolean>();
 	//Strings one of: "compiler","windowing","graphics","audio","collision","widget"
 	public Map<String,TargetSelection> targets = new HashMap<String,TargetSelection>();
 	public Set<String> extensions = new HashSet<String>();
@@ -64,9 +65,12 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 		loadDefinitions();
 		if (TargetHandler.defaults != null) targets.putAll(TargetHandler.defaults);
 
-		for (OptionGroupSetting ogs : SettingsHandler.optionGroups)
-			for (OptionSetting os : ogs.opts)
+		for (OptionGroupSetting ogs : SettingsHandler.optionGroups) {
+			for (OptionSetting os : ogs.opts) {
 				options.put(os.id,os.def);
+				textoptions.put(os.id,os.type.toLowerCase().equals("textfield"));
+			}
+		}
 
 		for (ExtensionSetting es : SettingsHandler.extensions)
 			if (es.def) extensions.add(es.path);
@@ -116,9 +120,9 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 	public void fromYaml(YamlNode n)
 		{
 		for (String key : options.keySet()) {
+			String val = n.getMC(key,null);
 			//TODO: If the property was not in the file, do not add it as null, just leave it out
 			//so the default value is used.
-			String val = n.getMC(key,null);
 			if (val == null) { continue; }
 			options.put(key,val);
 		}
@@ -146,14 +150,15 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 	public void fromProperties(Properties p)
 		{
 		//TODO: The content in this file may be formated slightly differently, however
-		//the file does hold the e-yaml specification header, and therefore all properties
+		//the file does hold the e-yaml specification header, and therefore string properties
 		//are subject to escape sequences.
 		for (String key : options.keySet()) {
+			String val = p.getProperty(key);
 			//TODO: If the property was not in the file, do not add it as null, just leave it out
 			//so the default value is used.
-			String val = p.getProperty(key);
 			if (val == null) continue;
-			options.put(key,YamlParser.YamlContent.escape(val));
+			if (getOptionIsText(key)) val = YamlParser.YamlContent.escape(val);
+			options.put(key,val);
 		}
 
 		for (String key : targets.keySet())
@@ -176,13 +181,23 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 			}
 		}
 	
-	public String getOption(Object key) {
-		for (Entry<String,String> entry : options.entrySet()) {
-			if (entry.getKey().equals(key)) {
-				return entry.getValue();
-			}
-		}
-		return null;
+	public String getOption(String key) {
+		return options.get(key);
+	}
+	
+	//TODO: This method is necessary in order to determine whether to escape
+	//the value with quotations, since string values in YAML such as make directory
+	//which contain % and other symbols need to be escaped.
+	//The map for this function however could be merged with the options map
+	//and the value type being an object or class wrapping both the value and the
+	//value data type.
+	public boolean getOptionIsText(String key) {
+		Boolean val = textoptions.get(key);
+		if (val == null) { return false; }
+		else { return val; }
+		//TODO: Not sure if you could just return it like this.
+		//Depends whether null equates to false or if it would throw an exception.
+		//return textoptions.get(key);
 	}
 
 	public void toYaml(PrintWriter out, boolean includeHeader)
@@ -192,8 +207,13 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 			out.println("%e-yaml"); //$NON-NLS-1$
 			out.println("---"); //$NON-NLS-1$
 			}
-		for (Entry<String,String> entry : options.entrySet())
-			out.append(entry.getKey()).append(": \"").append(entry.getValue()).append("\"").println(); //$NON-NLS-1$
+		for (Entry<String,String> entry : options.entrySet()) {
+			if (getOptionIsText(entry.getKey())) {
+				out.append(entry.getKey()).append(": \"").append(entry.getValue()).append("\"").println(); //$NON-NLS-1$
+			} else {
+				out.append(entry.getKey()).append(": ").append(entry.getValue()).println(); //$NON-NLS-1$
+			}
+		}
 
 		out.println();
 
