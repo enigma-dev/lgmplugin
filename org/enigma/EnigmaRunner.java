@@ -523,6 +523,11 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		for (Construct f : GMLKeywords.CONSTRUCTS)
 			BASE_CONSTRUCTS.add(f);
 		}
+	
+	private static String parseArguments(String args) {
+		if (!args.contains("(") || !args.contains(")")) { return args; }
+		return args.substring(args.indexOf("(") + 1, args.indexOf(")"));
+	}
 
 	public static void populateKeywords()
 		{
@@ -539,7 +544,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 					if (overloads > 0)
 						{
 						String args = DRIVER.resource_parameters(0);
-						fl.add(new Function(res,args.substring(1,args.length() - 1),null));
+						fl.add(new Function(res,parseArguments(args),null));
 						}
 					else
 						{
@@ -874,20 +879,20 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				{
 				case 0:
 					if (DRIVER.resource_isFunction())
-						{
+					{
 						int overloads = DRIVER.resource_overloadCount();
 						if (overloads > 0)
 							{
-							rl.add(res + DRIVER.resource_parameters(0));
+							rl.add(res + " : " + DRIVER.resource_parameters(0));
 							break;
 							}
 						int min = DRIVER.resource_argCountMin();
 						int max = DRIVER.resource_argCountMax();
 						res += "(" + min; //$NON-NLS-1$
-				if (min != max) res += "-" + max; //$NON-NLS-1$
-				res += ")"; //$NON-NLS-1$
-				rl.add(res);
-				}
+						if (min != max) res += "-" + max; //$NON-NLS-1$
+						res += ")"; //$NON-NLS-1$
+						rl.add(res);
+					}
 					break;
 				case 1:
 					if (DRIVER.resource_isGlobal()) rl.add(res);
