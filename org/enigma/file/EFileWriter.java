@@ -31,6 +31,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.JProgressBar;
 
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.messages.Messages;
@@ -39,6 +40,7 @@ import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.ProjectFile.FormatFlavor;
 import org.lateralgm.file.GmStreamEncoder;
 import org.lateralgm.file.iconio.ICOFile;
+import org.lateralgm.main.LGM;
 import org.lateralgm.main.Util;
 import org.lateralgm.resources.Background;
 import org.lateralgm.resources.Extensions;
@@ -332,7 +334,14 @@ public class EFileWriter
 
 	public static void writeEProjectFile(EGMOutputStream os, ProjectFile gf, ResNode tree) throws IOException
 		{
+		JProgressBar progressBar = LGM.getProgressDialogBar();
+		progressBar.setMaximum(tree.getChildCount());
+		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
+		
+		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		writeNodeChildren(os,gf,tree,new ArrayList<String>());
+		
+		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
 	// Workhorse methods
@@ -341,7 +350,7 @@ public class EFileWriter
 			throws IOException
 		{
 		PrintStream ps = new PrintStream(os.next(dir,"toc.txt")); //$NON-NLS-1$
-
+		
 		int children = node.getChildCount();
 		for (int i = 0; i < children; i++)
 			{
@@ -368,6 +377,8 @@ public class EFileWriter
 				writeNodeChildren(os,gf,child,newDir);
 				}
 			}
+		if (node.status == ResNode.STATUS_PRIMARY) 
+			LGM.setProgress(LGM.getProgressDialogBar().getValue()+1,Messages.getString("ProgressDialog.ENTRIES"));
 		}
 
 	/**
