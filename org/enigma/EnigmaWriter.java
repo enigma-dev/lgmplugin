@@ -104,6 +104,8 @@ import org.lateralgm.resources.sub.Action;
 import org.lateralgm.resources.sub.ActionContainer;
 import org.lateralgm.resources.sub.Argument;
 import org.lateralgm.resources.sub.BackgroundDef.PBackgroundDef;
+import org.lateralgm.resources.sub.CharacterRange;
+import org.lateralgm.resources.sub.CharacterRange.PCharacterRange;
 import org.lateralgm.resources.sub.Instance.PInstance;
 import org.lateralgm.resources.sub.Tile.PTile;
 import org.lateralgm.resources.sub.View.PView;
@@ -604,8 +606,19 @@ public final class EnigmaWriter
 			of.size = ifont.get(PFont.SIZE);
 			of.bold = ifont.get(PFont.BOLD);
 			of.italic = ifont.get(PFont.ITALIC);
-			of.rangeMin = ifont.get(PFont.RANGE_MIN);
-			of.rangeMax = ifont.get(PFont.RANGE_MAX);
+			//TODO: Implement multiple character ranges to ENIGMA
+			//Should also use the default instead of 0,0
+			int min = 32, max = 127;
+			CharacterRange cr = null;
+			if (ifont.characterRanges.size() > 0) {
+				cr = ifont.characterRanges.get(0);
+			}
+			if (cr != null) {
+				min = cr.properties.get(PCharacterRange.RANGE_MIN);
+				max = cr.properties.get(PCharacterRange.RANGE_MAX);
+			}
+			of.rangeMin = min;
+			of.rangeMax = max;
 
 			// Generate a Java font for glyph population
 			int style = (of.italic ? java.awt.Font.ITALIC : 0) | (of.bold ? java.awt.Font.BOLD : 0);
@@ -824,7 +837,7 @@ public final class EnigmaWriter
 			or.currentTab = is.get(PRoom.CURRENT_TAB);
 			or.scrollBarX = is.get(PRoom.SCROLL_BAR_X);
 			or.scrollBarY = is.get(PRoom.SCROLL_BAR_Y);
-			or.enableViews = is.get(PRoom.ENABLE_VIEWS);
+			or.enableViews = is.get(PRoom.VIEWS_ENABLED);
 			// ^^^ useless stuff ^^^ //
 
 			or.backgroundDefCount = is.backgroundDefs.size();

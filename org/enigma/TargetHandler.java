@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
 import org.enigma.file.YamlParser;
 import org.enigma.file.YamlParser.YamlContent;
 import org.enigma.file.YamlParser.YamlElement;

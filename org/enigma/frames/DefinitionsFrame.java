@@ -24,7 +24,7 @@ public class DefinitionsFrame extends InstantiableResourceFrame<Definitions,PDef
 	{
 	private static final long serialVersionUID = 1L;
 	public JToolBar tool;
-	public JComboBox kinds;
+	public JComboBox<String> kinds;
 	public CodeTextArea code;
 	public JPanel status;
 
@@ -49,7 +49,7 @@ public class DefinitionsFrame extends InstantiableResourceFrame<Definitions,PDef
 
 		tool.addSeparator();
 		String kindNames[] = { "Definitions","Global Locals","Initialization","Cleanup" };
-		tool.add(kinds = new JComboBox(kindNames));
+		tool.add(kinds = new JComboBox<String>(kindNames));
 		kinds.setMaximumSize(new Dimension(120,25));
 		plf.make(kinds,PDefinitions.KIND,new IndexComboBoxConversion());
 

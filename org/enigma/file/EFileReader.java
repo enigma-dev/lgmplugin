@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2011 Josh Ventura <JoshV10@gmail.com>
+ * Copyright (C) 2013-2014 Robert B. Colton
  * 
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -89,15 +90,19 @@ import org.lateralgm.resources.Sound;
 import org.lateralgm.resources.Sound.PSound;
 import org.lateralgm.resources.Sprite;
 import org.lateralgm.resources.Sprite.PSprite;
+import org.lateralgm.resources.Timeline;
+import org.lateralgm.resources.Timeline.PTimeline;
 import org.lateralgm.resources.library.LibAction;
 import org.lateralgm.resources.library.LibManager;
 import org.lateralgm.resources.sub.Action;
+import org.lateralgm.resources.sub.ActionContainer;
 import org.lateralgm.resources.sub.Argument;
 import org.lateralgm.resources.sub.BackgroundDef;
 import org.lateralgm.resources.sub.BackgroundDef.PBackgroundDef;
 import org.lateralgm.resources.sub.Event;
 import org.lateralgm.resources.sub.Instance;
 import org.lateralgm.resources.sub.Instance.PInstance;
+import org.lateralgm.resources.sub.Moment;
 import org.lateralgm.resources.sub.PathPoint;
 import org.lateralgm.resources.sub.Tile;
 import org.lateralgm.resources.sub.Tile.PTile;
@@ -153,8 +158,8 @@ public class EFileReader
 		readers.put(Path.class,new PathTextReader());
 		readers.put(Script.class,new ScriptReader());
 		readers.put(Shader.class,new ShaderReader());
-		readers.put(Font.class,new FontRawReader());
-		//		readers.put(Timeline.class,new TimelineIO());
+		readers.put(Font.class,new FontEefReader());
+		readers.put(Timeline.class,new TimelineEefReader());
 		readers.put(GmObject.class,new ObjectEefReader());
 		readers.put(Room.class,new RoomGmDataReader());
 		readers.put(GameInformation.class,new GameInfoRtfReader());
@@ -602,7 +607,6 @@ public class EFileReader
 	public static void processEntries(EProjectFile f, ProjectFile gf, ResNode parent,
 			List<EgmEntry> entries, String dir) throws IOException
 		{
-		int percent = 0;
 		for (EgmEntry e : entries)
 			{
 			String entry = e.name;
@@ -802,21 +806,53 @@ public class EFileReader
 		}
 	}
 	
-	static class FontRawReader extends DataPropReader<Font,PFont>
+	static class FontEefReader extends DataPropReader<Font,PFont>
 		{
-		@Override
-		protected void readDataFile(EProjectFile f, ProjectFile gf, Font r, Properties i, String dir)
-				throws IOException
-			{
-			//Override as no-op. Raw fonts have no data file.
-			}
 
 		@Override
 		protected void readData(ProjectFile gf, Font r, InputStream in)
-			{
-			//Raw fonts have no data file.
+		{
+			EEFNode en = EEFReader.parse(in);
+			System.out.println("EEF Contents:");
+			Font fnt = (Font) r;
+			for (EEFNode pnode : en.children) {
+				for (String[] entry : pnode.namedAttributes.values())
+				{
+					JOptionPane.showMessageDialog(null, entry[0]);
+				}
 			}
 		}
+	}
+	
+	static class TimelineEefReader extends DataPropReader<Timeline,PTimeline>
+	{
+	protected void readData(ProjectFile gf, Timeline r, InputStream in)
+		{
+		EEFNode mn = EEFReader.parse(in);
+		System.out.println("EEF Contents:");
+		
+		Timeline tml = (Timeline) r;
+		for (EEFNode mmnode : mn.children)
+			for (EEFNode momnode : mmnode.children)
+				{
+				if (momnode.id == null || momnode.id.length < 1)
+					{
+					System.err.println("FUCK");
+					return;
+					}
+				Moment mom = tml.addMoment();
+				mom.stepNo = Integer.parseInt(momnode.id[0]);
+					
+				readActions(gf, mom, momnode.children);
+				}
+		}
+	
+	protected void put(ProjectFile gf, PropertyMap<PTimeline> p, PTimeline key, String val)
+	{
+		super.put(gf,p,key,val);
+	}
+	
+	}
 
 	static class ObjectEefReader extends DataPropReader<GmObject,PGmObject>
 		{
@@ -854,113 +890,13 @@ public class EFileReader
 						}
 
 					obj.mainEvents.get(mid).events.add(e);
-
-					for (EEFNode actnode : evnode.children)
-						{
-						if (actnode.id == null || actnode.id.length < 2)
-							{
-							System.err.println("actFUCK");
-							continue;
-							}
-						int aid = Integer.parseInt(actnode.id[0]), lid = Integer.parseInt(actnode.id[1]);
-						//LibAction la = new LibAction();
-						//Argument args[] = new Argument[1];
-						//Action action = new Action(la,args);
-						System.out.println("actnode(" + actnode.id[0] + " in " + actnode.id[1] + "): "
-								+ actnode.lineAttribs.size() + " arguments");
-
-						LibAction la = LibManager.getLibAction(lid,aid);
-						if (la == null)
-							{
-							System.err.println("FUCK! UNDEFINED ACTION AND THEN SOME.");
-							return;
-							}
-						Action a = e.addAction(la); //assuming the Library was found and la != null
-
-						Map<String,String[]> attribs = actnode.namedAttributes;
-						if (attribs.containsKey("not")) a.setNot(true);
-						if (attribs.containsKey("relative")) a.setRelative(true);
-						String[] targets = attribs.get("applies");
-						if (targets != null && targets.length == 1) putAppliesRef(gf,a,targets[0]);
-
-						Argument args[];
-						if (la.interfaceKind != LibAction.INTERFACE_CODE)
-							{
-							args = new Argument[actnode.lineAttribs.size()];
-							System.out.println("Name: " + la.name);
-							for (int i = 0; i < actnode.lineAttribs.size(); i++)
-								{
-								String field = actnode.lineAttribs.get(i).trim();
-								args[i] = new Argument(la.libArguments[i].kind,field,null);
-								Class<? extends Resource<?,?>> kind = Argument.getResourceKind(la.libArguments[i].kind);
-								if (kind != null && Resource.class.isAssignableFrom(kind))
-									putArgumentRef(gf,args[i],field);
-								}
-							}
-						else
-							{
-							args = new Argument[1];
-							args[0] = new Argument(la.libArguments[0].kind,implode(actnode.lineAttribs),null);
-							}
-						a.setArguments(args);
-						}
+						
+					readActions(gf, e, evnode.children);
 					}
 			}
-
-		static void putAppliesRef(final ProjectFile gf, final Action act, final String name)
-			{
-			PostponedRef pr = new PostponedRef()
-				{
-					@Override
-					public boolean invoke()
-						{
-						if (name.equals("self") || name.equals("-1")) return true; //already self
-						if (name.equals("other") || name.equals("-2"))
-							{
-							act.setAppliesTo(GmObject.OBJECT_OTHER);
-							return true;
-							}
-						GmObject temp = gf.resMap.getList(GmObject.class).get(name);
-						if (temp != null) act.setAppliesTo(temp.reference);
-						return temp != null;
-						}
-				};
-			if (!pr.invoke()) postpone.add(pr);
-			}
-
-		static void putOtherRef(final ProjectFile gf, final Event e, final String name)
-			{
-			PostponedRef pr = new PostponedRef()
-				{
-					@Override
-					public boolean invoke()
-						{
-						GmObject temp = gf.resMap.getList(GmObject.class).get(name);
-						if (temp != null) e.other = temp.reference;
-						return temp != null;
-						}
-				};
-			if (!pr.invoke()) postpone.add(pr);
-			}
-
-		static void putArgumentRef(final ProjectFile gf, final Argument arg, final String name)
-			{
-			PostponedRef pr = new PostponedRef()
-				{
-					@Override
-					public boolean invoke()
-						{
-						Resource<?,?> temp = ((ResourceList<?>) gf.resMap.get(Argument.getResourceKind(arg.kind))).get(name);
-						if (temp != null) arg.setRes(temp.reference);
-						return temp != null;
-						}
-				};
-			if (!pr.invoke()) postpone.add(pr);
-			}
-
-		@Override
+		
 		protected void put(ProjectFile gf, PropertyMap<PGmObject> p, PGmObject key, String val)
-			{
+		{
 			if (key == PGmObject.SPRITE || key == PGmObject.MASK)
 				{
 				putRef(gf.resMap.getList(Sprite.class),p,key,val.toString());
@@ -972,7 +908,8 @@ public class EFileReader
 				return;
 				}
 			super.put(gf,p,key,val);
-			}
+		}
+		
 		}
 
 	static class RoomEefReader extends DataPropReader<Room,PRoom>
@@ -1458,5 +1395,108 @@ public class EFileReader
 		for (int i = 1; i < lines.size(); i++)
 			out.append('\n').append(lines.get(i));
 		return out.toString();
+		}
+
+	static void putAppliesRef(final ProjectFile gf, final Action act, final String name)
+	{
+	PostponedRef pr = new PostponedRef()
+		{
+			@Override
+			public boolean invoke()
+				{
+				if (name.equals("self") || name.equals("-1")) return true; //already self
+				if (name.equals("other") || name.equals("-2"))
+					{
+					act.setAppliesTo(GmObject.OBJECT_OTHER);
+					return true;
+					}
+				GmObject temp = gf.resMap.getList(GmObject.class).get(name);
+				if (temp != null) act.setAppliesTo(temp.reference);
+				return temp != null;
+				}
+		};
+	if (!pr.invoke()) postpone.add(pr);
+	}
+
+	static void putOtherRef(final ProjectFile gf, final Event e, final String name)
+	{
+	PostponedRef pr = new PostponedRef()
+		{
+			@Override
+			public boolean invoke()
+				{
+				GmObject temp = gf.resMap.getList(GmObject.class).get(name);
+				if (temp != null) e.other = temp.reference;
+				return temp != null;
+				}
+		};
+	if (!pr.invoke()) postpone.add(pr);
+	}
+
+	static void putArgumentRef(final ProjectFile gf, final Argument arg, final String name)
+	{
+	PostponedRef pr = new PostponedRef()
+		{
+			@Override
+			public boolean invoke()
+				{
+				Resource<?,?> temp = ((ResourceList<?>) gf.resMap.get(Argument.getResourceKind(arg.kind))).get(name);
+				if (temp != null) arg.setRes(temp.reference);
+				return temp != null;
+				}
+		};
+	if (!pr.invoke()) postpone.add(pr);
+	}
+	
+	public static void readActions(ProjectFile gf, ActionContainer container, ArrayList<EEFNode> children) {
+		for (EEFNode actnode : children)
+		{
+			if (actnode.id == null || actnode.id.length < 2)
+				{
+				System.err.println("actFUCK");
+				continue;
+				}
+			int aid = Integer.parseInt(actnode.id[0]), lid = Integer.parseInt(actnode.id[1]);
+			//LibAction la = new LibAction();
+			//Argument args[] = new Argument[1];
+			//Action action = new Action(la,args);
+			System.out.println("actnode(" + actnode.id[0] + " in " + actnode.id[1] + "): "
+					+ actnode.lineAttribs.size() + " arguments");
+	
+			LibAction la = LibManager.getLibAction(lid,aid);
+			if (la == null)
+				{
+				System.err.println("FUCK! UNDEFINED ACTION AND THEN SOME.");
+				return;
+				}
+			Action a = container.addAction(la); //assuming the Library was found and la != null
+	
+			Map<String,String[]> attribs = actnode.namedAttributes;
+			if (attribs.containsKey("not")) a.setNot(true);
+			if (attribs.containsKey("relative")) a.setRelative(true);
+			String[] targets = attribs.get("applies");
+			if (targets != null && targets.length == 1) putAppliesRef(gf,a,targets[0]);
+	
+			Argument args[];
+			if (la.interfaceKind != LibAction.INTERFACE_CODE)
+				{
+				args = new Argument[actnode.lineAttribs.size()];
+				System.out.println("Name: " + la.name);
+				for (int i = 0; i < actnode.lineAttribs.size(); i++)
+					{
+					String field = actnode.lineAttribs.get(i).trim();
+					args[i] = new Argument(la.libArguments[i].kind,field,null);
+					Class<? extends Resource<?,?>> kind = Argument.getResourceKind(la.libArguments[i].kind);
+					if (kind != null && Resource.class.isAssignableFrom(kind))
+						putArgumentRef(gf,args[i],field);
+					}
+				}
+			else
+				{
+				args = new Argument[1];
+				args[0] = new Argument(la.libArguments[0].kind,implode(actnode.lineAttribs),null);
+				}
+			a.setArguments(args);
+			}
 		}
 	}

@@ -64,10 +64,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
@@ -482,28 +485,41 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		//		p.setLayout(new BoxLayout(p,BoxLayout.PAGE_AXIS));
 		p.add(new JLabel(Messages.getString("EnigmaSettingsFrame.EXTENSIONS_INFO")), //$NON-NLS-1$
 				BorderLayout.NORTH);
-		p.add(new JScrollPane(new ExtensionSelector()),BorderLayout.CENTER);
+		ExtensionSelector es = new ExtensionSelector();
+		p.add(new JScrollPane(es),BorderLayout.CENTER);
 		return p;
 		}
 
 	public class ExtensionSelector extends JTable
 		{
 		private static final long serialVersionUID = 1L;
-
+		public final int defrowheight = 36;
+		
 		public ExtensionSelector()
 			{
 			super(new ExtTableModel(extensions));
-			final int bdim = 36;
 			getColumnModel().getColumn(1).setCellRenderer(new ExtCellRenderer());
-			getColumnModel().getColumn(0).setPreferredWidth(bdim);
-			getColumnModel().getColumn(0).setMaxWidth(bdim);
-			getColumnModel().getColumn(0).setMinWidth(bdim);
+			getColumnModel().getColumn(0).setPreferredWidth(defrowheight);
+			getColumnModel().getColumn(0).setMaxWidth(defrowheight);
+			getColumnModel().getColumn(0).setMinWidth(defrowheight);
 			getColumnModel().getColumn(1).setMinWidth(128);
 			getColumnModel().getColumn(1).setPreferredWidth(300);
-			getColumnModel().getColumn(2).setPreferredWidth(bdim);
-			getColumnModel().getColumn(2).setMaxWidth(bdim);
+			getColumnModel().getColumn(2).setPreferredWidth(defrowheight);
+			getColumnModel().getColumn(2).setMaxWidth(defrowheight);
 			getColumnModel().getColumn(2).setMinWidth(12);
-			setRowHeight(bdim);
+			setRowHeight(defrowheight);
+			
+			this.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent arg0) {
+					setRowHeight(defrowheight);
+					ExtCellRenderer ds = (ExtCellRenderer) getCellRenderer(getSelectedRow(), 1);
+					setRowHeight(getSelectedRow(),
+							ds.getPreferredRowHeight());
+				}
+			});
+			
+			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			setShowVerticalLines(false);
 			}
@@ -523,6 +539,10 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 				else
 					super.setValue(value);
 				}
+			public int getPreferredRowHeight() {
+				return 0;
+			//	return (int) getFontMetrics(getFont()).getLineMetrics(chars, beginIndex, limit, context);
+			}
 			}
 		}
 

@@ -23,7 +23,6 @@ import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.GmFormatException;
 import org.lateralgm.file.ProjectFile.FormatFlavor;
-import org.lateralgm.file.ProjectFormatException;
 import org.lateralgm.main.FileChooser.FileReader;
 import org.lateralgm.main.FileChooser.FileWriter;
 import org.lateralgm.main.FileChooser.GroupFilter;

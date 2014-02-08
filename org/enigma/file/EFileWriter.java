@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2011 Josh Ventura <JoshV10@gmail.com>
+ * Copyright (C) 2013-2014 Robert B. Colton
  * 
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -61,15 +62,19 @@ import org.lateralgm.resources.Sound;
 import org.lateralgm.resources.Shader.PShader;
 import org.lateralgm.resources.Sound.PSound;
 import org.lateralgm.resources.Sprite;
+import org.lateralgm.resources.Timeline;
 import org.lateralgm.resources.library.LibAction;
 import org.lateralgm.resources.sub.Action;
 import org.lateralgm.resources.sub.Argument;
 import org.lateralgm.resources.sub.BackgroundDef;
+import org.lateralgm.resources.sub.CharacterRange;
 import org.lateralgm.resources.sub.BackgroundDef.PBackgroundDef;
+import org.lateralgm.resources.sub.CharacterRange.PCharacterRange;
 import org.lateralgm.resources.sub.Event;
 import org.lateralgm.resources.sub.Instance;
 import org.lateralgm.resources.sub.Instance.PInstance;
 import org.lateralgm.resources.sub.MainEvent;
+import org.lateralgm.resources.sub.Moment;
 import org.lateralgm.resources.sub.PathPoint;
 import org.lateralgm.resources.sub.Tile;
 import org.lateralgm.resources.sub.Tile.PTile;
@@ -95,8 +100,8 @@ public class EFileWriter
 		writers.put(Path.class,new PathTextWriter());
 		writers.put(Script.class,new ScriptWriter());
 		writers.put(Shader.class,new ShaderEefWriter());
-		writers.put(Font.class,new FontRawWriter());
-		// writers.put(Timeline.class,new TimelineIO());
+		writers.put(Font.class,new FontEefWriter());
+		writers.put(Timeline.class,new TimelineEefWriter());
 		writers.put(GmObject.class,new ObjectEefWriter());
 		writers.put(Room.class,new RoomGmDataWriter());
 		writers.put(GameInformation.class,new GameInfoRtfWriter());
@@ -520,31 +525,42 @@ public class EFileWriter
 	
 	}
 
-	static class FontRawWriter implements ResourceWriter
+	static class FontEefWriter extends DataPropWriter
+	{
+	@Override
+	public String getExt(Resource<?,?> r)
 		{
-		public void write(EGMOutputStream os, ProjectFile gf, ResNode child, List<String> dir)
-				throws IOException
-			{
-			String name = (String) child.getUserObject();
-			Resource<?,?> r = (Resource<?,?>) Util.deRef((ResourceReference<?>) child.getRes());
-			writeProperties(new PrintStream(os.next(dir,name + EY)),r.properties);
-			}
-
-		public static void writeProperties(PrintStream os, PropertyMap<? extends Enum<?>> p)
-				throws IOException
-			{
-			for (Entry<? extends Enum<?>,Object> e : p.entrySet())
-				os.println(e.getKey().name() + ": " + e.getValue()); //$NON-NLS-1$
-			}
+		return ".fnt"; //$NON-NLS-1$
 		}
 
-	static class ObjectEefWriter extends DataPropWriter
+	@Override
+	public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 		{
+		Font fnt = (Font) r;
+		PrintStream ps = new PrintStream(os);
+
+		ps.println("Ranges:");
+		for (CharacterRange cr : fnt.characterRanges) {
+			ps.println("  - [" + cr.properties.get(PCharacterRange.RANGE_MIN) + "," +
+					cr.properties.get(PCharacterRange.RANGE_MAX) + "]");
+		}
+	
+		}
+
+	private static String getName(ResourceReference<?> rr, String def)
+		{
+		Resource<?,?> r = Util.deRef(rr);
+		return r == null ? def : r.getName();
+		}
+	}
+
+	static class ObjectEefWriter extends DataPropWriter
+	{
 		@Override
 		public String getExt(Resource<?,?> r)
-			{
+		{
 			return ".obj"; //$NON-NLS-1$
-			}
+		}
 
 		static final String NONE = "none", OTHER = "other";
 
@@ -554,69 +570,57 @@ public class EFileWriter
 			GmObject obj = (GmObject) r;
 			PrintStream ps = new PrintStream(os);
 			int numEvents = 0;
-
+		
 			// Write the Events super-key
 			for (MainEvent me : obj.mainEvents)
 				numEvents += me.events.size();
 			ps.println("Events{" + numEvents + "}");
+		
+			// Write the events
+			for (MainEvent me : obj.mainEvents) {
+				for (Event ev : me.events)
+				{
+				ps.print("  Event (");
+		
+				if (ev.mainId == MainEvent.EV_COLLISION)
+					ps.print(getName(ev.other,NONE));
+				else
+					ps.print(ev.id);
+		
+				ps.println("," + ev.mainId + "): " + "Actions{" + ev.actions.size() + "}");
+					printActions(ps, ev.actions);
+				}
+			}
+		}
+	
+	}
+	
+	static class TimelineEefWriter extends DataPropWriter
+		{
+		@Override
+		public String getExt(Resource<?,?> r)
+			{
+			return ".tml"; //$NON-NLS-1$
+			}
+
+		
+
+		@Override
+		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
+			{
+			Timeline tml = (Timeline) r;
+			PrintStream ps = new PrintStream(os);
+			
+			// Write the Moments super-key
+			ps.println("Moments{" + tml.moments.size() + "}");
 
 			// Write the events
-			for (MainEvent me : obj.mainEvents)
-				for (Event ev : me.events)
-					{
-					ps.print("  Event (");
-
-					if (ev.mainId == MainEvent.EV_COLLISION)
-						ps.print(getName(ev.other,NONE));
-					else
-						ps.print(ev.id);
-
-					ps.println("," + ev.mainId + "): " + "Actions{" + ev.actions.size() + "}");
-					for (Action action : ev.actions)
-						{
-						LibAction la = action.getLibAction();
-						ps.print("    Action (" + la.id + ","
-								+ (la.parent != null ? la.parent.id : la.parentId) + "): ");
-						if (action.isNot()) ps.print("\"Not\" ");
-						if (action.isRelative()) ps.print("\"Relative\" ");
-
-						//applies
-						ResourceReference<?> aplref = action.getAppliesTo();
-						String name = null;
-						if (aplref == GmObject.OBJECT_OTHER)
-							name = OTHER;
-						else if (aplref != GmObject.OBJECT_SELF) name = getName(aplref,null);
-						if (name != null) ps.print("Applies(" + name + ") ");
-
-						if (la.interfaceKind != LibAction.INTERFACE_CODE)
-							{
-							ps.println("Fields[" + action.getArguments().size() + "]");
-							for (Argument arg : action.getArguments())
-								{
-								ps.print("      ");
-								Class<? extends Resource<?,?>> kind = Argument.getResourceKind(arg.kind);
-								if (kind != null && Resource.class.isAssignableFrom(kind))
-									ps.println(getName(arg.getRes(),NONE));
-								else
-									ps.println(arg.getVal());
-								}
-							}
-						else
-							{
-							// note: check size first
-							String code = action.getArguments().get(0).getVal();
-							ps.println("Code[" + countLines(code) + " lines]");
-							ps.println(code);
-							}
-						}
-					}
-			}
-
-		private static String getName(ResourceReference<?> rr, String def)
+			for (Moment mom : tml.moments) 
 			{
-			Resource<?,?> r = Util.deRef(rr);
-			return r == null ? def : r.getName();
+				ps.println("  Moment (" + mom.stepNo + "): " + "Actions{" + mom.actions.size() + "}");
+				printActions(ps, mom.actions);
 			}
+		}
 		}
 
 	static class RoomEefWriter extends DataPropWriter
@@ -957,5 +961,52 @@ public class EFileWriter
 		while (m.find())
 			lines++;
 		return lines;
+		}
+
+	private static String getName(ResourceReference<?> rr, String def)
+	{
+		Resource<?,?> r = Util.deRef(rr);
+		return r == null ? def : r.getName();
+	}
+	
+	public static void printActions(PrintStream ps, List<Action> actions) {
+		final String NONE = "none", OTHER = "other";
+		for (Action action : actions)
+		{
+			LibAction la = action.getLibAction();
+			ps.print("    Action (" + la.id + ","
+					+ (la.parent != null ? la.parent.id : la.parentId) + "): ");
+			if (action.isNot()) ps.print("\"Not\" ");
+			if (action.isRelative()) ps.print("\"Relative\" ");
+
+			//applies
+			ResourceReference<?> aplref = action.getAppliesTo();
+			String name = null;
+			if (aplref == GmObject.OBJECT_OTHER)
+				name = OTHER;
+			else if (aplref != GmObject.OBJECT_SELF) name = getName(aplref,null);
+			if (name != null) ps.print("Applies(" + name + ") ");
+
+			if (la.interfaceKind != LibAction.INTERFACE_CODE)
+				{
+				ps.println("Fields[" + action.getArguments().size() + "]");
+				for (Argument arg : action.getArguments())
+					{
+					ps.print("      ");
+					Class<? extends Resource<?,?>> kind = Argument.getResourceKind(arg.kind);
+					if (kind != null && Resource.class.isAssignableFrom(kind))
+						ps.println(getName(arg.getRes(),NONE));
+					else
+						ps.println(arg.getVal());
+					}
+				}
+			else
+				{
+				// note: check size first
+				String code = action.getArguments().get(0).getVal();
+				ps.println("Code[" + countLines(code) + " lines]");
+				ps.println(code);
+				}
+			}
 		}
 	}

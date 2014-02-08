@@ -24,8 +24,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,6 +104,15 @@ public class ProgressFrame extends JFrame implements OutputHandler
 		JPanel p = new JPanel(new BorderLayout());
 		ta = new JTextPane();
 		ta.setEditable(false);
+		ta.addFocusListener(new FocusListener() {
+		  public void focusLost(FocusEvent e) {
+			    return;
+			  }
+			
+			  public void focusGained(FocusEvent e) {
+			  	ta.getCaret().setVisible(true); // show the caret anyway
+			  }
+		});
 		ta.setPreferredSize(new Dimension(440,150));
 		p.add(new JScrollPane(ta,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),BorderLayout.CENTER);
@@ -114,31 +123,12 @@ public class ProgressFrame extends JFrame implements OutputHandler
 
 	    // build popup menu
 	    final JPopupMenu popup = new JPopupMenu();
-	    
 
 		popup.add(makeContextButton(aCopy));
 		popup.addSeparator();
 		popup.add(makeContextButton(aSelAll));
 			
 	    ta.setComponentPopupMenu(popup);
-	    ta.addMouseListener(new MouseAdapter() {
-
-	    	@Override
-	    	public void mousePressed(MouseEvent e) {
-	        showPopup(e);
-	    	}
-
-	    	@Override
-	    	public void mouseReleased(MouseEvent e) {
-	        showPopup(e);
-	    	}
-
-	    	private void showPopup(MouseEvent e) {
-	    		if (e.isPopupTrigger()) {
-	    			popup.show(e.getComponent(), e.getX(), e.getY());
-	    		}
-	    	}
-		});
 		
 		setContentPane(p);
 		pack();
