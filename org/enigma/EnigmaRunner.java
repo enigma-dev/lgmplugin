@@ -784,7 +784,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			keywordListFrames[mode].setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 			LGM.mdi.add(keywordListFrames[mode]);
 			keywordLists[mode] = new KeywordListModel();
-			final JList list = new JList(keywordLists[mode]);
+			final JList<String> list = new JList<String>(keywordLists[mode]);
 			//			keywordLists[mode].setEditable(false);
 			//			keywordLists[mode].setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 			final JTextField filter = new JTextField();
@@ -817,7 +817,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		keywordListFrames[mode].toTop();
 		}
 
-	public class KeywordListModel extends AbstractListModel
+	public class KeywordListModel extends AbstractListModel<String>
 		{
 		private static final long serialVersionUID = 1L;
 		public List<String> keywords;
@@ -852,7 +852,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			}
 
 		@Override
-		public Object getElementAt(int index)
+		public String getElementAt(int index)
 			{
 			return filteredKeywords.get(index);
 			}

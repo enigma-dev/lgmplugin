@@ -108,7 +108,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 
 	private Map<String,Option> options;
 	private Map<String,TargetSelection> userPicks = new HashMap<String,TargetSelection>();
-	private Map<JComboBox,String> targets;
+	private Map<JComboBox<TargetSelection>,String> targets;
 	private Map<ExtensionSetting,Boolean> extensions;
 
 	private JButton bDef, bGlobLoc;
@@ -150,7 +150,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		JComponent[] cChoices;
 
 		IndexButtonGroup ibg = null;
-		JComboBox combo = null;
+		JComboBox<String> combo = null;
 		JCheckBox checkbox = null;
 		JTextField textfield = null;
 		String other = null;
@@ -205,7 +205,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			{
 			cChoices = new JComponent[name == null ? 1 : 2];
 			if (name != null) cChoices[0] = new JLabel(name);
-			cChoices[name == null ? 0 : 1] = combo = new JComboBox(choices);
+			cChoices[name == null ? 0 : 1] = combo = new JComboBox<String>(choices);
 			}
 		
 		void populateCheckbox(String name, boolean enabled)
@@ -690,7 +690,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			res.options.put(entry.getKey(),entry.getValue() == null ? null : entry.getValue().getValue());
 
 		res.targets.clear();
-		for (Entry<JComboBox,String> box : targets.entrySet())
+		for (Entry<JComboBox<TargetSelection>,String> box : targets.entrySet())
 			res.targets.put(box.getValue(),(TargetSelection) box.getKey().getSelectedItem());
 
 		res.extensions.clear();
@@ -712,7 +712,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			}
 
 		changing = true;
-		for (Entry<JComboBox,String> box : targets.entrySet())
+		for (Entry<JComboBox<TargetSelection>,String> box : targets.entrySet())
 			{
 			TargetSelection targ = es.targets.get(box.getValue());
 			if (targ != null) box.getKey().setSelectedItem(targ);
@@ -737,7 +737,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		}
 
 	/** A special ComboBoxModel to alleviate repopulation */
-	private class TargetCombo extends AbstractListModel implements ComboBoxModel
+	private class TargetCombo extends AbstractListModel<TargetSelection> implements ComboBoxModel<TargetSelection>
 		{
 		private static final long serialVersionUID = 1L;
 
@@ -764,7 +764,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 
 		//These methods may be called frequently...
 		@Override
-		public Object getElementAt(int index)
+		public TargetSelection getElementAt(int index)
 			{
 			return data.get(index);
 			}
@@ -785,10 +785,11 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 	private JComponent[] initializeTargets()
 		{
 		//first, initialize the boxes
-		JComboBox[] targs = new JComboBox[TargetHandler.targets.size()];
-		targets = new HashMap<JComboBox,String>(targs.length);
+		@SuppressWarnings("unchecked")
+		JComboBox<TargetSelection>[] targs = (JComboBox<TargetSelection>[])new JComboBox[TargetHandler.targets.size()];
+		targets = new HashMap<JComboBox<TargetSelection>,String>(targs.length);
 		for (int i = 0; i < targs.length; i++)
-			targets.put(targs[i] = new JComboBox(new TargetCombo()),TargetHandler.ids[i]);
+			targets.put(targs[i] = new JComboBox<TargetSelection>(new TargetCombo()),TargetHandler.ids[i]);
 
 		//now populate them
 		userPicks.put(TargetHandler.COMPILER,TargetHandler.defaults.get(TargetHandler.COMPILER));
@@ -820,7 +821,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 	 */
 	void populateTargets()
 		{
-		for (Entry<JComboBox,String> target : targets.entrySet()) // Iterate our combo boxes.
+		for (Entry<JComboBox<TargetSelection>,String> target : targets.entrySet()) // Iterate our combo boxes.
 			{ // We will need a handle to the combobox and the system it represents (ie, "windowing").
 			Set<TargetSelection> options = new LinkedHashSet<TargetSelection>(); // Keep a list of valid systems to assign to the combobox
 			for (Map<String,TargetSelection> combo : TargetHandler.combos) // Iterate our combinations.
@@ -851,7 +852,8 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 	@Override
 	public void popupMenuCanceled(PopupMenuEvent e)
 		{
-		JComboBox changedSystem = (JComboBox) e.getSource();
+		@SuppressWarnings("unchecked")
+		JComboBox<TargetSelection> changedSystem = (JComboBox<TargetSelection>) e.getSource();
 		String current = targets.get(changedSystem); // Get the category of the changed system
 		if (current == null) return;
 		userPicks.remove(current); // Clear the lock on this system
@@ -919,7 +921,8 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			{
 			if (changing) return;
 
-			JComboBox changedSystem = (JComboBox) s;
+			@SuppressWarnings("unchecked")
+			JComboBox<TargetSelection> changedSystem = (JComboBox<TargetSelection>) s;
 			TargetSelection changedSelection = (TargetSelection) changedSystem.getSelectedItem();
 
 			//Update author and description
@@ -936,7 +939,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 
 			//now trample the other cancelled selections
 			changing = true;
-			for (Entry<JComboBox,String> systems : targets.entrySet())
+			for (Entry<JComboBox<TargetSelection>,String> systems : targets.entrySet())
 				if (systems.getKey() != changedSystem && userPicks.get(systems.getValue()) == null)
 					systems.getKey().setSelectedIndex(0);
 			changing = false;
@@ -947,7 +950,8 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 	public void focusGained(FocusEvent e)
 		{
 		if (!(e.getSource() instanceof JComboBox)) return;
-		Object o = ((JComboBox) e.getSource()).getSelectedItem();
+		@SuppressWarnings("unchecked")
+		Object o = ((JComboBox<Object>) e.getSource()).getSelectedItem();
 		if (!(o instanceof TargetSelection)) return;
 		TargetSelection ts = (TargetSelection) o;
 		tfAuth.setText(ts.auth);
