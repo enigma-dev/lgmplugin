@@ -28,12 +28,14 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -55,6 +57,8 @@ import org.enigma.EnigmaRunner;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.backend.EnigmaSettings.PEnigmaSettings;
 import org.enigma.file.EEFReader.EEFNode;
+import org.enigma.file.YamlParser.YamlElement;
+import org.enigma.file.YamlParser.YamlNode;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
@@ -812,45 +816,48 @@ public class EFileReader
 		@Override
 		protected void readData(ProjectFile gf, Font r, InputStream in)
 		{
-			EEFNode en = EEFReader.parse(in);
-			System.out.println("EEF Contents:");
-			Font fnt = (Font) r;
-			for (EEFNode pnode : en.children) {
-				for (String[] entry : pnode.namedAttributes.values())
-				{
-					JOptionPane.showMessageDialog(null, entry[0]);
+			String str="";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+	        try {
+				while ((str = reader.readLine()) != null) { 
+				    String[] split = str.split(",");
+				    r.addRange(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
 				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
 	
 	static class TimelineEefReader extends DataPropReader<Timeline,PTimeline>
 	{
-	protected void readData(ProjectFile gf, Timeline r, InputStream in)
+		protected void readData(ProjectFile gf, Timeline r, InputStream in)
 		{
-		EEFNode mn = EEFReader.parse(in);
-		System.out.println("EEF Contents:");
-		
-		Timeline tml = (Timeline) r;
-		for (EEFNode mmnode : mn.children)
-			for (EEFNode momnode : mmnode.children)
+			EEFNode mn = EEFReader.parse(in);
+			System.out.println("EEF Contents:");
+			
+			Timeline tml = (Timeline) r;
+			for (EEFNode mmnode : mn.children) {
+				for (EEFNode momnode : mmnode.children)
 				{
-				if (momnode.id == null || momnode.id.length < 1)
-					{
-					System.err.println("FUCK");
-					return;
-					}
-				Moment mom = tml.addMoment();
-				mom.stepNo = Integer.parseInt(momnode.id[0]);
-					
-				readActions(gf, mom, momnode.children);
+					if (momnode.id == null || momnode.id.length < 1)
+						{
+						System.err.println("FUCK");
+						return;
+						}
+					Moment mom = tml.addMoment();
+					mom.stepNo = Integer.parseInt(momnode.id[0]);
+						
+					readActions(gf, mom, momnode.children);
 				}
+			}
 		}
 	
-	protected void put(ProjectFile gf, PropertyMap<PTimeline> p, PTimeline key, String val)
-	{
-		super.put(gf,p,key,val);
-	}
+		protected void put(ProjectFile gf, PropertyMap<PTimeline> p, PTimeline key, String val)
+		{
+			super.put(gf,p,key,val);
+		}
 	
 	}
 

@@ -71,6 +71,7 @@ import org.lateralgm.resources.sub.CharacterRange;
 import org.lateralgm.resources.sub.BackgroundDef.PBackgroundDef;
 import org.lateralgm.resources.sub.CharacterRange.PCharacterRange;
 import org.lateralgm.resources.sub.Event;
+import org.lateralgm.resources.sub.GlyphMetric;
 import org.lateralgm.resources.sub.Instance;
 import org.lateralgm.resources.sub.Instance.PInstance;
 import org.lateralgm.resources.sub.MainEvent;
@@ -539,18 +540,11 @@ public class EFileWriter
 		Font fnt = (Font) r;
 		PrintStream ps = new PrintStream(os);
 
-		ps.println("Ranges:");
 		for (CharacterRange cr : fnt.characterRanges) {
-			ps.println("  - [" + cr.properties.get(PCharacterRange.RANGE_MIN) + "," +
-					cr.properties.get(PCharacterRange.RANGE_MAX) + "]");
+			ps.println(cr.properties.get(PCharacterRange.RANGE_MIN) + "," +
+					cr.properties.get(PCharacterRange.RANGE_MAX));
 		}
 	
-		}
-
-	private static String getName(ResourceReference<?> rr, String def)
-		{
-		Resource<?,?> r = Util.deRef(rr);
-		return r == null ? def : r.getName();
 		}
 	}
 
