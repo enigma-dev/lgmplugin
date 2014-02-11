@@ -28,14 +28,12 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -57,8 +55,6 @@ import org.enigma.EnigmaRunner;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.backend.EnigmaSettings.PEnigmaSettings;
 import org.enigma.file.EEFReader.EEFNode;
-import org.enigma.file.YamlParser.YamlElement;
-import org.enigma.file.YamlParser.YamlNode;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
@@ -71,7 +67,7 @@ import org.lateralgm.main.LGM;
 import org.lateralgm.main.Util;
 import org.lateralgm.resources.Background;
 import org.lateralgm.resources.Background.PBackground;
-import org.lateralgm.resources.Extensions;
+import org.lateralgm.resources.ExtensionPackages;
 import org.lateralgm.resources.Font;
 import org.lateralgm.resources.Font.PFont;
 import org.lateralgm.resources.GameInformation;
@@ -168,7 +164,7 @@ public class EFileReader
 		readers.put(Room.class,new RoomGmDataReader());
 		readers.put(GameInformation.class,new GameInfoRtfReader());
 		readers.put(GameSettings.class,new GameSettingsReader());
-		readers.put(Extensions.class,new ExtensionsEmptyReader());
+		readers.put(ExtensionPackages.class,new ExtensionPackagesEmptyReader());
 		readers.put(EnigmaSettings.class,new EnigmaSettingsReader());
 		}
 
@@ -1277,10 +1273,10 @@ public class EFileReader
 			}
 		}
 
-	static class ExtensionsEmptyReader implements ResourceReader<Extensions>
+	static class ExtensionPackagesEmptyReader implements ResourceReader<ExtensionPackages>
 		{
 		@Override
-		public void read(EProjectFile f, ProjectFile gf, InputStream in, String dir, String name, Extensions e)
+		public void read(EProjectFile f, ProjectFile gf, InputStream in, String dir, String name, ExtensionPackages e)
 				throws IOException
 			{ //Extensions empty
 			}

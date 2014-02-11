@@ -44,7 +44,7 @@ import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.main.LGM;
 import org.lateralgm.main.Util;
 import org.lateralgm.resources.Background;
-import org.lateralgm.resources.Extensions;
+import org.lateralgm.resources.ExtensionPackages;
 import org.lateralgm.resources.Font;
 import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.GameInformation.PGameInformation;
@@ -71,7 +71,6 @@ import org.lateralgm.resources.sub.CharacterRange;
 import org.lateralgm.resources.sub.BackgroundDef.PBackgroundDef;
 import org.lateralgm.resources.sub.CharacterRange.PCharacterRange;
 import org.lateralgm.resources.sub.Event;
-import org.lateralgm.resources.sub.GlyphMetric;
 import org.lateralgm.resources.sub.Instance;
 import org.lateralgm.resources.sub.Instance.PInstance;
 import org.lateralgm.resources.sub.MainEvent;
@@ -107,7 +106,7 @@ public class EFileWriter
 		writers.put(Room.class,new RoomGmDataWriter());
 		writers.put(GameInformation.class,new GameInfoRtfWriter());
 		writers.put(GameSettings.class,new GameSettingsThreeWriter());
-		writers.put(Extensions.class,new ExtensionsEmptyWriter());
+		writers.put(ExtensionPackages.class,new ExtensionsEmptyWriter());
 		writers.put(EnigmaSettings.class,new EnigmaSettingsWriter());
 
 		for (Entry<String,Class<? extends Resource<?,?>>> e : Resource.kindsByName3.entrySet())
