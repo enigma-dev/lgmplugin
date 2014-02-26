@@ -18,7 +18,7 @@ public class Image extends Structure
 	{
 	public int width;
 	public int height;
-	public Buffer data; //zlib compressed RGBA
+	public Buffer data; //zlib compressed BGRA
 	public int dataSize;
 
 	@Override
