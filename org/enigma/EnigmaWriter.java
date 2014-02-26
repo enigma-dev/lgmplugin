@@ -961,12 +961,12 @@ public final class EnigmaWriter
 			{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(pixels.length * 4);
 			DeflaterOutputStream dos = new DeflaterOutputStream(baos);
-			// is this the most efficient way? ARGB => RGBA
+			// is this the most efficient way? ARGB => BGRA
 			for (int p = 0; p < pixels.length; p++)
 				{
-				dos.write(pixels[p] >>> 16 & 0xFF);
-				dos.write(pixels[p] >>> 8 & 0xFF);
 				dos.write(pixels[p] & 0xFF);
+				dos.write(pixels[p] >>> 8 & 0xFF);
+				dos.write(pixels[p] >>> 16 & 0xFF);
 				if (useTransp && ((pixels[p] & 0x00FFFFFF) == trans))
 					dos.write(0);
 				else
