@@ -17,6 +17,7 @@ import org.enigma.backend.other.Include;
 import org.enigma.backend.other.Trigger;
 import org.enigma.backend.resources.Background;
 import org.enigma.backend.resources.Font;
+import org.enigma.backend.resources.GameInformation;
 import org.enigma.backend.resources.GameSettings;
 import org.enigma.backend.resources.GmObject;
 import org.enigma.backend.resources.Path;
@@ -69,7 +70,7 @@ public class EnigmaStruct extends Structure
 	public Extension.ByReference extensions;
 	public int extensionCount;
 
-	// public GameInformation gameInfo;
+	public GameInformation gameInfo;
 	public GameSettings gameSettings;
 	public int lastInstanceId = 100000;
 	public int lastTileId = 10000000;
@@ -81,7 +82,7 @@ public class EnigmaStruct extends Structure
 				"backgrounds","backgroundCount","paths","pathCount","scripts","scriptCount","shaders","shaderCount","fonts",
 				"fontCount","timelines","timelineCount","gmObjects","gmObjectCount",
 				"rooms","roomCount","triggers","triggerCount","constants","constantCount","includes",
-				"includeCount","packages","packageCount","extensions","extensionCount","gameSettings",
+				"includeCount","packages","packageCount","extensions","extensionCount","gameInfo","gameSettings",
 				"lastInstanceId","lastTileId");
 		}
 	}

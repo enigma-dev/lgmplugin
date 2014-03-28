@@ -15,23 +15,24 @@ import com.sun.jna.Structure;
 
 public class GameInformation extends Structure
 	{
-	int backgroundColor; //default GM color 0xFFFFE100
-	boolean mimicGameWindow;
-	String formCaption;
-	int left;
-	int top;
-	int width;
-	int height;
-	boolean showBorder;
-	boolean allowResize;
-	boolean stayOnTop;
-	boolean pauseGame;
-	String gameInfoStr;
-
+	public int backgroundColor; //default GM color 0xFFFFE100
+	public boolean embedGameWindow;
+	public String formCaption;
+	public int left;
+	public int top;
+	public int width;
+	public int height;
+	public boolean showBorder;
+	public boolean allowResize;
+	public boolean stayOnTop;
+	public boolean pauseGame;
+	public String gameInfoStr;
+	
 	@Override
 	protected List<String> getFieldOrder()
 		{
-		return Arrays.asList("backgroundColor","mimicGameWindow","formCaption","left","top","width",
+		return Arrays.asList("backgroundColor","embedGameWindow","formCaption","left","top","width",
 				"height","showBorder","allowResize","stayOnTop","pauseGame","gameInfoStr");
 		}
+
 	}

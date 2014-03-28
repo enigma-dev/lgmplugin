@@ -515,7 +515,8 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 					setRowHeight(defrowheight);
 					ExtCellRenderer ds = (ExtCellRenderer) getCellRenderer(getSelectedRow(), 1);
 					setRowHeight(getSelectedRow(),
-							ds.getPreferredRowHeight());
+							defrowheight * 2);
+							//ds.getPreferredRowHeight());
 				}
 			});
 			

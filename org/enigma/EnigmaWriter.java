@@ -56,6 +56,7 @@ import org.enigma.backend.other.Extension;
 import org.enigma.backend.other.Include;
 import org.enigma.backend.resources.Background;
 import org.enigma.backend.resources.Font;
+import org.enigma.backend.resources.GameInformation;
 import org.enigma.backend.resources.GameSettings;
 import org.enigma.backend.resources.GmObject;
 import org.enigma.backend.resources.Path;
@@ -85,6 +86,7 @@ import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.main.LGM;
 import org.lateralgm.resources.Background.PBackground;
 import org.lateralgm.resources.Font.PFont;
+import org.lateralgm.resources.GameInformation.PGameInformation;
 import org.lateralgm.resources.GameSettings.PGameSettings;
 import org.lateralgm.resources.GmObject.PGmObject;
 import org.lateralgm.resources.InstantiableResource;
@@ -139,6 +141,7 @@ public final class EnigmaWriter
 		o.fileVersion = i.format == null ? -1 : i.format.getVersion();
 		o.filename = i.uri == null ? null : i.uri.toString();
 		
+		populateInformation();
 		populateSettings();
 		populateSprites();
 		populateSounds();
@@ -198,6 +201,23 @@ public final class EnigmaWriter
 			   DatatypeConverter.parseHexBinary("1f742f5c692b84bbe6e522233555e291"),
 			   DatatypeConverter.parseHexBinary("08aa73a35d0c8f45bcad79b0635007de")
 			 };
+	
+	protected void populateInformation() {
+		org.lateralgm.resources.GameInformation ig = i.gameInfo;
+		GameInformation oi = o.gameInfo;
+		oi.backgroundColor = ARGBtoRGBA(((Color) ig.get(PGameInformation.BACKGROUND_COLOR)).getRGB());
+		oi.formCaption = ig.get(PGameInformation.FORM_CAPTION);
+		oi.left = ig.get(PGameInformation.LEFT);
+	 	oi.top = ig.get(PGameInformation.TOP);
+	 	oi.width = ig.get(PGameInformation.WIDTH);
+	 	oi.height = ig.get(PGameInformation.HEIGHT);
+	 	oi.embedGameWindow = ig.get(PGameInformation.MIMIC_GAME_WINDOW);
+	 	oi.showBorder = ig.get(PGameInformation.SHOW_BORDER);
+	 	oi.allowResize = ig.get(PGameInformation.ALLOW_RESIZE);
+	 	oi.stayOnTop = ig.get(PGameInformation.STAY_ON_TOP); 
+	 	oi.pauseGame = ig.get(PGameInformation.PAUSE_GAME);
+	 	oi.gameInfoStr = ig.get(PGameInformation.TEXT);
+	}
 	
 	protected void populateSettings()
 		{

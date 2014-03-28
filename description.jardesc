@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="Enigma/enigma.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/Enigma/description.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="lgmplugin/enigma.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/lgmplugin/description.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="false" manifestLocation="/Enigma/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+    <manifest generateManifest="false" manifestLocation="/lgmplugin/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <file path="/Enigma/description.jardesc"/>
-        <file path="/Enigma/COPYING"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.frames"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.messages"/>
-        <file path="/Enigma/.project"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.file"/>
-        <file path="/Enigma/LICENSE"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.resources"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.other"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.util"/>
-        <folder path="/Enigma/META-INF"/>
-        <file path="/Enigma/Makefile"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.utility"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.sub"/>
-        <file path="/Enigma/.classpath"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend"/>
+        <file path="/lgmplugin/.classpath"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.other"/>
+        <folder path="/lgmplugin/META-INF"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.frames"/>
+        <file path="/lgmplugin/description.jardesc"/>
+        <file path="/lgmplugin/COPYING"/>
+        <file path="/lgmplugin/LICENSE"/>
+        <file path="/lgmplugin/.project"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.messages"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.sub"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.resources"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.file"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.utility"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.util"/>
+        <file path="/lgmplugin/Makefile"/>
+        <file path="/lgmplugin/README.md"/>
+        <file path="/lgmplugin/.gitignore"/>
     </selectedElements>
 </jardesc>
