@@ -85,6 +85,7 @@ import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.main.LGM;
 import org.lateralgm.resources.Background.PBackground;
+import org.lateralgm.resources.Constants;
 import org.lateralgm.resources.Font.PFont;
 import org.lateralgm.resources.GameInformation.PGameInformation;
 import org.lateralgm.resources.GameSettings.PGameSettings;
@@ -135,6 +136,20 @@ public final class EnigmaWriter
 		ew.populateStruct();
 		return ew.o;
 		}
+	
+	protected void populateConstants(List<org.lateralgm.resources.sub.Constant> consts) {
+		o.constantCount = consts.size();
+		if (o.constantCount != 0)
+			{
+			o.constants = new Constant.ByReference();
+			Constant[] ocl = (Constant[]) o.constants.toArray(o.constantCount);
+			for (int c = 0; c < o.constantCount; c++)
+				{
+				ocl[c].name = consts.get(c).name;
+				ocl[c].value = consts.get(c).value;
+				}
+			}
+	}
 
 	protected void populateStruct()
 		{
@@ -157,19 +172,13 @@ public final class EnigmaWriter
 		//triggers not implemented
 		o.triggerCount = 0;
 
-		o.constantCount = i.constants.size();
-		if (o.constantCount != 0)
-			{
-			o.constants = new Constant.ByReference();
-			Constant[] ocl = (Constant[]) o.constants.toArray(o.constantCount);
-			for (int c = 0; c < o.constantCount; c++)
-				{
-				ocl[c].name = i.constants.get(c).name;
-				ocl[c].value = i.constants.get(c).value;
-				}
-			}
+		populateConstants(i.defaultConstants.constants);
+		//TODO: Populate constants from chosen configuration on the main toolbar.
 
-		o.includeCount = i.includes.size();
+
+		//TODO: Fixme
+		o.includeCount = 0;//i.includes.size();
+		/*
 		if (o.includeCount != 0)
 			{
 			o.includes = new Include.ByReference();
@@ -179,7 +188,7 @@ public final class EnigmaWriter
 				oil[inc].filepath = i.includes.get(inc).filepath;
 				}
 			}
-
+		*/
 		//packages not implemented
 		o.packageCount = 0;
 		// o.packageCount = packages.length;
@@ -211,7 +220,7 @@ public final class EnigmaWriter
 	 	oi.top = ig.get(PGameInformation.TOP);
 	 	oi.width = ig.get(PGameInformation.WIDTH);
 	 	oi.height = ig.get(PGameInformation.HEIGHT);
-	 	oi.embedGameWindow = ig.get(PGameInformation.MIMIC_GAME_WINDOW);
+	 	oi.embedGameWindow = ig.get(PGameInformation.EMBED_GAME_WINDOW);
 	 	oi.showBorder = ig.get(PGameInformation.SHOW_BORDER);
 	 	oi.allowResize = ig.get(PGameInformation.ALLOW_RESIZE);
 	 	oi.stayOnTop = ig.get(PGameInformation.STAY_ON_TOP); 
