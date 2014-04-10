@@ -649,17 +649,12 @@ public final class EnigmaWriter
 			of.rangeMin = min;
 			of.rangeMax = max;
 
-			// Generate a Java font for glyph population
-			int style = (of.italic ? java.awt.Font.ITALIC : 0) | (of.bold ? java.awt.Font.BOLD : 0);
 			int screenRes;
 			if (GraphicsEnvironment.isHeadless())
 				screenRes=72;
 			else
 				screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
-			int fsize = (int) Math.round(of.size * screenRes / 72.0); // Java assumes 72 dps
-			java.awt.Font fnt = new java.awt.Font(of.fontName,style,fsize);
-
-			of.glyphs = populateGlyphs(fnt,of.rangeMin,of.rangeMax,(Integer) ifont.get(PFont.ANTIALIAS));
+			of.glyphs = populateGlyphs(ifont.getAWTFont(screenRes),of.rangeMin,of.rangeMax,(Integer) ifont.get(PFont.ANTIALIAS));
 			}
 		}
 
