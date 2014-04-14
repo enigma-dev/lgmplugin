@@ -98,7 +98,8 @@ public class EEFReader
 	 */
 	public static EEFNode parse(InputStream is)
 		{
-		return parse(new Scanner(is),",",false); //$NON-NLS-1$
+		//FIXME: I made it support UTF-8, not sure if it will break any thing, but my tests do not indicate any problems.
+		return parse(new Scanner(is, "UTF-8"),",",false); //$NON-NLS-1$
 		}
 
 	/**

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -240,7 +241,7 @@ public class EFileWriter
 			Resource<?,?> r = (Resource<?,?>) Util.deRef((ResourceReference<?>) child.getRes());
 			String fn = name + getExt(r);
 
-			PrintStream ps = new PrintStream(os.next(dir,name + EY));
+			PrintStream ps = new PrintStream(os.next(dir,name + EY), false, "UTF-8");
 			ps.println("Data: " + fn); //$NON-NLS-1$
 			writeProperties(ps,r.properties);
 
@@ -486,7 +487,7 @@ public class EFileWriter
 		@Override
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
-			os.write(((Script) r).getCode().getBytes()); // charset?
+			os.write(((Script) r).getCode().getBytes(Charset.forName("UTF-8"))); // charset?
 			}
 
 		@Override
@@ -509,17 +510,17 @@ public class EFileWriter
 		{
 		Resource<?,?> r = (Resource<?,?>) Util.deRef((ResourceReference<?>) child.getRes());
 		String name = (String) child.getUserObject();
-		PrintStream ps = new PrintStream(os.next(dir,name + EY));
+		PrintStream ps = new PrintStream(os.next(dir,name + EY), false, "UTF-8");
 
 		ps.println("VERTEX: " + name + ".vertex");
 		ps.println("FRAGMENT: " + name + ".fragment");
 		ps.println("TYPE: " + r.properties.get(PShader.TYPE));
 		ps.println("PRECOMPILE: " + r.properties.get(PShader.PRECOMPILE));
 		
-		PrintStream vps = new PrintStream(os.next(dir,name + ".vertex"));
+		PrintStream vps = new PrintStream(os.next(dir,name + ".vertex"), false, "UTF-8");
 		vps.print(r.properties.get(PShader.VERTEX));
 		
-		PrintStream fps = new PrintStream(os.next(dir,name + ".fragment"));
+		PrintStream fps = new PrintStream(os.next(dir,name + ".fragment"), false, "UTF-8");
 		fps.print(r.properties.get(PShader.FRAGMENT));
 		}
 	
@@ -561,7 +562,7 @@ public class EFileWriter
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
 			GmObject obj = (GmObject) r;
-			PrintStream ps = new PrintStream(os);
+			PrintStream ps = new PrintStream(os, false, "UTF-8");
 			int numEvents = 0;
 		
 			// Write the Events super-key
@@ -602,7 +603,7 @@ public class EFileWriter
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
 			Timeline tml = (Timeline) r;
-			PrintStream ps = new PrintStream(os);
+			PrintStream ps = new PrintStream(os, false, "UTF-8");
 			
 			// Write the Moments super-key
 			ps.println("Moments{" + tml.moments.size() + "}");
@@ -628,7 +629,7 @@ public class EFileWriter
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
 			Room rm = (Room) r;
-			PrintStream ps = new PrintStream(os);
+			PrintStream ps = new PrintStream(os, false, "UTF-8");
 
 			ps.println("Creation_Codes{1}");
 			ps.println("  Creation_Code: Code[" + countLines(rm.getCode()) + "]");
@@ -741,7 +742,14 @@ public class EFileWriter
 			{
 			Room rm = (Room) r;
 			GmStreamEncoder out = new GmStreamEncoder(os);
+			
+			//FIXME: UTF-8 Encode the creation code then reset the charset, since the code
+			// has not been tested to use it explicitly.
+			Charset cs = out.getCharset();
+			out.setCharset(Charset.forName("UTF-8"));
 			out.writeStr(rm.getCode());
+			out.setCharset(cs);
+			
 			out.write4(rm.backgroundDefs.size());
 			for (BackgroundDef back : rm.backgroundDefs)
 				{
@@ -769,7 +777,13 @@ public class EFileWriter
 				out.write4(in.getPosition().y);
 				writeName(out,(ResourceReference<?>) in.properties.get(PInstance.OBJECT));
 				out.write4((Integer) in.properties.get(PInstance.ID));
+				//FIXME: UTF-8 Encode the creation code then reset the charset, since the code
+				// has not been tested to use it explicitly.
+				cs = out.getCharset();
+				out.setCharset(Charset.forName("UTF-8"));
 				out.writeStr(in.getCreationCode());
+				out.setCharset(cs);
+				
 				out.writeBool(in.isLocked());
 				}
 			out.write4(rm.tiles.size());

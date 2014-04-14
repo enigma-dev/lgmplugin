@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -178,6 +179,8 @@ public class EFileReader
 		public abstract boolean isDirectory(String pathname);
 
 		public abstract InputStream asInputStream() throws IOException;
+		
+		public abstract InputStreamReader asInputStreamReader(String encoding) throws IOException;
 
 		public abstract SortedSet<String> getEntries();
 
@@ -233,6 +236,11 @@ public class EFileReader
 		public InputStream asInputStream() throws IOException
 			{
 			return z.getInputStream(ent);
+			}
+		
+		public InputStreamReader asInputStreamReader(String encoding) throws IOException
+			{
+			return new InputStreamReader(z.getInputStream(ent), encoding);
 			}
 
 		public boolean isDirectory(String directory, String name)
@@ -309,6 +317,11 @@ public class EFileReader
 		public InputStream asInputStream() throws IOException
 			{
 			return new FileInputStream(last);
+			}
+		
+		public InputStreamReader asInputStreamReader(String encoding) throws IOException
+			{
+			return new InputStreamReader(new FileInputStream(last), encoding);
 			}
 
 		public SortedSet<String> getEntries()
@@ -763,7 +776,7 @@ public class EFileReader
 			{
 			try
 				{
-				r.setCode(new String(Util.readFully(in).toByteArray()));
+				r.setCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
 				}
 			catch (IOException e)
 				{
@@ -781,16 +794,10 @@ public class EFileReader
 		{
 		try {
 			InputStream in = f.getEntry("Shaders/" + sh.getFragmentCode()).asInputStream();
-			byte[] b = new byte[in.available()];
-		    in.read(b);
-		    String text = new String(b);
-		    sh.setFragmentCode(text);
+		    sh.setFragmentCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
 		        
 		    in = f.getEntry("Shaders/" + sh.getVertexCode()).asInputStream();
-			b = new byte[in.available()];
-			in.read(b);
-			text = new String(b);
-			sh.setVertexCode(text);
+			sh.setVertexCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1130,7 +1137,13 @@ public class EFileReader
 			try
 				{
 				GmStreamDecoder in = new GmStreamDecoder(in2);
+				//FIXME: UTF-8 Decode the creation code then reset the charset, since the code
+				// has not been tested to use it explicitly.
+				Charset cs = in.getCharset();
+				in.setCharset(Charset.forName("UTF-8"));
 				rm.setCode(in.readStr());
+				in.setCharset(cs);
+				
 				int nobackgrounds = in.read4();
 				for (int j = 0; j < nobackgrounds; j++)
 					{
@@ -1168,7 +1181,14 @@ public class EFileReader
 					//					GmObject temp = f.gmObjects.getUnsafe(in.read4());
 					//					if (temp != null) inst.properties.put(PInstance.OBJECT,temp.reference);
 					inst.properties.put(PInstance.ID,in.read4());
+					
+					//FIXME: UTF-8 Decode the creation code then reset the charset, since the code
+					// has not been tested to use it explicitly.
+					cs = in.getCharset();
+					in.setCharset(Charset.forName("UTF-8"));
 					inst.setCreationCode(in.readStr());
+					in.setCharset(cs);
+					
 					inst.setLocked(in.readBool());
 					}
 				int notiles = in.read4();
