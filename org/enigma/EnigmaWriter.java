@@ -53,7 +53,6 @@ import javax.xml.bind.DatatypeConverter;
 import org.enigma.backend.EnigmaStruct;
 import org.enigma.backend.other.Constant;
 import org.enigma.backend.other.Extension;
-import org.enigma.backend.other.Include;
 import org.enigma.backend.resources.Background;
 import org.enigma.backend.resources.Font;
 import org.enigma.backend.resources.GameInformation;
@@ -69,6 +68,7 @@ import org.enigma.backend.resources.Timeline;
 import org.enigma.backend.sub.BackgroundDef;
 import org.enigma.backend.sub.Event;
 import org.enigma.backend.sub.Glyph;
+import org.enigma.backend.sub.GlyphRange;
 import org.enigma.backend.sub.Instance;
 import org.enigma.backend.sub.MainEvent;
 import org.enigma.backend.sub.Moment;
@@ -85,7 +85,6 @@ import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.main.LGM;
 import org.lateralgm.resources.Background.PBackground;
-import org.lateralgm.resources.Constants;
 import org.lateralgm.resources.Font.PFont;
 import org.lateralgm.resources.GameInformation.PGameInformation;
 import org.lateralgm.resources.GameSettings.PGameSettings;
@@ -615,9 +614,14 @@ public final class EnigmaWriter
 		oF.size = iF.getSize();
 		oF.bold = false;
 		oF.italic = false;
-		oF.rangeMin = 32;
-		oF.rangeMax = 127;
-		oF.glyphs = populateGlyphs(iF,oF.rangeMin,oF.rangeMax,0);
+		GlyphRange.ByReference oFglyphranges = new GlyphRange.ByReference();
+		GlyphRange[] oFgrl = (GlyphRange[]) oFglyphranges.toArray(1);
+		oFgrl[0].rangeMin = 32;
+		oFgrl[0].rangeMax = 127;
+		oFgrl[0].glyphs = populateGlyphs(iF, 32, 127, 0);
+		
+		oF.glyphRangeCount = oFgrl.length;
+		oF.glyphRanges = oFglyphranges;
 
 		if (size == 1) return;
 
@@ -635,26 +639,33 @@ public final class EnigmaWriter
 			of.size = ifont.get(PFont.SIZE);
 			of.bold = ifont.get(PFont.BOLD);
 			of.italic = ifont.get(PFont.ITALIC);
-			//TODO: Implement multiple character ranges to ENIGMA
-			//Should also use the default instead of 0,0
-			int min = 32, max = 127;
-			CharacterRange cr = null;
-			if (ifont.characterRanges.size() > 0) {
-				cr = ifont.characterRanges.get(0);
-			}
-			if (cr != null) {
-				min = cr.properties.get(PCharacterRange.RANGE_MIN);
-				max = cr.properties.get(PCharacterRange.RANGE_MAX);
-			}
-			of.rangeMin = min;
-			of.rangeMax = max;
 
 			int screenRes;
 			if (GraphicsEnvironment.isHeadless())
 				screenRes=72;
 			else
 				screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
-			of.glyphs = populateGlyphs(ifont.getAWTFont(screenRes),of.rangeMin,of.rangeMax,(Integer) ifont.get(PFont.ANTIALIAS));
+			GlyphRange.ByReference glyphranges = new GlyphRange.ByReference();
+			if (ifont.characterRanges.size() > 0) {
+				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges.toArray(ifont.characterRanges.size());
+				
+				for (int i = 0; i < ofgrl.length; i++) {
+					CharacterRange cr = ifont.characterRanges.get(i);
+					ofgrl[i].rangeMin = cr.properties.get(PCharacterRange.RANGE_MIN);
+					ofgrl[i].rangeMax = cr.properties.get(PCharacterRange.RANGE_MAX);
+					ofgrl[i].glyphs = populateGlyphs(ifont.getAWTFont(screenRes), ofgrl[i].rangeMin, ofgrl[i].rangeMax, (Integer) ifont.get(PFont.ANTIALIAS));
+				}
+				
+				of.glyphRangeCount = ofgrl.length;
+			} else {
+				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges.toArray(1);
+				ofgrl[0].rangeMin = 32;
+				ofgrl[0].rangeMax = 127;
+				ofgrl[0].glyphs = populateGlyphs(ifont.getAWTFont(screenRes), 32, 127,(Integer) ifont.get(PFont.ANTIALIAS));
+				
+				of.glyphRangeCount = ofgrl.length;
+			}
+			of.glyphRanges = glyphranges;
 			}
 		}
 

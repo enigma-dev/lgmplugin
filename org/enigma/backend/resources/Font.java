@@ -12,7 +12,7 @@ package org.enigma.backend.resources;
 import java.util.Arrays;
 import java.util.List;
 
-import org.enigma.backend.sub.Glyph;
+import org.enigma.backend.sub.GlyphRange;
 
 import com.sun.jna.Structure;
 
@@ -25,15 +25,14 @@ public class Font extends Structure
 	public int size;
 	public boolean bold;
 	public boolean italic;
-	public int rangeMin;
-	public int rangeMax;
-
-	public Glyph.ByReference glyphs; //count = rangeMax - rangeMin
+	
+	public int glyphRangeCount;
+	public GlyphRange.ByReference glyphRanges;
 
 	@Override
 	protected List<String> getFieldOrder()
 		{
-		return Arrays.asList("name","id","fontName","size","bold","italic","rangeMin","rangeMax","glyphs");
+		return Arrays.asList("name","id","fontName","size","bold","italic","glyphRangeCount","glyphRanges");
 		}
 
 	public static class ByReference extends Font implements Structure.ByReference
