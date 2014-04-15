@@ -674,19 +674,19 @@ public final class EnigmaWriter
 		{
 		Glyph.ByReference glyphs = new Glyph.ByReference();
 		Glyph[] ofgl = (Glyph[]) glyphs.toArray(rangeMax - rangeMin + 1);
-		for (char c = (char) rangeMin; c <= rangeMax; c++)
+		for (int c = rangeMin; c <= rangeMax; c++)
 			populateGlyph(ofgl[c - rangeMin],fnt,c,aa);
 		return glyphs;
 		}
 
-	private static void populateGlyph(Glyph og, java.awt.Font fnt, char c, int aa)
+	private static void populateGlyph(Glyph og, java.awt.Font fnt, int c, int aa)
 		{
 		Object aaHints[] = { RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP,RenderingHints.VALUE_TEXT_ANTIALIAS_ON,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB };
 		if (aa < 0 || aa >= aaHints.length) aa = 0;
 		GlyphVector gv = fnt.createGlyphVector(new FontRenderContext(null,aaHints[aa],
-				RenderingHints.VALUE_FRACTIONALMETRICS_OFF),String.valueOf(c));
+				RenderingHints.VALUE_FRACTIONALMETRICS_OFF),new String(Character.toChars(c)));
 		Rectangle2D r = gv.getPixelBounds(null,0,0); //don't know why it needs coordinates
 		if (r.getWidth() <= 0 || r.getHeight() <= 0) return;
 
