@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008-2011 IsmAvatar <IsmAvatar@gmail.com>
- * Copyright (C) 2013, Robert B. Colton
+ * Copyright (C) 2013, 2014 Robert B. Colton
  * 
  * This file is part of Enigma Plugin.
  * 
@@ -215,11 +215,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	    Thread.setDefaultUncaughtExceptionHandler(
 	        new Thread.UncaughtExceptionHandler() {
 	            public void uncaughtException(Thread t, Throwable e) {
-	                System.out.println(t.getName()+": "+e);
-	                e.printStackTrace();
-	            		new ErrorDialog(LGM.frame,Messages.getString("ErrorDialog.UNCAUGHT_TITLE"), //$NON-NLS-1$
-	            				Messages.getString("ErrorDialog.UNCAUGHT_MESSAGE"),e,
-	            				"https://github.com/enigma-dev/lgmplugin/issues").setVisible(true); //$NON-NLS-1$
+	                EnigmaRunner.showDefaultExceptionHandler(e);
 	            }
 	    });
 	}
