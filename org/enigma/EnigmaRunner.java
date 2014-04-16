@@ -126,6 +126,9 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	
 	public EnigmaRunner()
 		{
+		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
+		EnigmaRunner.addDefaultExceptionHandler();
+	    
 		addResourceHook();
 		
 		ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
@@ -166,6 +169,8 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			{
 				public void run()
 					{
+					EnigmaRunner.addDefaultExceptionHandler();
+				    
 					//Make checks for changes itself
 					if (!make()) //displays own error
 						{
@@ -204,6 +209,29 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			
 			initthread.start();
 		}
+
+	protected static void addDefaultExceptionHandler() {
+		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
+	    Thread.setDefaultUncaughtExceptionHandler(
+	        new Thread.UncaughtExceptionHandler() {
+	            public void uncaughtException(Thread t, Throwable e) {
+	                System.out.println(t.getName()+": "+e);
+	                e.printStackTrace();
+	            		new ErrorDialog(LGM.frame,Messages.getString("ErrorDialog.UNCAUGHT_TITLE"), //$NON-NLS-1$
+	            				Messages.getString("ErrorDialog.UNCAUGHT_MESSAGE"),e,
+	            				"https://github.com/enigma-dev/lgmplugin/issues").setVisible(true); //$NON-NLS-1$
+	            }
+	    });
+	}
+	
+	protected static void showDefaultExceptionHandler(Throwable e) {
+		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
+	    System.out.println(Thread.currentThread().getName()+": "+e);
+	    e.printStackTrace();
+			new ErrorDialog(LGM.frame,Messages.getString("ErrorDialog.UNCAUGHT_TITLE"), //$NON-NLS-1$
+					Messages.getString("ErrorDialog.UNCAUGHT_MESSAGE"),e,
+					"https://github.com/enigma-dev/lgmplugin/issues").setVisible(true); //$NON-NLS-1$
+	}
 
 	private static UnsatisfiedLinkError attemptLib()
 	{
@@ -628,6 +656,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
         final int mode;
         final File efi;
         CompilerThread(final int m, File outname) {
+    		EnigmaRunner.addDefaultExceptionHandler();
             mode = m;
             efi = outname;
         }
