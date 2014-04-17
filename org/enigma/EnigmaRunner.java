@@ -212,7 +212,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	// Adds a default uncaught exception handler to the current thread. This allows LGM to catch most exceptions
 	// and properly display a stack trace for the user to file a bug report.
-	protected static void addDefaultExceptionHandler() {
+	public static void addDefaultExceptionHandler() {
 	    Thread.currentThread().setUncaughtExceptionHandler(
 	        new Thread.UncaughtExceptionHandler() {
 	            public void uncaughtException(Thread t, Throwable e) {
@@ -654,12 +654,12 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
         final int mode;
         final File efi;
         CompilerThread(final int m, File outname) {
-    		EnigmaRunner.addDefaultExceptionHandler();
             mode = m;
             efi = outname;
         }
 
         public void run() {
+        	EnigmaRunner.addDefaultExceptionHandler();
         	ef.open();
         	ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
         	EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);

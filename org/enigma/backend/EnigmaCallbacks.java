@@ -132,6 +132,7 @@ public class EnigmaCallbacks extends Structure
 				{
 					public void run()
 						{
+						EnigmaRunner.addDefaultExceptionHandler();
 						InputStream in = null;
 						while (in == null)
 							{
