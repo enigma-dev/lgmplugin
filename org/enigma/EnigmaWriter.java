@@ -314,11 +314,9 @@ public final class EnigmaWriter
 		}
 		catch (IOException e)
 		{
-			JOptionPane.showMessageDialog(null, e.getStackTrace());
-			e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
+		} catch (NoSuchAlgorithmException e) {
+			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 		finally
 		{
@@ -328,7 +326,7 @@ public final class EnigmaWriter
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 		}
 		og.gameIcon = fn;
@@ -1016,7 +1014,7 @@ public final class EnigmaWriter
 			}
 		catch (IOException e)
 			{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 
 		////we assume an int is 4 bytes

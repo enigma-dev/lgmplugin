@@ -21,6 +21,8 @@ import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
 
+import org.enigma.EnigmaRunner;
+
 public final class ApngIO
 	{
 	public static final byte[] PNG_SIGNATURE = { (byte) 0x89,'P','N','G',0x0D,0x0A,0x1A,0x0A };
@@ -124,7 +126,7 @@ public final class ApngIO
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			return baos.toByteArray();
 			}
@@ -541,7 +543,7 @@ public final class ApngIO
 			}
 		catch (IOException e)
 			{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		return ret;
 		}

@@ -210,8 +210,9 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			initthread.start();
 		}
 
+	// Adds a default uncaught exception handler to the current thread. This allows LGM to catch most exceptions
+	// and properly display a stack trace for the user to file a bug report.
 	protected static void addDefaultExceptionHandler() {
-		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
 	    Thread.currentThread().setUncaughtExceptionHandler(
 	        new Thread.UncaughtExceptionHandler() {
 	            public void uncaughtException(Thread t, Throwable e) {
@@ -220,7 +221,8 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	    });
 	}
 	
-	protected static void showDefaultExceptionHandler(Throwable e) {
+	// Show the default uncaught exception handler dialog to the user with a stack trace they can use to submit a bug report.
+	public static void showDefaultExceptionHandler(Throwable e) {
 		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
 	    System.out.println(Thread.currentThread().getName()+": "+e);
 	    e.printStackTrace();
@@ -238,10 +240,10 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			NativeLibrary.addSearchPath(lib,LGM.workDir.getPath());
 			DRIVER = (EnigmaDriver) Native.loadLibrary(lib,EnigmaDriver.class);
 		} catch (UnsatisfiedLinkError e) {
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			return e;
 		} catch (Exception e) {
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 		return null;
 	}
@@ -708,7 +710,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			return;
 		}
 		if (mode == MODE_COMPILE)
@@ -741,8 +743,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		try {
 			cthread.join();
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e1);
 		}
 		//cthread.run(outname);
 		cthread.start();
@@ -755,7 +756,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				}
 			catch (Exception e)
 				{
-				e.printStackTrace();
+					EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		}
@@ -1037,8 +1038,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		try {
 			LGM.main(args);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 		new EnigmaRunner();
 		}

@@ -143,7 +143,7 @@ public class EnigmaCallbacks extends Structure
 								{
 								if (!running)
 									{
-									e.printStackTrace();
+									EnigmaRunner.showDefaultExceptionHandler(e);
 									return;
 									}
 								try
@@ -194,7 +194,7 @@ public class EnigmaCallbacks extends Structure
 							}
 						catch (IOException e)
 							{
-							e.printStackTrace();
+							EnigmaRunner.showDefaultExceptionHandler(e);
 							}
 						}
 				}.start();

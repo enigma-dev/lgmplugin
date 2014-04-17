@@ -17,6 +17,7 @@ import java.net.URI;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 
+import org.enigma.EnigmaRunner;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.CustomFileFilter;
 import org.lateralgm.components.impl.ResNode;
@@ -56,8 +57,7 @@ public class EgmIO extends FileView implements FileReader,FileWriter,GroupFilter
 		try {
 			in.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 		return file;
 		}

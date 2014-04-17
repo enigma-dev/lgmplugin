@@ -275,8 +275,7 @@ public class EFileReader
 			try {
 				z.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 		}
@@ -519,7 +518,7 @@ public class EFileReader
 			}
 		catch (GmFormatException e)
 			{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 
@@ -693,7 +692,7 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		}
@@ -709,7 +708,7 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		}
@@ -739,13 +738,13 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			finally {
 				try {
 					br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 			}
@@ -780,7 +779,7 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		}
@@ -799,9 +798,7 @@ public class EFileReader
 		    in = f.getEntry("Shaders/" + sh.getVertexCode()).asInputStream();
 			sh.setVertexCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getStackTrace());
+			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 
 		}
@@ -827,8 +824,7 @@ public class EFileReader
 				    r.addRange(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 	}
@@ -1211,7 +1207,7 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 
@@ -1238,7 +1234,7 @@ public class EFileReader
 				}
 			catch (IOException e)
 				{
-				e.printStackTrace();
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		}

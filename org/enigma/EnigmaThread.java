@@ -100,7 +100,7 @@ public class EnigmaThread extends Thread
 			}
 		catch (IOException e)
 			{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 
@@ -115,7 +115,7 @@ public class EnigmaThread extends Thread
 			}
 		catch (InterruptedException e)
 			{
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 
@@ -134,6 +134,7 @@ public class EnigmaThread extends Thread
 				catch (Exception e)
 					{
 					ef.progress(100,"Finished with errors",e.getMessage());
+					EnigmaRunner.showDefaultExceptionHandler(e);
 					}
 				}
 			else
@@ -148,7 +149,7 @@ public class EnigmaThread extends Thread
 					}
 				catch (IOException e)
 					{
-					e.printStackTrace();
+					EnigmaRunner.showDefaultExceptionHandler(e);
 					}
 				}
 			}

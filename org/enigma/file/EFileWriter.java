@@ -35,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JProgressBar;
 
+import org.enigma.EnigmaRunner;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.ResNode;
@@ -318,8 +319,7 @@ public class EFileWriter
 			}
 		catch (IOException e)
 			{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 
@@ -333,8 +333,7 @@ public class EFileWriter
 			}
 		catch (IOException e)
 			{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 

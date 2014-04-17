@@ -95,8 +95,7 @@ public final class SettingsHandler
 			}
 		catch (YamlException e)
 			{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		parseExtensions();
 		}
