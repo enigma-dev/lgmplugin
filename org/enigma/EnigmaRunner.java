@@ -198,6 +198,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 						return;
 					}
 
+					while (LGM.LOADING_PROJECT) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e1) {
+							EnigmaRunner.showDefaultExceptionHandler(e1);
+						}
+					}
 					ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 					rh.getResource().commitToDriver(DRIVER);
 					setupBaseKeywords();
@@ -508,7 +515,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			String name = Resource.kindNamesPlural.get(Definitions.class);
 			LGM.root.addChild(name,ResNode.STATUS_PRIMARY,Definitions.class);
 			}
-		LGM.tree.updateUI();
+		LGM.updateTreeUI();
 		}
 
 	public void populateTree()
@@ -1009,6 +1016,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			esf.resOriginal = rh.getResource();
 			esf.revertResource(); //updates local res copy as well
 		}
+		LGM.LOADING_PROJECT = false;
 	}
 	public static ImageIcon findIcon(String loc)
 		{
