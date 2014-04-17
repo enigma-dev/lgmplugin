@@ -212,7 +212,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	protected static void addDefaultExceptionHandler() {
 		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
-	    Thread.setDefaultUncaughtExceptionHandler(
+	    Thread.currentThread().setUncaughtExceptionHandler(
 	        new Thread.UncaughtExceptionHandler() {
 	            public void uncaughtException(Thread t, Throwable e) {
 	                EnigmaRunner.showDefaultExceptionHandler(e);
