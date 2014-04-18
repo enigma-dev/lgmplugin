@@ -515,7 +515,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			String name = Resource.kindNamesPlural.get(Definitions.class);
 			LGM.root.addChild(name,ResNode.STATUS_PRIMARY,Definitions.class);
 			}
-		LGM.updateTreeUI();
+		LGM.tree.updateUI();
 		}
 
 	public void populateTree()
