@@ -699,9 +699,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		String ext = es.targets.get(TargetHandler.COMPILER).ext;
 		String os = TargetHandler.normalize(System.getProperty("os.name")); //$NON-NLS-1$
-		if (os.contains("win") && ext == null) {
-			ext = ".exe";
-		}
 		
 		//determine `outname` (rebuild has no `outname`)
 		File outname = null;
