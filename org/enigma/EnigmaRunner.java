@@ -108,6 +108,9 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public static boolean NEW_DEFINITIONS_READY_YET = false;
 
 	public static boolean ENIGMA_READY = false, ENIGMA_FAIL = false, SHUTDOWN = false;
+	public static ErrorDialog uncaughtExceptionDialog = new ErrorDialog(LGM.frame,Messages.getString("ErrorDialog.UNCAUGHT_TITLE"), //$NON-NLS-1$
+			Messages.getString("ErrorDialog.UNCAUGHT_MESSAGE"),
+			"https://github.com/enigma-dev/lgmplugin/issues");
 	public static final int MODE_RUN = 0, MODE_DEBUG = 1, MODE_DESIGN = 2;
 	public static final int MODE_COMPILE = 3, MODE_REBUILD = 4;
 	public static final File WORKDIR = LGM.workDir.getParentFile();
@@ -231,11 +234,12 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	// Show the default uncaught exception handler dialog to the user with a stack trace they can use to submit a bug report.
 	public static void showDefaultExceptionHandler(Throwable e) {
 		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
-	    System.out.println(Thread.currentThread().getName()+": "+e);
-	    e.printStackTrace();
-			new ErrorDialog(LGM.frame,Messages.getString("ErrorDialog.UNCAUGHT_TITLE"), //$NON-NLS-1$
-					Messages.getString("ErrorDialog.UNCAUGHT_MESSAGE"),e,
-					"https://github.com/enigma-dev/lgmplugin/issues").setVisible(true); //$NON-NLS-1$
+		System.out.println(Thread.currentThread().getName()+": "+e);
+		e.printStackTrace();
+		if (!uncaughtExceptionDialog.isVisible()) {
+			uncaughtExceptionDialog.setVisible(true);
+		}
+		uncaughtExceptionDialog.appenDebugInfo(e); //$NON-NLS-1$
 	}
 
 	private static UnsatisfiedLinkError attemptLib()
