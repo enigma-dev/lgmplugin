@@ -153,8 +153,8 @@ public final class EnigmaWriter
 	protected void populateStruct()
 		{
 		o.fileVersion = i.format == null ? -1 : i.format.getVersion();
-		o.filename = i.uri == null ? null : i.uri.toString();
-		
+		o.filename = i.uri == null ? null : i.uri.getPath();
+
 		populateInformation();
 		populateSettings();
 		populateSprites();
@@ -1173,6 +1173,9 @@ public final class EnigmaWriter
 	public static String toString(Argument arg)
 		{
 		String val = arg.getVal();
+		if (val.length() == 0) {
+			return "0";
+		}
 		switch (arg.kind)
 			{
 			case Argument.ARG_BOTH:
