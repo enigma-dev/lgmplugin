@@ -407,22 +407,22 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		stopb.setToolTipText(Messages.getString("EnigmaRunner.MENU_STOP"));
 		stopb.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
 		LGM.tool.add(new JToolBar.Separator(), 4);
-		LGM.tool.add(stopb, 5);
+		//LGM.tool.add(stopb, 5);
 		runb = new JButton(); //$NON-NLS-1$
 		runb.addActionListener(this);
 		runb.setToolTipText(Messages.getString("EnigmaRunner.MENU_RUN"));
 		runb.setIcon(LGM.getIconForKey("EnigmaPlugin.EXECUTE"));
-		LGM.tool.add(runb, 6);
+		LGM.tool.add(runb, 5);
 		debugb = new JButton(); //$NON-NLS-1$
 		debugb.addActionListener(this);
 		debugb.setToolTipText(Messages.getString("EnigmaRunner.MENU_DEBUG"));
 		debugb.setIcon(LGM.getIconForKey("EnigmaPlugin.DEBUG"));
-		LGM.tool.add(debugb, 7);
+		LGM.tool.add(debugb, 6);
 		compileb = new JButton(); //$NON-NLS-1$
 		compileb.addActionListener(this);
 		compileb.setToolTipText(Messages.getString("EnigmaRunner.MENU_COMPILE"));
 		compileb.setIcon(LGM.getIconForKey("EnigmaPlugin.COMPILE"));
-		LGM.tool.add(compileb, 8);
+		LGM.tool.add(compileb, 7);
 		
 		JMenu menu = new GmMenu(Messages.getString("EnigmaRunner.MENU_BUILD")); //$NON-NLS-1$
 		if (LGM.themename.equals("Quantum")) {
