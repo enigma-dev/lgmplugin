@@ -239,7 +239,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		if (!uncaughtExceptionDialog.isVisible()) {
 			uncaughtExceptionDialog.setVisible(true);
 		}
-		uncaughtExceptionDialog.appenDebugInfo(e); //$NON-NLS-1$
+		uncaughtExceptionDialog.appendDebugInfo(e); //$NON-NLS-1$
 	}
 
 	private static UnsatisfiedLinkError attemptLib()

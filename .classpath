@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Owner/Desktop/ENIGMA/enigma-dev/plugins/shared/jna.jar"/>
 	<classpathentry kind="src" path=""/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LateralGM"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/LateralGM"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
