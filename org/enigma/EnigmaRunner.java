@@ -402,7 +402,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	public void populateMenu()
 		{
-		LGM.tool.add(new JToolBar.Separator(), 4);
 		//stopb = new JButton(); //$NON-NLS-1$
 		//stopb.addActionListener(this);
 		//stopb.setToolTipText(Messages.getString("EnigmaRunner.MENU_STOP"));
@@ -423,6 +422,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		compileb.setToolTipText(Messages.getString("EnigmaRunner.MENU_COMPILE"));
 		compileb.setIcon(LGM.getIconForKey("EnigmaPlugin.COMPILE"));
 		LGM.tool.add(compileb, 7);
+		LGM.tool.add(new JToolBar.Separator(), 8);
 		
 		JMenu menu = new GmMenu(Messages.getString("EnigmaRunner.MENU_BUILD")); //$NON-NLS-1$
 		if (LGM.themename.equals("Quantum")) {
