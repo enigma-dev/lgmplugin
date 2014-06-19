@@ -672,7 +672,10 @@ public class EFileReader
 			{
 			try
 				{
-				r.subImages.addAll(ApngIO.apngToBufferedImages(in));
+					// The user may have saved an empty sprite.
+					if (in.available() > 0) {
+					r.subImages.addAll(ApngIO.apngToBufferedImages(in));
+					}
 				}
 			catch (Exception e)
 				{

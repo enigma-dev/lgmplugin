@@ -410,14 +410,16 @@ public class EFileWriter
 		@Override
 		public String getExt(Resource<?,?> r)
 			{
-			return ".apng"; //$NON-NLS-1$
+				return ".apng"; //$NON-NLS-1$
 			}
 
 		@Override
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
-			ArrayList<BufferedImage> subs = ((Sprite) r).subImages;
-			ApngIO.imagesToApng(subs,os);
+				// The user may be saving an empty sprite with no subimages.
+				ArrayList<BufferedImage> subs = ((Sprite) r).subImages;
+				if (subs.size() > 0)
+					ApngIO.imagesToApng(subs,os);
 			}
 		}
 
@@ -447,7 +449,11 @@ public class EFileWriter
 		@Override
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
-			ImageIO.write(((Background) r).getBackgroundImage(),"png",os); //$NON-NLS-1$
+				// The user may be saving an empty background with no data.
+				BufferedImage bi = ((Background) r).getBackgroundImage();
+				if (bi != null) {
+					ImageIO.write(bi,"png",os); //$NON-NLS-1$
+				}
 			}
 		}
 
