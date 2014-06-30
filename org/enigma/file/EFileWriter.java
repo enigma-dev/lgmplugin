@@ -693,7 +693,7 @@ public class EFileWriter
 				ps.format("  Tile (%s,%d,%d): ",src,depth,id);
 				if (t.isLocked()) ps.print("LOCKED ");
 				ps.println("Fields[3]");
-				ps.println("    room_position: " + implode(t.getRoomPosition()));
+				ps.println("    room_position: " + implode(t.getPosition()));
 				ps.println("    bkg_position: " + implode(t.getBackgroundPosition()));
 				ps.println("    size: " + implode(t.getSize()));
 				}
@@ -794,8 +794,8 @@ public class EFileWriter
 			out.write4(rm.tiles.size());
 			for (Tile tile : rm.tiles)
 				{
-				out.write4(tile.getRoomPosition().x);
-				out.write4(tile.getRoomPosition().y);
+				out.write4(tile.getPosition().x);
+				out.write4(tile.getPosition().y);
 				writeName(out,(ResourceReference<?>) tile.properties.get(PTile.BACKGROUND));
 				out.write4(tile.getBackgroundPosition().x);
 				out.write4(tile.getBackgroundPosition().y);
