@@ -1193,7 +1193,7 @@ public class EFileReader
 				for (int j = 0; j < notiles; j++)
 					{
 					Tile t = new Tile(rm);
-					t.setRoomPosition(new Point(in.read4(),in.read4()));
+					t.setPosition(new Point(in.read4(),in.read4()));
 					putRef(gf.resMap.getList(Background.class),t.properties,PTile.BACKGROUND,in.readStr());
 					//					Background temp = f.backgrounds.getUnsafe(in.read4());
 					//					ResourceReference<Background> bkg = null;
