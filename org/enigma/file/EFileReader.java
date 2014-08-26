@@ -115,7 +115,6 @@ public class EFileReader
 	{
 	public static final String EY = ".ey"; //$NON-NLS-1$
 	public static final boolean ADD_EY_ORPHANS = true;
-	private static String egmVersionNumber = "1.0";
 	
 	static Queue<PostponedRef> postpone = new LinkedList<PostponedRef>();
 
@@ -555,7 +554,6 @@ public class EFileReader
 		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
 		
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
-		readEgmVersionNumber(f);
 		readNodeChildren(f,gf,root,null,new String());
 		
 		while (!postpone.isEmpty())
@@ -564,17 +562,6 @@ public class EFileReader
 		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
-	public static void readEgmVersionNumber(EProjectFile f) throws IOException
-	{
-		f.getEntry("version.txt");
-		
-		if (f.exists())
-		{
-			BufferedReader in = new BufferedReader(new InputStreamReader(f.asInputStream()));
-			egmVersionNumber = in.readLine();
-		}
-		
-	}
 	// Workhorse methods
 	public static void readNodeChildren(EProjectFile f, ProjectFile gf, ResNode parent,
 			Class<? extends Resource<?,?>> k, String dir) throws IOException
@@ -1189,16 +1176,11 @@ public class EFileReader
 					{
 					Instance inst = rm.addInstance();
 					inst.setPosition(new Point(in.read4(),in.read4()));
-					
-					// Read new properties
-					if (egmVersionNumber.equals("1.1"))
-					{
-						inst.setScale(new Point2D.Double(in.readD(),in.readD()));
-						Color color = Util.convertInstanceColorWithAlpha((int) in.read4());
-						inst.setColor(color);
-						inst.setAlpha(color.getAlpha());
-						inst.setRotation(in.readD());
-					}
+					inst.setScale(new Point2D.Double(in.readD(),in.readD()));
+					Color color = Util.convertInstanceColorWithAlpha((int) in.read4());
+					inst.setColor(color);
+					inst.setAlpha(color.getAlpha());
+					inst.setRotation(in.readD());
 					
 					putRef(gf.resMap.getList(GmObject.class),inst.properties,PInstance.OBJECT,in.readStr());
 					//					GmObject temp = f.gmObjects.getUnsafe(in.read4());

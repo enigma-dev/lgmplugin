@@ -354,10 +354,6 @@ public class EFileWriter
 	public static void writeNodeChildren(EGMOutputStream os, ProjectFile gf, ResNode node, List<String> dir)
 			throws IOException
 		{
-		// Make a version file for saving the current version of egm format 
-		PrintStream psVersion = new PrintStream(os.next(dir,"version.txt")); //$NON-NLS-1$
-		psVersion.println("1.1");
-		
 		PrintStream ps = new PrintStream(os.next(dir,"toc.txt")); //$NON-NLS-1$
 		
 		int children = node.getChildCount();
