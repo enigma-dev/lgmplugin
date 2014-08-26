@@ -784,8 +784,6 @@ public class EFileWriter
 				{
 				out.write4(in.getPosition().x);
 				out.write4(in.getPosition().y);
-				out.write4(in.getPosition().x);
-				out.write4(in.getPosition().y);
 				out.writeD(in.getScale().getX());
 				out.writeD(in.getScale().getY());
 				out.write4((int) Util.getInstanceColorWithAlpha(in.getColor(),in.getAlpha()));
