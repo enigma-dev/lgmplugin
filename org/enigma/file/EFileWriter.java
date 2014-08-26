@@ -354,6 +354,10 @@ public class EFileWriter
 	public static void writeNodeChildren(EGMOutputStream os, ProjectFile gf, ResNode node, List<String> dir)
 			throws IOException
 		{
+		// Make a version file for saving the current version of egm format 
+		PrintStream psVersion = new PrintStream(os.next(dir,"version.txt")); //$NON-NLS-1$
+		psVersion.println("1.1");
+		
 		PrintStream ps = new PrintStream(os.next(dir,"toc.txt")); //$NON-NLS-1$
 		
 		int children = node.getChildCount();
@@ -780,6 +784,12 @@ public class EFileWriter
 				{
 				out.write4(in.getPosition().x);
 				out.write4(in.getPosition().y);
+				out.write4(in.getPosition().x);
+				out.write4(in.getPosition().y);
+				out.writeD(in.getScale().getX());
+				out.writeD(in.getScale().getY());
+				out.write4((int) Util.getInstanceColorWithAlpha(in.getColor(),in.getAlpha()));
+				out.writeD(in.getRotation());
 				writeName(out,(ResourceReference<?>) in.properties.get(PInstance.OBJECT));
 				out.write4((Integer) in.properties.get(PInstance.ID));
 				//FIXME: UTF-8 Encode the creation code then reset the charset, since the code
