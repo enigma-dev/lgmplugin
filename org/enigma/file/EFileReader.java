@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -114,7 +115,7 @@ public class EFileReader
 	{
 	public static final String EY = ".ey"; //$NON-NLS-1$
 	public static final boolean ADD_EY_ORPHANS = true;
-
+	
 	static Queue<PostponedRef> postpone = new LinkedList<PostponedRef>();
 
 	static interface PostponedRef
@@ -1175,6 +1176,12 @@ public class EFileReader
 					{
 					Instance inst = rm.addInstance();
 					inst.setPosition(new Point(in.read4(),in.read4()));
+					inst.setScale(new Point2D.Double(in.readD(),in.readD()));
+					Color color = Util.convertInstanceColorWithAlpha((int) in.read4());
+					inst.setColor(color);
+					inst.setAlpha(color.getAlpha());
+					inst.setRotation(in.readD());
+					
 					putRef(gf.resMap.getList(GmObject.class),inst.properties,PInstance.OBJECT,in.readStr());
 					//					GmObject temp = f.gmObjects.getUnsafe(in.read4());
 					//					if (temp != null) inst.properties.put(PInstance.OBJECT,temp.reference);
