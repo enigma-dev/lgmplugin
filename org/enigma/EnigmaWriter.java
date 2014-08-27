@@ -115,46 +115,39 @@ import org.lateralgm.resources.sub.View.PView;
 
 import com.sun.xml.internal.bind.marshaller.Messages;
 
-public final class EnigmaWriter
-{
+public final class EnigmaWriter {
 	protected ProjectFile i;
 	protected EnigmaStruct o;
 	protected ResNode root;
 
 	static Map<BufferedImage, ByteArrayOutputStream> imageCache = new WeakHashMap<BufferedImage, ByteArrayOutputStream>();
 
-	private EnigmaWriter(ProjectFile in, EnigmaStruct out, ResNode root)
-	{
+	private EnigmaWriter(ProjectFile in, EnigmaStruct out, ResNode root) {
 		i = in;
 		o = out;
 		this.root = root;
 	}
 
-	public static EnigmaStruct prepareStruct(ProjectFile f, ResNode root)
-	{
+	public static EnigmaStruct prepareStruct(ProjectFile f, ResNode root) {
 		EnigmaWriter ew = new EnigmaWriter(f, new EnigmaStruct(), root);
 		ew.populateStruct();
 		return ew.o;
 	}
 
 	protected void populateConstants(
-			List<org.lateralgm.resources.sub.Constant> consts)
-	{
+			List<org.lateralgm.resources.sub.Constant> consts) {
 		o.constantCount = consts.size();
-		if (o.constantCount != 0)
-		{
+		if (o.constantCount != 0) {
 			o.constants = new Constant.ByReference();
 			Constant[] ocl = (Constant[]) o.constants.toArray(o.constantCount);
-			for (int c = 0; c < o.constantCount; c++)
-			{
+			for (int c = 0; c < o.constantCount; c++) {
 				ocl[c].name = consts.get(c).name;
 				ocl[c].value = consts.get(c).value;
 			}
 		}
 	}
 
-	protected void populateStruct()
-	{
+	protected void populateStruct() {
 		o.fileVersion = i.format == null ? -1 : i.format.getVersion();
 		o.filename = i.uri == null ? null : i.uri.getPath();
 
@@ -204,15 +197,13 @@ public final class EnigmaWriter
 
 	// make sure we replace these md5 sum'd icons if they are in anybodies
 	// project
-	byte[][] icoBlackList = new byte[][]
-	{
+	byte[][] icoBlackList = new byte[][] {
 			DatatypeConverter
 					.parseHexBinary("1f742f5c692b84bbe6e522233555e291"),
 			DatatypeConverter
 					.parseHexBinary("08aa73a35d0c8f45bcad79b0635007de") };
 
-	protected void populateInformation()
-	{
+	protected void populateInformation() {
 		org.lateralgm.resources.GameInformation ig = i.gameInfo;
 		GameInformation oi = o.gameInfo;
 		oi.backgroundColor = ARGBtoRGBA(((Color) ig
@@ -230,8 +221,7 @@ public final class EnigmaWriter
 		oi.gameInfoStr = ig.get(PGameInformation.TEXT);
 	}
 
-	protected void populateSettings()
-	{
+	protected void populateSettings() {
 		org.lateralgm.resources.GameSettings ig = i.gameSettings;
 		GameSettings og = o.gameSettings;
 
@@ -311,19 +301,15 @@ public final class EnigmaWriter
 
 		OutputStream os = null;
 		String fn = null;
-		if (ico != null)
-		{
-			try
-			{
+		if (ico != null) {
+			try {
 				File f = File.createTempFile("egm_ico", ".ico");
 
 				// if the icon has been black listed, replace it with the
 				// defualt one
 				byte[] hash = ico.getDigest("MD5");
-				for (byte[] blhash : icoBlackList)
-				{
-					if (Arrays.equals(hash, blhash))
-					{
+				for (byte[] blhash : icoBlackList) {
+					if (Arrays.equals(hash, blhash)) {
 						InputStream is = LGM.class.getClassLoader()
 								.getResourceAsStream(
 										"org/lateralgm/file/default.ico");
@@ -334,20 +320,15 @@ public final class EnigmaWriter
 
 				ico.write(os = new FileOutputStream(f));
 				fn = f.getAbsolutePath();
-			} catch (IOException e)
-			{
+			} catch (IOException e) {
 				EnigmaRunner.showDefaultExceptionHandler(e);
-			} catch (NoSuchAlgorithmException e)
-			{
+			} catch (NoSuchAlgorithmException e) {
 				EnigmaRunner.showDefaultExceptionHandler(e);
-			} finally
-			{
+			} finally {
 				if (os != null)
-					try
-					{
+					try {
 						os.close();
-					} catch (IOException e)
-					{
+					} catch (IOException e) {
 						EnigmaRunner.showDefaultExceptionHandler(e);
 					}
 			}
@@ -356,16 +337,14 @@ public final class EnigmaWriter
 
 	}
 
-	protected String bytesAsHex(byte[] bs)
-	{
+	protected String bytesAsHex(byte[] bs) {
 		String res = "";
 		for (byte b : bs)
 			res += String.format("%02x", b);
 		return res;
 	}
 
-	protected void populateSprites()
-	{
+	protected void populateSprites() {
 		int size = i.resMap.getList(org.lateralgm.resources.Sprite.class)
 				.size();
 		o.spriteCount = size;
@@ -377,8 +356,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Sprite[] isl = i.resMap.getList(
 				org.lateralgm.resources.Sprite.class).toArray(
 				new org.lateralgm.resources.Sprite[0]);
-		for (int s = 0; s < size; s++)
-		{
+		for (int s = 0; s < size; s++) {
 			Sprite os = osl[s];
 			org.lateralgm.resources.Sprite is = isl[s];
 
@@ -412,16 +390,14 @@ public final class EnigmaWriter
 			os.subImages = new SubImage.ByReference();
 			SubImage[] osil = (SubImage[]) os.subImages
 					.toArray(os.subImageCount);
-			for (int i = 0; i < os.subImageCount; i++)
-			{
+			for (int i = 0; i < os.subImageCount; i++) {
 				BufferedImage img = is.subImages.get(i);
 				osil[i].image = new Image.ByReference();
 				populateImage(img, osil[i].image, os.transparent);
 			}
 
 			// Polygon Masking
-			if (is.get(PSprite.SHAPE) != MaskShape.POLYGON)
-			{
+			if (is.get(PSprite.SHAPE) != MaskShape.POLYGON) {
 				os.maskShapeCount = 0;
 				continue;
 			}
@@ -441,8 +417,7 @@ public final class EnigmaWriter
 					.toArray(os.maskShapeCount);
 
 			// populate each polygon
-			for (int j = 0; j < opl.length; j++)
-			{
+			for (int j = 0; j < opl.length; j++) {
 				System.out.println("Populating polygon " + j);
 				List<java.awt.Point> ippl = m.getRayOutline(m.pts.get(j));
 				opl[j].pointCount = ippl.size();
@@ -457,8 +432,7 @@ public final class EnigmaWriter
 				System.out.println("Test2");
 
 				// populate each point
-				for (int k = 0; k < oppl.length; k++)
-				{
+				for (int k = 0; k < oppl.length; k++) {
 					System.out.println(" " + ippl.get(k));
 					oppl[k].x = ippl.get(k).x;
 					oppl[k].y = ippl.get(k).y;
@@ -467,8 +441,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateSounds()
-	{
+	protected void populateSounds() {
 		int size = i.resMap.getList(org.lateralgm.resources.Sound.class).size();
 		o.soundCount = size;
 		if (size == 0)
@@ -479,8 +452,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Sound[] isl = i.resMap.getList(
 				org.lateralgm.resources.Sound.class).toArray(
 				new org.lateralgm.resources.Sound[0]);
-		for (int s = 0; s < size; s++)
-		{
+		for (int s = 0; s < size; s++) {
 			Sound os = osl[s];
 			org.lateralgm.resources.Sound is = isl[s];
 
@@ -499,8 +471,7 @@ public final class EnigmaWriter
 			os.pan = is.get(PSound.PAN);
 			os.preload = is.get(PSound.PRELOAD);
 
-			if (is.data == null)
-			{
+			if (is.data == null) {
 				os.size = 0;
 				continue;
 			}
@@ -509,8 +480,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateBackgrounds()
-	{
+	protected void populateBackgrounds() {
 		int size = i.resMap.getList(org.lateralgm.resources.Background.class)
 				.size();
 		o.backgroundCount = size;
@@ -522,8 +492,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Background[] ibl = i.resMap.getList(
 				org.lateralgm.resources.Background.class).toArray(
 				new org.lateralgm.resources.Background[0]);
-		for (int s = 0; s < size; s++)
-		{
+		for (int s = 0; s < size; s++) {
 			Background ob = obl[s];
 			org.lateralgm.resources.Background ib = ibl[s];
 
@@ -547,8 +516,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populatePaths()
-	{
+	protected void populatePaths() {
 		int size = i.resMap.getList(org.lateralgm.resources.Path.class).size();
 		o.pathCount = size;
 		if (size == 0)
@@ -559,8 +527,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Path[] ipl = i.resMap.getList(
 				org.lateralgm.resources.Path.class).toArray(
 				new org.lateralgm.resources.Path[0]);
-		for (int p = 0; p < size; p++)
-		{
+		for (int p = 0; p < size; p++) {
 			Path op = opl[p];
 			org.lateralgm.resources.Path ip = ipl[p];
 
@@ -580,8 +547,7 @@ public final class EnigmaWriter
 
 			op.points = new PathPoint.ByReference();
 			PathPoint[] oppl = (PathPoint[]) op.points.toArray(op.pointCount);
-			for (int pp = 0; pp < oppl.length; pp++)
-			{
+			for (int pp = 0; pp < oppl.length; pp++) {
 				org.lateralgm.resources.sub.PathPoint ipp = ip.points.get(pp);
 				oppl[pp].x = ipp.getX();
 				oppl[pp].y = ipp.getY();
@@ -590,8 +556,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateScripts()
-	{
+	protected void populateScripts() {
 		List<LibAction> qs = getQuestionLibActions();
 
 		int size = i.resMap.getList(org.lateralgm.resources.Script.class)
@@ -605,8 +570,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Script[] isl = i.resMap.getList(
 				org.lateralgm.resources.Script.class).toArray(
 				new org.lateralgm.resources.Script[0]);
-		for (int s = 0; s < isl.length; s++)
-		{
+		for (int s = 0; s < isl.length; s++) {
 			Script oo = osl[s];
 			org.lateralgm.resources.Script io = isl[s];
 
@@ -615,8 +579,7 @@ public final class EnigmaWriter
 			oo.code = io.get(PScript.CODE);
 		}
 
-		for (int s = 0; s < qs.size(); s++)
-		{
+		for (int s = 0; s < qs.size(); s++) {
 			Script oo = osl[s + isl.length];
 			oo.name = "lib" + qs.get(s).parentId + "_action" + qs.get(s).id; //$NON-NLS-1$ //$NON-NLS-2$
 			oo.id = -s - 2;
@@ -624,8 +587,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateShaders()
-	{
+	protected void populateShaders() {
 		int size = i.resMap.getList(org.lateralgm.resources.Shader.class)
 				.size();
 		o.shaderCount = size;
@@ -637,8 +599,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Shader[] isl = i.resMap.getList(
 				org.lateralgm.resources.Shader.class).toArray(
 				new org.lateralgm.resources.Shader[0]);
-		for (int s = 0; s < isl.length; s++)
-		{
+		for (int s = 0; s < isl.length; s++) {
 			Shader oo = osl[s];
 			org.lateralgm.resources.Shader io = isl[s];
 
@@ -651,8 +612,7 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateFonts()
-	{
+	protected void populateFonts() {
 		int size = i.resMap.getList(org.lateralgm.resources.Font.class).size() + 1;
 		o.fontCount = size;
 
@@ -684,8 +644,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Font[] ifl = i.resMap.getList(
 				org.lateralgm.resources.Font.class).toArray(
 				new org.lateralgm.resources.Font[0]);
-		for (int f = 1; f < size; f++)
-		{
+		for (int f = 1; f < size; f++) {
 			Font of = ofl[f];
 			org.lateralgm.resources.Font ifont = ifl[f - 1];
 
@@ -703,13 +662,11 @@ public final class EnigmaWriter
 			else
 				screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
 			GlyphRange.ByReference glyphranges = new GlyphRange.ByReference();
-			if (ifont.characterRanges.size() > 0)
-			{
+			if (ifont.characterRanges.size() > 0) {
 				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges
 						.toArray(ifont.characterRanges.size());
 
-				for (int i = 0; i < ofgrl.length; i++)
-				{
+				for (int i = 0; i < ofgrl.length; i++) {
 					CharacterRange cr = ifont.characterRanges.get(i);
 					ofgrl[i].rangeMin = cr.properties
 							.get(PCharacterRange.RANGE_MIN);
@@ -722,8 +679,7 @@ public final class EnigmaWriter
 				}
 
 				of.glyphRangeCount = ofgrl.length;
-			} else
-			{
+			} else {
 				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges.toArray(1);
 				ofgrl[0].rangeMin = 32;
 				ofgrl[0].rangeMax = 127;
@@ -737,8 +693,7 @@ public final class EnigmaWriter
 	}
 
 	private static Glyph.ByReference populateGlyphs(java.awt.Font fnt,
-			int rangeMin, int rangeMax, int aa)
-	{
+			int rangeMin, int rangeMax, int aa) {
 		Glyph.ByReference glyphs = new Glyph.ByReference();
 		Glyph[] ofgl = (Glyph[]) glyphs.toArray(rangeMax - rangeMin + 1);
 		for (int c = rangeMin; c <= rangeMax; c++)
@@ -746,10 +701,8 @@ public final class EnigmaWriter
 		return glyphs;
 	}
 
-	private static void populateGlyph(Glyph og, java.awt.Font fnt, int c, int aa)
-	{
-		Object aaHints[] =
-		{ RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
+	private static void populateGlyph(Glyph og, java.awt.Font fnt, int c, int aa) {
+		Object aaHints[] = { RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB };
@@ -795,8 +748,7 @@ public final class EnigmaWriter
 		og.raster = ByteBuffer.allocateDirect(raster.length).put(raster);
 	}
 
-	protected void populateTimelines()
-	{
+	protected void populateTimelines() {
 		int size = i.resMap.getList(org.lateralgm.resources.Timeline.class)
 				.size();
 		o.timelineCount = size;
@@ -808,8 +760,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.Timeline[] itl = i.resMap.getList(
 				org.lateralgm.resources.Timeline.class).toArray(
 				new org.lateralgm.resources.Timeline[0]);
-		for (int t = 0; t < size; t++)
-		{
+		for (int t = 0; t < size; t++) {
 			Timeline ot = otl[t];
 			org.lateralgm.resources.Timeline it = itl[t];
 
@@ -822,16 +773,14 @@ public final class EnigmaWriter
 
 			ot.moments = new Moment.ByReference();
 			Moment[] oml = (Moment[]) ot.moments.toArray(ot.momentCount);
-			for (int m = 0; m < ot.momentCount; m++)
-			{
+			for (int m = 0; m < ot.momentCount; m++) {
 				oml[m].stepNo = it.moments.get(m).stepNo;
 				oml[m].code = getActionsCode(it.moments.get(m));
 			}
 		}
 	}
 
-	protected void populateObjects()
-	{
+	protected void populateObjects() {
 		int size = i.resMap.getList(org.lateralgm.resources.GmObject.class)
 				.size();
 		o.gmObjectCount = size;
@@ -843,8 +792,7 @@ public final class EnigmaWriter
 		org.lateralgm.resources.GmObject[] iol = i.resMap.getList(
 				org.lateralgm.resources.GmObject.class).toArray(
 				new org.lateralgm.resources.GmObject[0]);
-		for (int s = 0; s < size; s++)
-		{
+		for (int s = 0; s < size; s++) {
 			GmObject oo = ool[s];
 			org.lateralgm.resources.GmObject io = iol[s];
 
@@ -872,8 +820,7 @@ public final class EnigmaWriter
 			// we assume there are never 0 main events
 			// oo.mainEventCount = io.mainEvents.size();
 			// oo.mainEvents = new MainEvent[oo.mainEventCount];
-			for (int me = 0; me < oo.mainEventCount; me++)
-			{
+			for (int me = 0; me < oo.mainEventCount; me++) {
 				MainEvent ome = ooil[me];
 				List<org.lateralgm.resources.sub.Event> iel = io.mainEvents
 						.get(me).events;
@@ -886,8 +833,7 @@ public final class EnigmaWriter
 				ome.events = new Event.ByReference();
 				Event[] oel = (Event[]) ome.events.toArray(ome.eventCount);
 
-				for (int e = 0; e < ome.eventCount; e++)
-				{
+				for (int e = 0; e < ome.eventCount; e++) {
 					Event oe = oel[e];
 					org.lateralgm.resources.sub.Event ie = iel.get(e);
 
@@ -902,15 +848,12 @@ public final class EnigmaWriter
 		}
 	}
 
-	protected void populateRooms()
-	{
+	protected void populateRooms() {
 		ArrayList<org.lateralgm.resources.Room> irooms = new ArrayList<org.lateralgm.resources.Room>();
 		Enumeration<?> e = root.preorderEnumeration();
-		while (e.hasMoreElements())
-		{
+		while (e.hasMoreElements()) {
 			ResNode node = (ResNode) e.nextElement();
-			if (node.kind == org.lateralgm.resources.Room.class)
-			{
+			if (node.kind == org.lateralgm.resources.Room.class) {
 				org.lateralgm.resources.Room r = (org.lateralgm.resources.Room) deRef((ResourceReference<?>) node
 						.getRes());
 				if (r != null)
@@ -927,8 +870,7 @@ public final class EnigmaWriter
 		Room[] orly = (Room[]) o.rooms.toArray(size);
 		org.lateralgm.resources.Room[] irl = irooms
 				.toArray(new org.lateralgm.resources.Room[0]);
-		for (int s = 0; s < size; s++)
-		{
+		for (int s = 0; s < size; s++) {
 			Room or = orly[s];
 			org.lateralgm.resources.Room is = irl[s];
 
@@ -971,13 +913,11 @@ public final class EnigmaWriter
 			// ^^^ useless stuff ^^^ //
 
 			or.backgroundDefCount = is.backgroundDefs.size();
-			if (or.backgroundDefCount != 0)
-			{
+			if (or.backgroundDefCount != 0) {
 				or.backgroundDefs = new BackgroundDef.ByReference();
 				BackgroundDef[] obdl = (BackgroundDef[]) or.backgroundDefs
 						.toArray(or.backgroundDefCount);
-				for (int bd = 0; bd < obdl.length; bd++)
-				{
+				for (int bd = 0; bd < obdl.length; bd++) {
 					BackgroundDef obd = obdl[bd];
 					org.lateralgm.resources.sub.BackgroundDef ibd = is.backgroundDefs
 							.get(bd);
@@ -1000,12 +940,10 @@ public final class EnigmaWriter
 			}
 
 			or.viewCount = is.views.size();
-			if (or.viewCount != 0)
-			{
+			if (or.viewCount != 0) {
 				or.views = new View.ByReference();
 				View[] ovl = (View[]) or.views.toArray(or.viewCount);
-				for (int v = 0; v < ovl.length; v++)
-				{
+				for (int v = 0; v < ovl.length; v++) {
 					View ov = ovl[v];
 					org.lateralgm.resources.sub.View iv = is.views.get(v);
 
@@ -1033,20 +971,20 @@ public final class EnigmaWriter
 					ri.add(ii);
 
 			or.instanceCount = ri.size();
-			if (or.instanceCount != 0)
-			{
+			if (or.instanceCount != 0) {
 				or.instances = new Instance.ByReference();
 				Instance[] oil = (Instance[]) or.instances.toArray(ri.size());
 				int i = 0;
-				
+
 				StringBuilder sb = new StringBuilder();
-				
-				for (org.lateralgm.resources.sub.Instance ii : ri)
-				{
+
+				for (org.lateralgm.resources.sub.Instance ii : ri) {
 					Instance oi = oil[i++];
 
 					oi.x = ii.properties.get(PInstance.X);
 					oi.y = ii.properties.get(PInstance.Y);
+
+					// Append the new instance's properties
 					Point2D scale = ii.getScale();
 
 					if (scale.getX() != 1.0)
@@ -1058,10 +996,10 @@ public final class EnigmaWriter
 								+ String.valueOf(scale.getY()) + ";\r\n");
 
 					Double rotation = ii.getRotation();
-					
+
 					if (rotation > 0.0)
-						sb.append("image_angle="
-								+ String.valueOf(rotation) + ";\r\n");
+						sb.append("image_angle=" + String.valueOf(rotation)
+								+ ";\r\n");
 
 					Color color = ii.getColor();
 
@@ -1076,28 +1014,29 @@ public final class EnigmaWriter
 
 					if (alpha < 255)
 						sb.append("image_alpha="
-								+ String.valueOf(alpha/255) + ";\r\n");
-					
+								+ String.valueOf((float) (alpha / 255.0))
+								+ ";\r\n");
+
 					oi.objectId = toId(ii.properties.get(PInstance.OBJECT), -1);
 					oi.id = ii.properties.get(PInstance.ID);
 
-					// oi.creationCode =
-					// ii.properties.get(PInstance.CREATION_CODE);
 					if (sb.length() > 0)
-					oi.creationCode = sb.toString();
+						oi.preCreationCode = sb.toString();
+
 					sb.setLength(0);
-					
+
+					oi.creationCode = ii.properties
+							.get(PInstance.CREATION_CODE);
+
 					oi.locked = ii.properties.get(PInstance.LOCKED);
 				}
 			}
 
 			or.tileCount = is.tiles.size();
-			if (or.tileCount != 0)
-			{
+			if (or.tileCount != 0) {
 				or.tiles = new Tile.ByReference();
 				Tile[] otl = (Tile[]) or.tiles.toArray(or.tileCount);
-				for (int t = 0; t < otl.length; t++)
-				{
+				for (int t = 0; t < otl.length; t++) {
 					Tile ot = otl[t];
 					org.lateralgm.resources.sub.Tile it = is.tiles.get(t);
 
@@ -1117,8 +1056,7 @@ public final class EnigmaWriter
 		} // rooms
 	} // populateRooms()
 
-	public static void populateImage(BufferedImage i, Image o, boolean useTransp)
-	{
+	public static void populateImage(BufferedImage i, Image o, boolean useTransp) {
 		if (i == null || o == null)
 			return;
 
@@ -1126,8 +1064,7 @@ public final class EnigmaWriter
 		o.height = i.getHeight();
 
 		ByteArrayOutputStream cache = imageCache.get(i);
-		if (cache != null)
-		{
+		if (cache != null) {
 			o.dataSize = cache.size();
 			o.data = ByteBuffer.allocateDirect(cache.size()).put(
 					cache.toByteArray());
@@ -1136,14 +1073,12 @@ public final class EnigmaWriter
 
 		int pixels[] = i.getRGB(0, 0, o.width, o.height, null, 0, o.width);
 		int trans = i.getRGB(0, o.height - 1) & 0x00FFFFFF;
-		try
-		{
+		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(
 					pixels.length * 4);
 			DeflaterOutputStream dos = new DeflaterOutputStream(baos);
 			// is this the most efficient way? ARGB => BGRA
-			for (int p = 0; p < pixels.length; p++)
-			{
+			for (int p = 0; p < pixels.length; p++) {
 				dos.write(pixels[p] & 0xFF);
 				dos.write(pixels[p] >>> 8 & 0xFF);
 				dos.write(pixels[p] >>> 16 & 0xFF);
@@ -1159,8 +1094,7 @@ public final class EnigmaWriter
 			o.data = ByteBuffer.allocateDirect(baos.size()).put(
 					baos.toByteArray());
 			imageCache.put(i, baos);
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
 
@@ -1170,13 +1104,11 @@ public final class EnigmaWriter
 		// pixels);
 	}
 
-	public static int ARGBtoRGBA(int argb)
-	{
+	public static int ARGBtoRGBA(int argb) {
 		return ((argb & 0x00FFFFFF) << 8) | (argb >>> 24);
 	}
 
-	public static int toId(Object obj, int def)
-	{
+	public static int toId(Object obj, int def) {
 		Resource<?, ?> r = deRef((ResourceReference<?>) obj);
 		if (r != null)
 			return ((InstantiableResource<?, ?>) r).getId();
@@ -1192,21 +1124,17 @@ public final class EnigmaWriter
 										// 1 if, so its important to track the
 										// number
 
-	public static String getActionsCode(ActionContainer ac)
-	{
+	public static String getActionsCode(ActionContainer ac) {
 		final String nl = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuilder code = new StringBuilder();
 
 		numberOfBraces = 0;
 		numberOfIfs = 0;
 
-		for (Action act : ac.actions)
-		{
+		for (Action act : ac.actions) {
 			LibAction la = act.getLibAction();
-			if (la == null)
-			{
-				if (!actionDemise)
-				{
+			if (la == null) {
+				if (!actionDemise) {
 					JOptionPane.showMessageDialog(null, Messages.format(
 							"EnigmaWriter.UNSUPPORTED_DND", ac.toString())); //$NON-NLS-1$
 					actionDemise = true;
@@ -1214,8 +1142,7 @@ public final class EnigmaWriter
 				continue;
 			}
 			List<Argument> args = act.getArguments();
-			switch (la.actionKind)
-			{
+			switch (la.actionKind) {
 			case Action.ACT_BEGIN:
 				code.append('{');
 				numberOfBraces++;
@@ -1226,18 +1153,15 @@ public final class EnigmaWriter
 				code.append('{').append(args.get(0).getVal())
 						.append("/**/\n}").append(nl); //$NON-NLS-1$
 				break;
-			case Action.ACT_ELSE:
-			{
-				if (numberOfIfs > 0)
-				{
+			case Action.ACT_ELSE: {
+				if (numberOfIfs > 0) {
 					code.append("else "); //$NON-NLS-1$
 					numberOfIfs--;
 				}
 			}
 				break;
 			case Action.ACT_END:
-				if (numberOfBraces > 0)
-				{
+				if (numberOfBraces > 0) {
 					code.append('}');
 					numberOfBraces--;
 				}
@@ -1256,16 +1180,13 @@ public final class EnigmaWriter
 					code.append(args.get(0).getVal())
 							.append(" = ").append(args.get(1).getVal()).append(nl); //$NON-NLS-1$
 				break;
-			case Action.ACT_NORMAL:
-			{
+			case Action.ACT_NORMAL: {
 				if (la.execType == Action.EXEC_NONE)
 					break;
 				ResourceReference<org.lateralgm.resources.GmObject> apto = act
 						.getAppliesTo();
-				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
-				{
-					if (la.question)
-					{
+				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
+					if (la.question) {
 						/* Question action using with statement */
 						if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
 							code.append("with (other) "); //$NON-NLS-1$
@@ -1274,8 +1195,7 @@ public final class EnigmaWriter
 						else
 							code.append("/*null with!*/"); //$NON-NLS-1$
 
-					} else
-					{
+					} else {
 						if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
 							code.append("with (other) {"); //$NON-NLS-1$
 						else if (apto.get() != null)
@@ -1284,15 +1204,13 @@ public final class EnigmaWriter
 							code.append("/*null with!*/{"); //$NON-NLS-1$
 					}
 				}
-				if (la.question)
-				{
+				if (la.question) {
 					code.append("if "); //$NON-NLS-1$
 					numberOfIfs++;
 				}
 				if (act.isNot())
 					code.append('!');
-				if (la.allowRelative)
-				{
+				if (la.allowRelative) {
 					if (la.question)
 						code.append("(argument_relative := ").append(act.isRelative()).append(", "); //$NON-NLS-1$ //$NON-NLS-2$
 					else
@@ -1302,11 +1220,9 @@ public final class EnigmaWriter
 					code.append("lib").append(la.parentId).append("_action").append(la.id); //$NON-NLS-1$ //$NON-NLS-2$
 				else
 					code.append(la.execInfo);
-				if (la.execType == Action.EXEC_FUNCTION)
-				{
+				if (la.execType == Action.EXEC_FUNCTION) {
 					code.append('(');
-					for (int i = 0; i < args.size(); i++)
-					{
+					for (int i = 0; i < args.size(); i++) {
 						if (i != 0)
 							code.append(',');
 						code.append(toString(args.get(i)));
@@ -1324,8 +1240,7 @@ public final class EnigmaWriter
 				break;
 			}
 		}
-		if (numberOfBraces > 0)
-		{
+		if (numberOfBraces > 0) {
 			// someone forgot the closing block action
 			for (int i = 0; i < numberOfBraces; i++)
 				code.append("\n}"); //$NON-NLS-1$
@@ -1333,15 +1248,12 @@ public final class EnigmaWriter
 		return code.toString();
 	}
 
-	public static String toString(Argument arg)
-	{
+	public static String toString(Argument arg) {
 		String val = arg.getVal();
-		if (val.length() == 0)
-		{
+		if (val.length() == 0) {
 			return "0";
 		}
-		switch (arg.kind)
-		{
+		switch (arg.kind) {
 		case Argument.ARG_BOTH:
 			// treat as literal if starts with quote (")
 			if (val.startsWith("\"") || val.startsWith("'"))return val; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1353,21 +1265,17 @@ public final class EnigmaWriter
 		case Argument.ARG_MENU:
 			return val;
 		case Argument.ARG_COLOR:
-			try
-			{
+			try {
 				return String.format("$%06X", Integer.parseInt(val)); //$NON-NLS-1$
-			} catch (NumberFormatException e)
-			{
+			} catch (NumberFormatException e) {
 			}
 			return val;
 		default:
 			if (Argument.getResourceKind(arg.kind) == null)
 				return val;
-			try
-			{
+			try {
 				return arg.getRes().get().getName();
-			} catch (NullPointerException e)
-			{
+			} catch (NullPointerException e) {
 				val = "-1"; //$NON-NLS-1$
 			}
 			return val;
@@ -1376,8 +1284,7 @@ public final class EnigmaWriter
 
 	// in order to allow question actions to get converted to code, we treat
 	// their internal code as scripts
-	public static ArrayList<LibAction> getQuestionLibActions()
-	{
+	public static ArrayList<LibAction> getQuestionLibActions() {
 		ArrayList<LibAction> ala = new ArrayList<LibAction>();
 		for (Library lib : LibManager.libs)
 			for (LibAction act : lib.libActions)
