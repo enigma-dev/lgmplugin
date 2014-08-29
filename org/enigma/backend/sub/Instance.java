@@ -13,22 +13,22 @@ import java.util.List;
 
 import com.sun.jna.Structure;
 
-public class Instance extends Structure
-	{
+public class Instance extends Structure {
 	public int x;
 	public int y;
 	public int objectId;
 	public int id;
 	public String creationCode;
+	public String preCreationCode;
 	public boolean locked;
 
-	@Override
-	protected List<String> getFieldOrder()
-		{
-		return Arrays.asList("x","y","objectId","id","creationCode","locked");
-		}
 
-	public static class ByReference extends Instance implements Structure.ByReference
-		{
-		}
+	@Override
+	protected List<String> getFieldOrder() {
+		return Arrays.asList("x", "y", "objectId", "id", "creationCode","preCreationCode", "locked");
 	}
+
+	public static class ByReference extends Instance implements
+			Structure.ByReference {
+	}
+}
