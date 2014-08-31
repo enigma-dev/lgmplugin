@@ -1251,7 +1251,10 @@ public final class EnigmaWriter {
 	public static String toString(Argument arg) {
 		String val = arg.getVal();
 		if (val.length() == 0) {
-			return "0";
+			if (arg.kind == Argument.ARG_STRING)
+				return "\"\"";
+			else
+				return "0";
 		}
 		switch (arg.kind) {
 		case Argument.ARG_BOTH:
