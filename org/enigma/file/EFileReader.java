@@ -49,6 +49,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileView;
 
@@ -556,6 +557,9 @@ public class EFileReader
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		readNodeChildren(f,gf,root,null,new String());
 		
+		readResource(f,gf,null,EnigmaSettings.class,
+				f.getEntry("Enigma Settings.ey").asInputStream(),"","Enigma Settings");
+		
 		while (!postpone.isEmpty())
 			postpone.remove().invoke();
 		
@@ -657,7 +661,6 @@ public class EFileReader
 			System.err.println(Messages.format("EFileReader.NO_READER",kind)); //$NON-NLS-1$
 			return null;
 			}
-
 		Resource<?,?> r = gf.resMap.get(kind).getResource();
 		reader.readUnknown(f,gf,is,dir,name,r);
 		is.close();

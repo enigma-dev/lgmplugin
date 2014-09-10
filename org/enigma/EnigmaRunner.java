@@ -55,7 +55,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.tree.TreeNode;
 
 import org.enigma.backend.Definitions;
 import org.enigma.backend.EnigmaCallbacks;
@@ -67,7 +66,7 @@ import org.enigma.file.EFileReader;
 import org.enigma.file.EgmIO;
 import org.enigma.file.YamlParser;
 import org.enigma.file.YamlParser.YamlNode;
-import org.enigma.frames.EnigmaSettingsFrame;
+import org.enigma.frames.EnigmaSettingsHandler;
 import org.enigma.frames.ProgressFrame;
 import org.enigma.messages.Messages;
 import org.enigma.utility.EnigmaBuildReader;
@@ -121,11 +120,10 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public ProgressFrame ef = new ProgressFrame();
 	/** This is global scoped so that it doesn't get GC'd */
 	private EnigmaCallbacks ec = new EnigmaCallbacks(ef);
-	public EnigmaSettingsFrame esf;
+	public EnigmaSettingsHandler esh;
 	public JMenuItem busy, run, debug, design, compile, rebuild, stop;
 	public JButton stopb, runb, debugb, compileb;
 	public JMenuItem mImport, showFunctions, showGlobals, showTypes;
-	public ResNode node;
 	
 	public EnigmaRunner()
 		{
@@ -139,15 +137,12 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			LGM.currentFile.resMap.put(EnigmaSettings.class,
 					rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
 		}
-		node = new ResNode(Messages.getString("EnigmaRunner.RESNODE_NAME"), //$NON-NLS-1$
-				ResNode.STATUS_SECONDARY,EnigmaSettings.class, rh.getResource().reference);
 		
 		populateMenu();
 		populateTree();
 		
-		esf = new EnigmaSettingsFrame(rh.getResource());
-		esf.revertResource();
-		LGM.mdi.add(esf);
+		esh = new EnigmaSettingsHandler(rh.getResource());
+		esh.revertResource();
 		
 		rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 		final String makedir = rh.getResource().getOption("make-directory");
@@ -388,7 +383,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 					@Override
 					public ResourceFrame<?,?> makeFrame(Resource<?,?> r, ResNode node)
 						{
-						return esf;
+						return LGM.getGameSettings();
 						}
 				};
 			}
@@ -473,12 +468,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		menu.addSeparator();
 
 		JMenuItem mi = addItem(Messages.getString("EnigmaRunner.MENU_SETTINGS")); //$NON-NLS-1$
+		mi.setIcon(LGM.getIconForKey("EnigmaPlugin.SETTINGS"));
 		mi.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent e)
 					{
-					node.openFrame();
+					LGM.showGameSettings();
 					}
 			});
 		menu.add(mi);
@@ -512,7 +508,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	public void firstSetup()
 		{
-		LGM.root.add(node); //EnigmaSettings node
 		if (NEW_DEFINITIONS_READY_YET)
 			{
 			LGM.currentFile.resMap.addList(Definitions.class);
@@ -524,6 +519,8 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	public void populateTree()
 		{
+		/* This is the old code where it would look for the ENIGMA settings node, it just extends game settings now it's no longer
+		 * its own frame.
 		if (!LGM.root.isNodeChild(node))
 			{
 			boolean found = false;
@@ -538,6 +535,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				}
 			if (!found) firstSetup();
 			}
+		*/
 		}
 
 	private static SortedSet<Function> BASE_FUNCTIONS;
@@ -702,7 +700,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			}
 
 		String ext = es.targets.get(TargetHandler.COMPILER).ext;
-		String os = TargetHandler.normalize(System.getProperty("os.name")); //$NON-NLS-1$
+		//String os = TargetHandler.normalize(System.getProperty("os.name")); //$NON-NLS-1$
 		
 		//determine `outname` (rebuild has no `outname`)
 		File outname = null;
@@ -814,7 +812,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		if (keywordListFrames[mode] == null)
 			{
 			keywordListFrames[mode] = new MDIFrame(KEY_MODES[mode],true,true,true,true);
-			keywordListFrames[mode].setSize(200,400);
+			keywordListFrames[mode].setSize(700,500);
 			keywordListFrames[mode].setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 			LGM.mdi.add(keywordListFrames[mode]);
 			keywordLists[mode] = new KeywordListModel();
@@ -955,7 +953,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		else if (source instanceof CodeFrame)
 			{
 			CodeFrame cf = (CodeFrame) source;
-			if (esf != null && cf.codeHolder == esf.sDef) return;
+			if (esh != null && cf.codeHolder == esh.sDef) return;
 			tool = cf.tool;
 			code = cf.code;
 			status = cf.status;
@@ -1008,14 +1006,14 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	{
 		populateTree();
 		
-		if (esf != null) {
+		if (esh != null) {
 			ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 			if (rh == null)
 				LGM.currentFile.resMap.put(EnigmaSettings.class,
 						rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
 					
-			esf.resOriginal = rh.getResource();
-			esf.revertResource(); //updates local res copy as well
+			esh.resOriginal = rh.getResource();
+			esh.revertResource(); //updates local res copy as well
 		}
 		LGM.LOADING_PROJECT = false;
 	}

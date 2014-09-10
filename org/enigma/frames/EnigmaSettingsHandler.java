@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008-2011 IsmAvatar <IsmAvatar@gmail.com>
+ * Copyright (C) 2014 Robert B. Colton
  * 
  * This file is part of Enigma Plugin.
  * 
@@ -58,13 +59,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -75,6 +75,8 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 import org.enigma.EnigmaRunner;
 import org.enigma.SettingsHandler;
@@ -84,7 +86,6 @@ import org.enigma.SettingsHandler.OptionSetting;
 import org.enigma.TargetHandler;
 import org.enigma.TargetHandler.TargetSelection;
 import org.enigma.backend.EnigmaSettings;
-import org.enigma.backend.EnigmaSettings.PEnigmaSettings;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.CustomFileChooser;
 import org.lateralgm.components.CodeTextArea;
@@ -93,17 +94,20 @@ import org.lateralgm.components.impl.IndexButtonGroup;
 import org.lateralgm.main.LGM;
 import org.lateralgm.subframes.CodeFrame;
 import org.lateralgm.subframes.CodeFrame.CodeHolder;
-import org.lateralgm.subframes.ResourceFrame;
+import org.lateralgm.subframes.GameSettingFrame;
+import org.lateralgm.subframes.ResourceFrame.ResourceFrameListener;
 
-public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSettings> implements
-		ActionListener,FocusListener,PopupMenuListener
+public class EnigmaSettingsHandler implements ActionListener,FocusListener,PopupMenuListener,ResourceFrameListener
 	{
-	private static final long serialVersionUID = 1L;
 	private static final ImageIcon CODE_ICON = LGM.getIconForKey("Resource.SCRIPT"); //$NON-NLS-1$
 	private static final String[] labels = { "Compiler: ","Platform: ","Graphics: ","Audio: ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"Collision: ","Widgets: ","Networking: " }; //$NON-NLS-1$ //$NON-NLS-2$
+	
+	/** The resource this frame is editing (feel free to change it as you wish) */
+	public EnigmaSettings res;
+	/** Backup of res as it was before changes were made */
+	public EnigmaSettings resOriginal;
 
-	protected JToolBar toolbar;
 	protected JButton saveFile, loadFile;
 
 	private Map<String,Option> options;
@@ -274,48 +278,62 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		}
 	}
 
-	public EnigmaSettingsFrame(EnigmaSettings es)
+	public EnigmaSettingsHandler(EnigmaSettings es)
 	{
-		super(es,null,"Enigma Settings",false,true,true,true); //$NON-NLS-1$
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
-
+		this.res = es;
+		resOriginal = res.clone();
+		
 		fc = new CustomFileChooser("/org/enigma","LAST_SETTINGS_DIR"); //$NON-NLS-1$ //$NON-NLS-2$
 		fc.setFileFilter(new CustomFileFilter(
 				".ey",Messages.getString("EnigmaSettingsFrame.EY_DESCRIPTION"))); //$NON-NLS-1$ //$NON-NLS-2$
-
-		toolbar = makeToolBar();
-		add(toolbar,BorderLayout.NORTH);
-		JTabbedPane tabs = new JTabbedPane();
-		tabs.add(Messages.getString("EnigmaSettingsFrame.TAB_GENERAL"),makeSettings()); //$NON-NLS-1$
-		tabs.add(Messages.getString("EnigmaSettingsFrame.TAB_API"),makeAPI()); //$NON-NLS-1$
-		tabs.add(Messages.getString("EnigmaSettingsFrame.TAB_EXTENSIONS"),makeExtensions()); //$NON-NLS-1$
-		add(tabs,BorderLayout.CENTER);
-		pack();
+		
+		GameSettingFrame gsf = LGM.getGameSettings();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) gsf.tree.getModel().getRoot();
+		DefaultMutableTreeNode enode = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_ENIGMA"));
+		JPanel pane = makeENIGMAPane();
+		root.add(enode);
+		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_ENIGMA"));
+		
+		gsf.setFrameListener(this);
+		
+		pane = makeSettings();
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_GENERAL"));
+		enode.add(node);
+		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_GENERAL"));
+		
+		pane = makeAPI();
+		node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_API"));
+		enode.add(node);
+		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_API"));
+		
+		pane = makeExtensions();
+		node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_EXTENSIONS"));
+		enode.add(node);
+		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_EXTENSIONS"));
+		
+		// reload after adding all root children to make sure its children are visible
+		((DefaultTreeModel)gsf.tree.getModel()).reload();
+		
+		gsf.pack();
 		}
 
-	private JToolBar makeToolBar()
+	private JPanel makeENIGMAPane()
 		{
-		JToolBar tool = new JToolBar();
-		tool.setFloatable(false);
-
+		JPanel pane = new JPanel();
+		
 		// Setup the buttons
-		save.setRequestFocusEnabled(false);
-		tool.add(save);
-		tool.addSeparator();
-
-		loadFile = new JButton(LGM.getIconForKey("Toolbar.OPEN")); //$NON-NLS-1$
+		loadFile = new JButton(Messages.getString("EnigmaSettingsFrame.LOAD"),LGM.getIconForKey("Toolbar.OPEN")); //$NON-NLS-1$
 		loadFile.setToolTipText(Messages.getString("EnigmaSettingsFrame.LOAD_TIP")); //$NON-NLS-1$
 		loadFile.setRequestFocusEnabled(false);
 		loadFile.addActionListener(this);
-		tool.add(loadFile);
-		saveFile = new JButton(LGM.getIconForKey("Toolbar.SAVEAS")); //$NON-NLS-1$
+		pane.add(loadFile);
+		saveFile = new JButton(Messages.getString("EnigmaSettingsFrame.SAVE"),LGM.getIconForKey("Toolbar.SAVEAS")); //$NON-NLS-1$
 		saveFile.setToolTipText(Messages.getString("EnigmaSettingsFrame.SAVE_TIP")); //$NON-NLS-1$
 		saveFile.setRequestFocusEnabled(false);
 		saveFile.addActionListener(this);
-		tool.add(saveFile);
+		pane.add(saveFile);
 
-		tool.addSeparator();
-		return tool;
+		return pane;
 		}
 
 	private static JPanel makePane(String name, int choiceCount, Option...opts)
@@ -373,6 +391,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		{
 		JPanel p = new JPanel();
 		GroupLayout layout = new GroupLayout(p);
+		layout.setAutoCreateContainerGaps(true);
 		p.setLayout(layout);
 
 		List<JPanel> panels = generateOptionPanels();
@@ -423,6 +442,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		{
 		JPanel p = new JPanel();
 		GroupLayout layout = new GroupLayout(p);
+		layout.setAutoCreateContainerGaps(true);
 		p.setLayout(layout);
 
 		Group hg1 = layout.createParallelGroup();
@@ -482,6 +502,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			extensions.put(es,es.def);
 
 		JPanel p = new JPanel(new BorderLayout());
+		p.setBorder(new EmptyBorder(4,4,4,4));
 		//		p.setLayout(new BoxLayout(p,BoxLayout.PAGE_AXIS));
 		p.add(new JLabel(Messages.getString("EnigmaSettingsFrame.EXTENSIONS_INFO")), //$NON-NLS-1$
 				BorderLayout.NORTH);
@@ -649,7 +670,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		{
 		commitChanges();
 		fc.setDialogTitle(Messages.getString("EnigmaSettingsFrame.SAVE_TITLE")); //$NON-NLS-1$
-		if (fc.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+		if (fc.showSaveDialog(LGM.getGameSettings()) != JFileChooser.APPROVE_OPTION) return;
 		String name = fc.getSelectedFile().getPath();
 		if (CustomFileFilter.getExtension(name) == null) name += ".ey"; //$NON-NLS-1$
 
@@ -664,13 +685,13 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
-
+/* This here is no longer needed because it's no longer it's own frame and game settings frame will handle this.
 	@Override
 	public String getConfirmationName()
 		{
 		return Messages.getString("EnigmaSettingsFrame.DIALOG_KEEPCHANGES_RESOURCE"); //$NON-NLS-1$
 		}
-
+*/
 	//FIXME: This shouldn't override. Find out if this affects anything else
 	@Override
 	public void updateResource()
@@ -730,11 +751,13 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 			entry.setValue(es.extensions.contains(entry.getKey().path)); //writes through to map
 		}
 
+	@Override
 	public void revertResource()
 		{
-		//		super.revertResource();
+		//super.revertResource(); no longer a frame so must manually update the reference
+		resOriginal.updateReference();
 		resOriginal.copyInto(res);
-		setComponents(res);
+		setComponents(resOriginal);
 		}
 
 	/** A special ComboBoxModel to alleviate repopulation */
@@ -869,7 +892,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 	@Override
 	public void actionPerformed(ActionEvent e)
 		{
-		super.actionPerformed(e);
+		LGM.getGameSettings().actionPerformed(e);
 		Object s = e.getSource();
 
 		if (s == loadFile)
@@ -993,7 +1016,7 @@ public class EnigmaSettingsFrame extends ResourceFrame<EnigmaSettings,PEnigmaSet
 		CodeFrame cf = new CodeFrame(ch,"{0}",title); //$NON-NLS-1$
 		cf.addInternalFrameListener(ifl);
 		LGM.mdi.add(cf);
-		LGM.mdi.addZChild(this,cf);
+		LGM.mdi.addZChild(LGM.getGameSettings(),cf);
 		return cf;
 		}
 

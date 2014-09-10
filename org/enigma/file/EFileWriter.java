@@ -33,6 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.enigma.EnigmaRunner;
@@ -109,7 +110,7 @@ public class EFileWriter
 		writers.put(GameInformation.class,new GameInfoRtfWriter());
 		writers.put(GameSettings.class,new GameSettingsThreeWriter());
 		writers.put(ExtensionPackages.class,new ExtensionsEmptyWriter());
-		writers.put(EnigmaSettings.class,new EnigmaSettingsWriter());
+		//writers.put(EnigmaSettings.class,new EnigmaSettingsWriter());
 
 		for (Entry<String,Class<? extends Resource<?,?>>> e : Resource.kindsByName3.entrySet())
 			kindName3s.put(e.getValue(),e.getKey());
@@ -240,6 +241,12 @@ public class EFileWriter
 			{
 			String name = (String) child.getUserObject();
 			Resource<?,?> r = (Resource<?,?>) Util.deRef((ResourceReference<?>) child.getRes());
+			this.write(os, gf, name, r, dir);
+			}
+		
+		public void write(EGMOutputStream os, ProjectFile gf, String name, Resource<?,?> r, List<String> dir)
+				throws IOException
+			{
 			String fn = name + getExt(r);
 
 			PrintStream ps = new PrintStream(os.next(dir,name + EY), false, "UTF-8");
@@ -345,6 +352,9 @@ public class EFileWriter
 		
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		writeNodeChildren(os,gf,tree,new ArrayList<String>());
+		
+		EnigmaSettingsWriter esw = new EnigmaSettingsWriter();
+		esw.write(os, gf, "Enigma Settings", new ArrayList<String>());
 		
 		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
@@ -934,13 +944,18 @@ public class EFileWriter
 	static class EnigmaSettingsWriter implements ResourceWriter
 		{
 		@Override
-		public void write(EGMOutputStream os, ProjectFile gf, ResNode child, List<String> dir)
+		public void write(EGMOutputStream os, ProjectFile gf, ResNode child,
+				List<String> dir) throws IOException {
+			this.write(os, gf, (String)child.getUserObject(), dir);
+		}
+		
+		public void write(EGMOutputStream os, ProjectFile gf, String name, List<String> dir)
 				throws IOException
 			{
 			//			ResourceReference<? extends Resource<?,?>> ref = child.getRes();
 			//			EnigmaSettings es = ref == null ? null : (EnigmaSettings) ref.get();
 
-			String name = (String) child.getUserObject();
+
 			String fn = name + ".eef"; //$NON-NLS-1$
 
 			PrintWriter pw = new PrintWriter(os.next(dir,name + EY));
