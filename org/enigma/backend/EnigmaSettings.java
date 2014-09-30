@@ -41,6 +41,8 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 	{
 	public String definitions = "", globalLocals = ""; //$NON-NLS-1$ //$NON-NLS-2$
 	public String initialization = "", cleanup = ""; //$NON-NLS-1$ //$NON-NLS-2$
+	//Controls whether or not the resource type will have nodes in the resource tree.
+	public static final boolean hasNode = false;
 
 	public Map<String,String> options = new HashMap<String,String>();
 	public Map<String,Boolean> textoptions = new HashMap<String,Boolean>();

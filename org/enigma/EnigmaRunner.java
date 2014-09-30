@@ -88,6 +88,7 @@ import org.lateralgm.main.LGM;
 import org.lateralgm.main.LGM.ReloadListener;
 import org.lateralgm.main.LGM.SingletonPluginResource;
 import org.lateralgm.main.Listener;
+import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.Script;
 import org.lateralgm.subframes.ActionFrame;
@@ -740,9 +741,10 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		setMenuEnabled(false);
 		LGM.commitAll();
-		//Don't need to update ESF since commitAll traverses all nodes
-		//esf.updateResource();
-		es.commitToDriver(DRIVER);
+		//TODO: commit changes, have to do it because it's attached to game settings frame
+		//and doesn't get told.
+		esh.commitChanges();
+		esh.res.commitToDriver(DRIVER);
 		//System.out.println("Compiling with " + enigma);
 		
 		cthread = new CompilerThread(mode, outname);
@@ -1011,9 +1013,12 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			if (rh == null)
 				LGM.currentFile.resMap.put(EnigmaSettings.class,
 						rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
-					
+			
 			esh.resOriginal = rh.getResource();
 			esh.revertResource(); //updates local res copy as well
+			
+			//TODO: See comments in LGM reload() this is only a temporary patch.
+			LGM.currentFile.resMap.put(EnigmaSettings.class,new SingletonResourceHolder(esh.res));
 		}
 		LGM.LOADING_PROJECT = false;
 	}

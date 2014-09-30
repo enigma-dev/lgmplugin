@@ -1035,4 +1035,16 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 	public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
 		{
 		}
+
+	@Override
+	public boolean resourceChanged() {
+		commitChanges();
+		return !res.equals(resOriginal);
 	}
+
+	@Override
+	public void setResourceChanged() {
+		res.changed = true;
+	}
+	
+}
