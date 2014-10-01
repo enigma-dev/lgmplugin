@@ -27,13 +27,27 @@ import java.util.ResourceBundle;
 public final class Messages
 	{
 	private static final String BUNDLE_NAME = "org.enigma.messages.messages"; //$NON-NLS-1$
+	private static final String KEYBOARD_BUNDLE_NAME = "org.enigma.messages.keyboard"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static ResourceBundle KEYBOARD_BUNDLE = ResourceBundle.getBundle(KEYBOARD_BUNDLE_NAME);
 
 	private Messages()
 		{
 		}
 
+	public static String getKeyboardString(String key)
+	{
+	try
+		{
+		return KEYBOARD_BUNDLE.getString(key);
+		}
+	catch (MissingResourceException e)
+		{
+		return '!' + key + '!';
+		}
+	}
+	
 	public static String getString(String key)
 		{
 		try

@@ -431,32 +431,32 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		run = addItem(Messages.getString("EnigmaRunner.MENU_RUN")); //$NON-NLS-1$
 		run.addActionListener(this);
 		run.setIcon(LGM.getIconForKey("EnigmaPlugin.EXECUTE"));
-		run.setAccelerator(KeyStroke.getKeyStroke("F5"));
+		run.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.EXECUTE")));
 		menu.add(run);
 		debug = addItem(Messages.getString("EnigmaRunner.MENU_DEBUG")); //$NON-NLS-1$
 		debug.addActionListener(this);
 		debug.setIcon(LGM.getIconForKey("EnigmaPlugin.DEBUG"));
-		debug.setAccelerator(KeyStroke.getKeyStroke("F6"));
+		debug.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.DEBUG")));
 		menu.add(debug);
 		design = addItem(Messages.getString("EnigmaRunner.MENU_DESIGN")); //$NON-NLS-1$
 		design.addActionListener(this);
-		design.setAccelerator(KeyStroke.getKeyStroke("F7"));
+		design.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.DESIGN")));
 		menu.add(design);
 		compile = addItem(Messages.getString("EnigmaRunner.MENU_COMPILE")); //$NON-NLS-1$
 		compile.addActionListener(this);
 		compile.setIcon(LGM.getIconForKey("EnigmaPlugin.COMPILE"));
-		compile.setAccelerator(KeyStroke.getKeyStroke("F8"));
+		compile.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.COMPILE")));
 		menu.add(compile);
 		menu.addSeparator();
 		//stop = addItem(Messages.getString("EnigmaRunner.MENU_STOP")); //$NON-NLS-1$
 		//stop.addActionListener(this);
 		//stop.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
-		//stop.setAccelerator(KeyStroke.getKeyStroke("F9"));
+		//stop.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.STOP")));
 		//menu.add(stop);
 		rebuild = addItem(Messages.getString("EnigmaRunner.MENU_REBUILD_ALL")); //$NON-NLS-1$
 		rebuild.addActionListener(this);
 		rebuild.setIcon(LGM.getIconForKey("EnigmaPlugin.REBUILD_ALL"));
-		rebuild.setAccelerator(KeyStroke.getKeyStroke("F10"));
+		rebuild.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.REBUILD_ALL")));
 		menu.add(rebuild);
 
 		menu.addSeparator();
