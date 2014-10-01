@@ -88,7 +88,6 @@ import org.lateralgm.main.LGM;
 import org.lateralgm.main.LGM.ReloadListener;
 import org.lateralgm.main.LGM.SingletonPluginResource;
 import org.lateralgm.main.Listener;
-import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.Script;
 import org.lateralgm.subframes.ActionFrame;
@@ -1014,11 +1013,9 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				LGM.currentFile.resMap.put(EnigmaSettings.class,
 						rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
 			
-			esh.resOriginal = rh.getResource();
+			esh.res = rh.getResource();
+			esh.resOriginal = rh.getResource().clone();
 			esh.revertResource(); //updates local res copy as well
-			
-			//TODO: See comments in LGM reload() this is only a temporary patch.
-			LGM.currentFile.resMap.put(EnigmaSettings.class,new SingletonResourceHolder(esh.res));
 		}
 		LGM.LOADING_PROJECT = false;
 	}

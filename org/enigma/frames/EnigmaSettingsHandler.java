@@ -757,7 +757,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 		//super.revertResource(); no longer a frame so must manually update the reference
 		resOriginal.updateReference();
 		resOriginal.copyInto(res);
-		setComponents(resOriginal);
+		setComponents(res);
 		}
 
 	/** A special ComboBoxModel to alleviate repopulation */
