@@ -694,9 +694,11 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 */
 	//FIXME: This shouldn't override. Find out if this affects anything else
 	@Override
-	public void updateResource()
+	public void updateResource(boolean commit)
 		{
-		commitChanges();
+		if (commit) {
+			commitChanges();
+		}
 		res.copyInto(resOriginal);
 		}
 
