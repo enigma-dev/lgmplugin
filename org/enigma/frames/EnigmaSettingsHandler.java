@@ -1041,12 +1041,46 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 	@Override
 	public boolean resourceChanged() {
 		commitChanges();
+		if (cfDef != null && cfDef.resourceChanged()) return true;
+		if (cfGlobLoc != null && cfGlobLoc.resourceChanged()) return true;
+		if (cfInit != null && cfInit.resourceChanged()) return true;
+		if (cfClean != null && cfClean.resourceChanged()) return true;
 		return !res.equals(resOriginal);
 	}
 
 	@Override
 	public void setResourceChanged() {
 		res.changed = true;
+	}
+
+	@Override
+	public void dispose() {
+		if (cfDef != null)
+			cfDef.dispose();
+		if (cfGlobLoc != null)
+			cfGlobLoc.dispose();
+		if (cfInit != null)
+			cfInit.dispose();
+		if (cfClean != null)
+			cfClean.dispose();
+	}
+	
+	@Override 
+	public void setVisible(boolean visible) {
+		//TODO: This here needs worked out because if you close the frame
+		//then the associated windows should be closed as well. But there is
+		//difficulty in getting the frames to revert because they must be committed to the driver.
+		//dispose();
+		/*
+		if (cfDef != null)
+			cfDef.setVisible(false);
+		if (cfGlobLoc != null)
+			cfGlobLoc.setVisible(false);
+		if (cfInit != null)
+			cfInit.setVisible(false);
+		if (cfClean != null)
+			cfClean.setVisible(false);
+		*/
 	}
 	
 }
