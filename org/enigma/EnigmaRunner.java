@@ -939,7 +939,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		return rl;
 		}
 
-	public void subframeAppeared(MDIFrame source)
+	public void subframeAppeared(MDIFrame source, boolean wasVisible)
 		{
 		JToolBar tool;
 		final CodeTextArea code;
@@ -969,6 +969,9 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		else
 			return;
 
+		// if the frame was already visible we don't have to add this stuff again
+		if (wasVisible) return;
+		
 		status.add(new JLabel(" | ")); //$NON-NLS-1$
 		//visible divider       ^   since JSeparator isn't visible and takes up the whole thing...
 		final JLabel errors = new JLabel(Messages.getString("EnigmaRunner.LABEL_ERRORS_UNSET")); //$NON-NLS-1$
