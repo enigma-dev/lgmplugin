@@ -123,7 +123,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public EnigmaSettingsHandler esh;
 	public JMenuItem busy, run, debug, design, compile, rebuild, stop;
 	public JButton stopb, runb, debugb, compileb;
-	public JMenuItem mImport, showFunctions, showGlobals, showTypes;
+	public JMenuItem showFunctions, showGlobals, showTypes;
 	
 	public EnigmaRunner()
 		{
@@ -461,12 +461,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		menu.addSeparator();
 
-		mImport = addItem(Messages.getString("EnigmaRunner.MENU_IMPORT")); //$NON-NLS-1$
-		mImport.addActionListener(this);
-		menu.add(mImport);
-
-		menu.addSeparator();
-
 		JMenuItem mi = addItem(Messages.getString("EnigmaRunner.MENU_SETTINGS")); //$NON-NLS-1$
 		mi.setIcon(LGM.getIconForKey("EnigmaPlugin.SETTINGS"));
 		mi.addActionListener(new ActionListener()
@@ -793,7 +787,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		if (s == compile || s == compileb) compile(MODE_COMPILE);
 		if (s == rebuild) compile(MODE_REBUILD);
 
-		if (s == mImport) EFileReader.importEgmFolder();
 		if (s == showFunctions) showKeywordListFrame(FUNCTIONS);
 		if (s == showGlobals) showKeywordListFrame(GLOBALS);
 		if (s == showTypes) showKeywordListFrame(TYPES);

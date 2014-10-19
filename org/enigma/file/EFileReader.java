@@ -483,6 +483,7 @@ public class EFileReader
 		}
 
 	// Constructors
+	//TODO: This has been replaced with a more comprehensive system that supports all formats for importing/exporting en masse.
 	//TODO: Improve the Folder Chooser
 	public static void importEgmFolder()
 		{
@@ -512,6 +513,7 @@ public class EFileReader
 	public static void importEgmFolder(File folder)
 		{
 		if (folder == null || !folder.exists() || !folder.isDirectory()) return;
+		/*
 		try
 			{
 			readEgmFile(folder,LGM.newRoot(),false);
@@ -520,17 +522,17 @@ public class EFileReader
 			{
 			EnigmaRunner.showDefaultExceptionHandler(e);
 			}
+		*/
 		}
 
-	public static ProjectFile readEgmFile(File f, ResNode root, boolean zip) throws GmFormatException
+	public static ProjectFile readEgmFile(ProjectFile gf, ResNode root, boolean zip) throws GmFormatException
 		{
-		ProjectFile gf = new ProjectFile();
 		gf.resMap.put(EnigmaSettings.class,new SingletonResourceHolder<EnigmaSettings>(
 				new EnigmaSettings()));
-		gf.uri = f.toURI();
 		EProjectFile epf = null;
 		try
 			{
+			File f = new File(gf.uri);
 			epf = zip ? new EGMZipFile(f) : new EGMFolderFile(f);
 			readEgmFile(epf,gf,root);
 			return gf;

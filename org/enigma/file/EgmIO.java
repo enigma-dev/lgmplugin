@@ -51,15 +51,14 @@ public class EgmIO extends FileView implements FileReader,FileWriter,GroupFilter
 		return filter.accept(new File(uri));
 		}
 
-	public ProjectFile read(InputStream in, URI uri, ResNode root) throws GmFormatException
+	public void read(InputStream in, ProjectFile file, URI uri, ResNode root) throws GmFormatException
 		{
-		ProjectFile file = EFileReader.readEgmFile(new File(uri),root,true);
+		EFileReader.readEgmFile(file,root,true);
 		try {
 			in.close();
 		} catch (IOException e) {
 			EnigmaRunner.showDefaultExceptionHandler(e);
 		}
-		return file;
 		}
 
 	//Writer
