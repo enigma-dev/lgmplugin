@@ -62,7 +62,6 @@ import org.enigma.backend.EnigmaDriver;
 import org.enigma.backend.EnigmaDriver.SyntaxError;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.backend.EnigmaStruct;
-import org.enigma.file.EFileReader;
 import org.enigma.file.EgmIO;
 import org.enigma.file.YamlParser;
 import org.enigma.file.YamlParser.YamlNode;
