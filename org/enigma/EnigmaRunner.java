@@ -228,7 +228,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	// Show the default uncaught exception handler dialog to the user with a stack trace they can use to submit a bug report.
 	public static void showDefaultExceptionHandler(Throwable e) {
 		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
-		System.out.println(Thread.currentThread().getName()+": "+e);
+		System.out.println(Thread.currentThread().getName() + ": ");
 		e.printStackTrace();
 		if (!uncaughtExceptionDialog.isVisible()) {
 			uncaughtExceptionDialog.setVisible(true);
