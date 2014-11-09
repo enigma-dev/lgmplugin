@@ -60,6 +60,7 @@ import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.ProjectFile.SingletonResourceHolder;
+import org.lateralgm.file.ApngIO;
 import org.lateralgm.file.GmFormatException;
 import org.lateralgm.file.GmStreamDecoder;
 import org.lateralgm.file.ResourceList;

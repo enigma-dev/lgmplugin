@@ -39,6 +39,7 @@ import org.enigma.EnigmaRunner;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.messages.Messages;
 import org.lateralgm.components.impl.ResNode;
+import org.lateralgm.file.ApngIO;
 import org.lateralgm.file.ProjectFile;
 import org.lateralgm.file.ProjectFile.FormatFlavor;
 import org.lateralgm.file.GmStreamEncoder;
