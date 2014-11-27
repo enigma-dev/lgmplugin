@@ -69,6 +69,7 @@ import org.enigma.frames.EnigmaSettingsHandler;
 import org.enigma.frames.ProgressFrame;
 import org.enigma.messages.Messages;
 import org.enigma.utility.EnigmaBuildReader;
+import org.lateralgm.components.CustomFileChooser;
 import org.lateralgm.components.ErrorDialog;
 import org.lateralgm.components.CodeTextArea;
 import org.lateralgm.components.GmMenu;
@@ -714,7 +715,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		}
 		if (mode == MODE_COMPILE)
 		{
-			JFileChooser fc = new JFileChooser();
+			CustomFileChooser fc = new CustomFileChooser("/org/lateralgm","LAST_FILE_DIR");
 			CustomFileFilter exefilter = new CustomFileFilter(
 					Messages.getString("EnigmaRunner.CHOOSER_EXE_DESCRIPTION"), ext);
 			fc.setFileFilter(exefilter); //$NON-NLS-1$
