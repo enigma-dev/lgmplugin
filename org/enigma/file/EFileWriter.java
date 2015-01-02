@@ -877,36 +877,39 @@ public class EFileWriter
 		public void write(EGMOutputStream os, ProjectFile gf, ResNode child, List<String> dir)
 				throws IOException
 			{
-			GameSettings gs = gf.gameSettings.firstElement();
-			String name = (String) child.getUserObject();
-			String icon = "icon.ico", sSplash = "splash.png"; //$NON-NLS-1$ //$NON-NLS-2$
-			String sFiller = "filler.png", sProgress = "progress.png"; //$NON-NLS-1$ //$NON-NLS-2$
-
-			Object splash = gs.get(PGameSettings.LOADING_IMAGE);
-			Object filler = gs.get(PGameSettings.BACK_LOAD_BAR);
-			Object progress = gs.get(PGameSettings.FRONT_LOAD_BAR);
-
-			if (splash == null) sSplash = null;
-			if (filler == null) sFiller = null;
-			if (progress == null) sProgress = null;
-
-			PrintStream ps = new PrintStream(os.next(dir,name + EY));
-			ps.println("Icon: " + icon); //$NON-NLS-1$
-			ps.println("Splash: " + sSplash); //$NON-NLS-1$
-			ps.println("Filler: " + sFiller); //$NON-NLS-1$
-			ps.println("Progress: " + sProgress); //$NON-NLS-1$
-
-			//handle guid
-			ps.print(PGameSettings.GAME_GUID.name() + ": 0x");
-			byte[] dg = (byte[]) gs.get(PGameSettings.GAME_GUID);
-			ps.format("%032x\n",new BigInteger(1,dg));
-
-			writeProperties(ps,gs.properties);
-
-			((ICOFile) gs.get(PGameSettings.GAME_ICON)).write(os.next(dir,icon));
-			if (splash != null) ImageIO.write((BufferedImage) splash,"png",os.next(dir,sSplash));
-			if (filler != null) ImageIO.write((BufferedImage) filler,"png",os.next(dir,sFiller));
-			if (progress != null) ImageIO.write((BufferedImage) progress,"png",os.next(dir,sProgress));
+			List<String> cfgdir = new ArrayList<String>(dir);
+			cfgdir.add("Configurations");
+			for (GameSettings gs : gf.gameSettings) {
+				String name = gs.getName();
+				String icon = name + "_icon.ico", sSplash = name + "_splash.png"; //$NON-NLS-1$ //$NON-NLS-2$
+				String sFiller = name + "_filler.png", sProgress = name + "_progress.png"; //$NON-NLS-1$ //$NON-NLS-2$
+	
+				Object splash = gs.get(PGameSettings.LOADING_IMAGE);
+				Object filler = gs.get(PGameSettings.BACK_LOAD_BAR);
+				Object progress = gs.get(PGameSettings.FRONT_LOAD_BAR);
+	
+				if (splash == null) sSplash = null;
+				if (filler == null) sFiller = null;
+				if (progress == null) sProgress = null;
+	
+				PrintStream ps = new PrintStream(os.next(cfgdir,name + EY));
+				ps.println("Icon: " + icon); //$NON-NLS-1$
+				ps.println("Splash: " + sSplash); //$NON-NLS-1$
+				ps.println("Filler: " + sFiller); //$NON-NLS-1$
+				ps.println("Progress: " + sProgress); //$NON-NLS-1$
+	
+				//handle guid
+				ps.print(PGameSettings.GAME_GUID.name() + ": 0x");
+				byte[] dg = (byte[]) gs.get(PGameSettings.GAME_GUID);
+				ps.format("%032x\n",new BigInteger(1,dg));
+	
+				writeProperties(ps,gs.properties);
+	
+				((ICOFile) gs.get(PGameSettings.GAME_ICON)).write(os.next(cfgdir,icon));
+				if (splash != null) ImageIO.write((BufferedImage) splash,"png",os.next(cfgdir,sSplash));
+				if (filler != null) ImageIO.write((BufferedImage) filler,"png",os.next(cfgdir,sFiller));
+				if (progress != null) ImageIO.write((BufferedImage) progress,"png",os.next(cfgdir,sProgress));
+			}
 			}
 
 		public static void writeProperties(PrintStream os, PropertyMap<? extends Enum<?>> p)
