@@ -33,6 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.enigma.EnigmaRunner;
@@ -879,6 +880,11 @@ public class EFileWriter
 			{
 			List<String> cfgdir = new ArrayList<String>(dir);
 			cfgdir.add("Configurations");
+			PrintStream tps = new PrintStream(os.next(cfgdir,"toc.txt"));
+			//TODO: Josh is too crazy to help combine these into one loop.
+			for (GameSettings gs : gf.gameSettings) {
+				tps.println(gs.getName());
+			}
 			for (GameSettings gs : gf.gameSettings) {
 				String name = gs.getName();
 				String icon = name + "_icon.ico", sSplash = name + "_splash.png"; //$NON-NLS-1$ //$NON-NLS-2$

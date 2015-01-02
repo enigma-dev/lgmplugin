@@ -49,6 +49,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileView;
 
@@ -1268,6 +1269,7 @@ public class EFileReader
 		protected void readDataFile(EProjectFile f, ProjectFile gf, GameSettings r, Properties i, String dir)
 				throws IOException
 			{
+			JOptionPane.showMessageDialog(null, "readDataFile");
 			String[] entries = { "Icon","Splash","Filler","Progress" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			PGameSettings[] keys = { PGameSettings.GAME_ICON,PGameSettings.LOADING_IMAGE,
 					PGameSettings.BACK_LOAD_BAR,PGameSettings.FRONT_LOAD_BAR };
@@ -1300,6 +1302,7 @@ public class EFileReader
 
 		protected void readData(ProjectFile gf, GameSettings r, InputStream in)
 			{ //Unused since readDataFile is overridden
+			JOptionPane.showMessageDialog(null, "readData");
 			}
 		}
 
