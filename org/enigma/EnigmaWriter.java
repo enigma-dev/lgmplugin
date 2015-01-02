@@ -222,7 +222,7 @@ public final class EnigmaWriter {
 	}
 
 	protected void populateSettings() {
-		org.lateralgm.resources.GameSettings ig = i.gameSettings;
+		org.lateralgm.resources.GameSettings ig = LGM.getSelectedConfig();
 		GameSettings og = o.gameSettings;
 
 		og.gameId = ig.get(PGameSettings.GAME_ID);

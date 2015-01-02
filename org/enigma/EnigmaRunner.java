@@ -468,7 +468,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				@Override
 				public void actionPerformed(ActionEvent e)
 					{
-					LGM.showGameSettings();
+					LGM.showGameSettings(LGM.getSelectedConfig());
 					}
 			});
 		menu.add(mi);

@@ -877,7 +877,7 @@ public class EFileWriter
 		public void write(EGMOutputStream os, ProjectFile gf, ResNode child, List<String> dir)
 				throws IOException
 			{
-			GameSettings gs = gf.gameSettings;
+			GameSettings gs = gf.gameSettings.firstElement();
 			String name = (String) child.getUserObject();
 			String icon = "icon.ico", sSplash = "splash.png"; //$NON-NLS-1$ //$NON-NLS-2$
 			String sFiller = "filler.png", sProgress = "progress.png"; //$NON-NLS-1$ //$NON-NLS-2$
