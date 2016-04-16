@@ -459,7 +459,7 @@ public final class EnigmaWriter {
 			os.name = is.getName();
 			os.id = is.getId();
 
-			os.kind = ProjectFile.SOUND_CODE.get(is.get(PSound.KIND));
+			os.kind = ProjectFile.SOUND_KIND_CODE.get(is.get(PSound.KIND));
 			os.fileType = is.get(PSound.FILE_TYPE);
 			os.fileName = is.get(PSound.FILE_NAME);
 			os.chorus = is.get(PSound.CHORUS);

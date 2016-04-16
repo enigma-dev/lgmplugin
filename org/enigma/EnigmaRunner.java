@@ -420,9 +420,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		LGM.tool.add(new JToolBar.Separator(), 8);
 		
 		JMenu menu = new GmMenu(Messages.getString("EnigmaRunner.MENU_BUILD")); //$NON-NLS-1$
-		if (LGM.themename.equals("Quantum")) {
-		  menu.setFont(LGM.lnfFont);
-		}
 		menu.setMnemonic('B');
 		busy = addItem(Messages.getString("EnigmaRunner.MENU_BUSY"));
 		busy.setEnabled(false);
@@ -474,9 +471,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		menu.add(mi);
 
 		JMenu sub = new JMenu(Messages.getString("EnigmaRunner.MENU_KEYWORDS")); //$NON-NLS-1$
-		if (LGM.themename.equals("Quantum")) {
-		  sub.setFont(LGM.lnfFont);
-		}
 		menu.add(sub);
 
 		showFunctions = addItem(KEY_MODES[FUNCTIONS]);
@@ -494,9 +488,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	private JMenuItem addItem(String string) {
 		JMenuItem ret = new JMenuItem(string);
-		if (LGM.themename.equals("Quantum")) {
-		  ret.setFont(LGM.lnfFont);
-		}
 		return ret;
 	}
 

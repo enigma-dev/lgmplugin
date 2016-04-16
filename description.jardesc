@@ -11,24 +11,24 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <file path="/lgmplugin/.classpath"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.other"/>
-        <folder path="/lgmplugin/META-INF"/>
         <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.frames"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.other"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.util"/>
+        <file path="/lgmplugin/.classpath"/>
         <file path="/lgmplugin/description.jardesc"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.resources"/>
+        <folder path="/lgmplugin/META-INF"/>
         <file path="/lgmplugin/COPYING"/>
-        <file path="/lgmplugin/LICENSE"/>
-        <file path="/lgmplugin/.project"/>
         <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.messages"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend"/>
+        <file path="/lgmplugin/Makefile"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.utility"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.file"/>
+        <file path="/lgmplugin/LICENSE"/>
         <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.sub"/>
         <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.resources"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.file"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.utility"/>
-        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.util"/>
-        <file path="/lgmplugin/Makefile"/>
-        <file path="/lgmplugin/README.md"/>
         <file path="/lgmplugin/.gitignore"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend"/>
+        <file path="/lgmplugin/README.md"/>
+        <file path="/lgmplugin/.project"/>
     </selectedElements>
 </jardesc>
