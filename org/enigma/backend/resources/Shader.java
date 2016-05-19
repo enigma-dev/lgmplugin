@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Robert B. Colton
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -20,7 +20,7 @@ public class Shader extends Structure
 
 	public String vertex;
 	public String fragment;
-	
+
 	public String type;
 	public boolean precompile;
 

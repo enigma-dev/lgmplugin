@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2011 Josh Ventura <JoshV10@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -99,7 +99,7 @@ public final class TargetHandler
 	 * not many systems and it gets the job done. If you can think up a more
 	 * efficient solution, please do. For internal workings, see internal
 	 * comments.
-	 * 
+	 *
 	 * Note: System = Entry<String,Set<TargetSelection>>, or may omit the String
 	 */
 	private static Collection<Combo> dependencyResolution()

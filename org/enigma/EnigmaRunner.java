@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2008-2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2013, 2014 Robert B. Colton
- * 
+ *
  * This file is part of Enigma Plugin.
- * 
+ *
  * Enigma Plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Enigma Plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License (COPYING) for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -124,33 +124,34 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public JMenuItem busy, run, debug, design, compile, rebuild, stop;
 	public JButton stopb, runb, debugb, compileb;
 	public JMenuItem showFunctions, showGlobals, showTypes;
-	
+
 	public EnigmaRunner()
 		{
-		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
+		// Create the uncaught exception handler so that users will be displayed with a generic form
+		// to submit bug reports.
 		EnigmaRunner.addDefaultExceptionHandler();
-	    
+
 		addResourceHook();
-		
+
 		ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 		if (rh == null) {
 			LGM.currentFile.resMap.put(EnigmaSettings.class,
 					rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
 		}
-		
+
 		populateMenu();
 		populateTree();
-		
+
 		esh = new EnigmaSettingsHandler(rh.getResource());
 		esh.revertResource();
-		
+
 		rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 		final String makedir = rh.getResource().getOption("make-directory");
-		
+
 		LGM.addReloadListener(this);
 		SubframeInformer.addSubframeListener(this);
 		applyBackground("org/enigma/enigma.png"); //$NON-NLS-1$
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread()
 			{
 				public void run()
@@ -162,13 +163,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		setMenuEnabled(false);
 		//stop.setVisible(false);
 		//stopb.setVisible(false);
-		
+
 		final Thread initthread = new Thread()
 			{
 				public void run()
 					{
 					EnigmaRunner.addDefaultExceptionHandler();
-				    
+
 					//Make checks for changes itself
 					if (!make()) //displays own error
 						{
@@ -211,21 +212,21 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 					ENIGMA_READY = true;
 					}
 			};
-			
+
 			initthread.start();
 		}
 
 	// Adds a default uncaught exception handler to the current thread. This allows LGM to catch most exceptions
 	// and properly display a stack trace for the user to file a bug report.
 	public static void addDefaultExceptionHandler() {
-	    Thread.currentThread().setUncaughtExceptionHandler(
-	        new Thread.UncaughtExceptionHandler() {
-	            public void uncaughtException(Thread t, Throwable e) {
-	                EnigmaRunner.showDefaultExceptionHandler(e);
-	            }
-	    });
+			Thread.currentThread().setUncaughtExceptionHandler(
+					new Thread.UncaughtExceptionHandler() {
+							public void uncaughtException(Thread t, Throwable e) {
+									EnigmaRunner.showDefaultExceptionHandler(e);
+							}
+			});
 	}
-	
+
 	// Show the default uncaught exception handler dialog to the user with a stack trace they can use to submit a bug report.
 	public static void showDefaultExceptionHandler(Throwable e) {
 		// Create the uncaught exception handler so that users will be displayed with a generic form to submit bug reports.
@@ -418,7 +419,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		compileb.setIcon(LGM.getIconForKey("EnigmaPlugin.COMPILE"));
 		LGM.tool.add(compileb, 7);
 		LGM.tool.add(new JToolBar.Separator(), 8);
-		
+
 		JMenu menu = new GmMenu(Messages.getString("EnigmaRunner.MENU_BUILD")); //$NON-NLS-1$
 		menu.setMnemonic('B');
 		busy = addItem(Messages.getString("EnigmaRunner.MENU_BUSY"));
@@ -543,7 +544,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		for (Construct f : GMLKeywords.CONSTRUCTS)
 			BASE_CONSTRUCTS.add(f);
 		}
-	
+
 	private static String parseArguments(String args) {
 		if (!args.contains("(") || !args.contains(")")) { return args; }
 		return args.substring(args.indexOf("(") + 1, args.indexOf(")"));
@@ -643,32 +644,32 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public static String getUnixPath(String path) {
 		return path.replace("\\","/");
 	}
-	
-    class CompilerThread extends Thread {
-        final int mode;
-        final File efi;
-        CompilerThread(final int m, File outname) {
-            mode = m;
-            efi = outname;
-        }
 
-        public void run() {
-        	EnigmaRunner.addDefaultExceptionHandler();
-        	ef.open();
-        	ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
-        	EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
-        	ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
-        	System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
-        	System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
-        	setupBaseKeywords();
-        	populateKeywords();
-			
-        	setMenuEnabled(true);
-        	//stop.setEnabled(false);
-        	//stopb.setEnabled(false);
-        }
-    }
-    
+	class CompilerThread extends Thread {
+		final int mode;
+		final File efi;
+		CompilerThread(final int m, File outname) {
+			mode = m;
+			efi = outname;
+		}
+
+		public void run() {
+			EnigmaRunner.addDefaultExceptionHandler();
+			ef.open();
+			ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
+			EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
+			ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
+			System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
+			System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
+			setupBaseKeywords();
+			populateKeywords();
+
+			setMenuEnabled(true);
+			//stop.setEnabled(false);
+			//stopb.setEnabled(false);
+		}
+	}
+
 	private static CompilerThread cthread;
 	public void compile(final int mode)
 		{
@@ -686,7 +687,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		String ext = es.targets.get(TargetHandler.COMPILER).ext;
 		//String os = TargetHandler.normalize(System.getProperty("os.name")); //$NON-NLS-1$
-		
+
 		//determine `outname` (rebuild has no `outname`)
 		File outname = null;
 		try
@@ -730,7 +731,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		esh.commitChanges();
 		esh.res.commitToDriver(DRIVER);
 		//System.out.println("Compiling with " + enigma);
-		
+
 		cthread = new CompilerThread(mode, outname);
 		try {
 			cthread.join();
@@ -739,7 +740,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		}
 		//cthread.run(outname);
 		cthread.start();
-		
+
 		if (mode == MODE_DESIGN) //design
 			{
 			try
@@ -768,7 +769,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		{
 		if (!assertReady()) return;
 		Object s = e.getSource();
-		//if (s == stop || s == stopb)  {
+		//if (s == stop || s == stopb) {
 		//	cthread.interrupt();
 		//	setMenuEnabled(true);
 		//}
@@ -955,7 +956,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		// if the frame was already visible we don't have to add this stuff again
 		if (wasVisible) return;
-		
+
 		status.add(new JLabel(" | ")); //$NON-NLS-1$
 		//visible divider       ^   since JSeparator isn't visible and takes up the whole thing...
 		final JLabel errors = new JLabel(Messages.getString("EnigmaRunner.LABEL_ERRORS_UNSET")); //$NON-NLS-1$
@@ -993,13 +994,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public void reloadPerformed(boolean newRoot)
 	{
 		populateTree();
-		
+
 		if (esh != null) {
 			ResourceHolder<EnigmaSettings> rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
 			if (rh == null)
 				LGM.currentFile.resMap.put(EnigmaSettings.class,
 						rh = new SingletonResourceHolder<EnigmaSettings>(new EnigmaSettings()));
-			
+
 			esh.res = rh.getResource();
 			esh.resOriginal = rh.getResource().clone();
 			esh.revertResource(); //updates local res copy as well

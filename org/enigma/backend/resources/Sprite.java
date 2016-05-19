@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 IsmAvatar <IsmAvatar@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -22,7 +22,7 @@ public class Sprite extends Structure
 	public int id;
 
 	public boolean transparent;
-	public int shape; //0*=Precise, 1=Rectangle,  2=Disk, 3=Diamond
+	public int shape; //0*=Precise, 1=Rectangle, 2=Disk, 3=Diamond
 	public int alphaTolerance;
 	public boolean separateMask;
 	public boolean smoothEdges;

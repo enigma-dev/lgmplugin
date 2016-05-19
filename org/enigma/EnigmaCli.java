@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -48,7 +48,7 @@ public final class EnigmaCli
 	{
 	public static final String prog = "enigma"; //$NON-NLS-1$
 	public static EnigmaDriver DRIVER;
-	
+
 	private static final String targetsDelimiter = ";";
 	private static final String targetsItemDelimiter = ":";
 	private static final String targetsStart = "-targets=";
@@ -63,25 +63,24 @@ public final class EnigmaCli
 		System.err.println(prog + ": " + err); //$NON-NLS-1$
 		System.exit(-1);
 		}
-	
+
 	private static enum ArgumentType {
 		HELP, SYNTAX, TARGETS, INPUTFILE, OUTPUTNAME, UNKNOWN
 	}
-	
+
 	private static class ArgumentTypeAndValue {
 		public final ArgumentType argType;
 		public final String value;
-		
+
 		public ArgumentTypeAndValue(ArgumentType _argType, String _value) {
 			argType = _argType;
 			value = _value;
 		}
 	}
-	
+
 	private static List<ArgumentTypeAndValue> parseCommandLineArguments(String[] args) {
-		
 		List<ArgumentTypeAndValue> result = new ArrayList<ArgumentTypeAndValue>();
-		
+
 		for (String str : args) {
 			ArgumentType argType;
 			String value = str;
@@ -111,10 +110,10 @@ public final class EnigmaCli
 			}
 			result.add(new ArgumentTypeAndValue(argType, value));
 		}
-		
+
 		return result;
 	}
-	
+
 	private static boolean containsArgumentType(List<ArgumentTypeAndValue> parsedArguments, ArgumentType argType) {
 		for (ArgumentTypeAndValue argTypeAndValue : parsedArguments) {
 			if (argTypeAndValue.argType == argType) {
@@ -123,7 +122,7 @@ public final class EnigmaCli
 		}
 		return false;
 	}
-	
+
 	private static List<String> getValues(List<ArgumentTypeAndValue> parsedArguments, ArgumentType argType) {
 		List<String> results = new ArrayList<String>();
 		for (ArgumentTypeAndValue argTypeAndValue : parsedArguments) {
@@ -133,11 +132,11 @@ public final class EnigmaCli
 		}
 		return results;
 	}
-	
+
 	private static class TargetsOrError {
 		public final Map<String, TargetSelection> targetToValue;
 		public final String error; // If empty, no error. Else, error.
-		
+
 		public TargetsOrError(Map<String, TargetSelection> _targetToValue, String _error) {
 			targetToValue = _targetToValue;
 			error = _error;
@@ -145,11 +144,9 @@ public final class EnigmaCli
 	}
 
 	private static TargetsOrError parseTargets(String targetsString) {
-		
 		final Map<String, TargetSelection> result = new HashMap<String, TargetSelection>();
-		
 		final String[] targets = targetsString.split(targetsDelimiter);
-		
+
 		for (String target : targets) {
 			final String[] keyValue = target.split(targetsItemDelimiter);
 			if (keyValue.length != 2) { // Ignore ill-formed key-value pairs.
@@ -173,7 +170,7 @@ public final class EnigmaCli
 				return new TargetsOrError(result, "API target not found. API type, target: " + key + ", " + valueString);
 			}
 		}
-		
+
 		return new TargetsOrError(result, "");
 	}
 
@@ -202,14 +199,14 @@ public final class EnigmaCli
 			"    compiling. Default is the path and name of the game source file\n" +
 			"    without its extension.\n"
 			;
-		
+
 		if (args.length < 1) {
 			System.out.println(helpString);
 			error("No arguments.");
 		}
-		
+
 		final List<ArgumentTypeAndValue> parsedArguments = parseCommandLineArguments(args);
-		
+
 		if (containsArgumentType(parsedArguments, ArgumentType.HELP)) {
 			System.out.println(helpString);
 			System.exit(0);
@@ -232,7 +229,7 @@ public final class EnigmaCli
 			}
 			inputFile = inputFiles.get(0);
 		}
-		
+
 		final boolean syntax = containsArgumentType(parsedArguments, ArgumentType.SYNTAX);
 		final boolean hasTargets = containsArgumentType(parsedArguments, ArgumentType.TARGETS);
 		TargetsOrError parsedTargets;
@@ -245,12 +242,12 @@ public final class EnigmaCli
 			}
 			String targetsString = targetsStringBuilder.toString();
 			parsedTargets = parseTargets(targetsString);
-			
+
 			if (hasTargets && !parsedTargets.error.equals("")) {
 				error(parsedTargets.error);
 			}
 		}
-		
+
 		String outname = null;
 		{
 			List<String> outputNames = getValues(parsedArguments, ArgumentType.OUTPUTNAME);
@@ -264,7 +261,7 @@ public final class EnigmaCli
 				error("Output name indicated multiple times.");
 			}
 		}
-		
+
 		int compilation_status = 0;
 		try
 			{
@@ -286,7 +283,7 @@ public final class EnigmaCli
 		System.out.println("CLI Done.");
 		System.exit(compilation_status); //FIXME: Find out why it doesn't terminate normally
 		}
-	
+
 	private static void transformEnigmaSettings(EnigmaSettings enigmaSettings, Map<String, TargetSelection> newTargets) {
 		if (newTargets != null) {
 			for (Map.Entry<String, TargetSelection> target : newTargets.entrySet()) {
@@ -342,7 +339,7 @@ public final class EnigmaCli
 			}
 		return DRIVER.libInit(new EnigmaCallbacks(new CliOutputHandler())); //returns String on toolchain failure
 		}
-	
+
 	public static void syntaxChecker(ProjectFile f, ResNode root) {
 		syntaxChecker(f, root, null);
 	}
@@ -355,7 +352,7 @@ public final class EnigmaCli
 		else
 			error(se.line + ":" + se.position + "::" + se.errorString);
 		}
-	
+
 	public static SyntaxError syntaxCheck(ProjectFile f, ResNode root) {
 		return syntaxCheck(f, root, null);
 	}
@@ -380,7 +377,7 @@ public final class EnigmaCli
 
 		return null;
 		}
-	
+
 	public static int compile(ProjectFile f, ResNode root, String outname) {
 		return compile(f, root, null);
 	}
@@ -395,7 +392,7 @@ public final class EnigmaCli
 
 		//Generate arguments for compile
 		EnigmaStruct es = EnigmaWriter.prepareStruct(f,root);
-		
+
 		//XXX: Handle custom modes?
 		int mode = EnigmaRunner.MODE_COMPILE;
 

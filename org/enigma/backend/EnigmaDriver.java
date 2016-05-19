@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 IsmAvatar <IsmAvatar@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -31,7 +31,7 @@ public interface EnigmaDriver extends Library
 		}
 
 	public void libSetMakeDirectory(String dir);
-	
+
 	public String libInit(EnigmaCallbacks ef);
 
 	public SyntaxError definitionsModified(String wscode, String yaml);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 IsmAvatar <IsmAvatar@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -182,11 +182,11 @@ public class EnigmaSettings extends Resource<EnigmaSettings,EnigmaSettings.PEnig
 			Collections.addAll(extensions,ext.split(","));
 			}
 		}
-	
+
 	public String getOption(String key) {
 		return options.get(key);
 	}
-	
+
 	//TODO: This method is necessary in order to determine whether to escape
 	//the value with quotations, since string values in YAML such as make directory
 	//which contain % and other symbols need to be escaped.

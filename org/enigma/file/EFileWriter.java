@@ -2,7 +2,7 @@
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2011 Josh Ventura <JoshV10@gmail.com>
  * Copyright (C) 2013-2014 Robert B. Colton
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -243,7 +243,7 @@ public class EFileWriter
 			Resource<?,?> r = (Resource<?,?>) Util.deRef((ResourceReference<?>) child.getRes());
 			this.write(os, gf, name, r, dir);
 			}
-		
+
 		public void write(EGMOutputStream os, ProjectFile gf, String name, Resource<?,?> r, List<String> dir)
 				throws IOException
 			{
@@ -271,7 +271,7 @@ public class EFileWriter
 
 	/**
 	 * Convenience wrapper for automatically writing allowed properties.
-	 * 
+	 *
 	 * @see DataResourceWriter
 	 */
 	static abstract class DataPropWriter extends DataResourceWriter
@@ -349,13 +349,13 @@ public class EFileWriter
 		JProgressBar progressBar = LGM.getProgressDialogBar();
 		progressBar.setMaximum(tree.getChildCount());
 		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
-		
+
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		writeNodeChildren(os,gf,tree,new ArrayList<String>());
-		
+
 		EnigmaSettingsWriter esw = new EnigmaSettingsWriter();
 		esw.write(os, gf, "Enigma Settings", new ArrayList<String>());
-		
+
 		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
@@ -365,7 +365,7 @@ public class EFileWriter
 			throws IOException
 		{
 		PrintStream ps = new PrintStream(os.next(dir,"toc.txt")); //$NON-NLS-1$
-		
+
 		int children = node.getChildCount();
 		for (int i = 0; i < children; i++)
 			{
@@ -392,7 +392,7 @@ public class EFileWriter
 				writeNodeChildren(os,gf,child,newDir);
 				}
 			}
-		if (node.status == ResNode.STATUS_PRIMARY) 
+		if (node.status == ResNode.STATUS_PRIMARY)
 			LGM.setProgress(LGM.getProgressDialogBar().getValue()+1,Messages.getString("ProgressDialog.ENTRIES"));
 		}
 
@@ -511,11 +511,10 @@ public class EFileWriter
 			return false;
 			}
 		}
-	
+
 	static class ShaderEefWriter implements ResourceWriter
 	{
-		
-		public String getExt(Resource<?,?> r)
+	public String getExt(Resource<?,?> r)
 		{
 		return EY; //$NON-NLS-1$
 		}
@@ -531,14 +530,13 @@ public class EFileWriter
 		ps.println("FRAGMENT: " + name + ".fragment");
 		ps.println("TYPE: " + r.properties.get(PShader.TYPE));
 		ps.println("PRECOMPILE: " + r.properties.get(PShader.PRECOMPILE));
-		
+
 		PrintStream vps = new PrintStream(os.next(dir,name + ".vertex"), false, "UTF-8");
 		vps.print(r.properties.get(PShader.VERTEX));
-		
+
 		PrintStream fps = new PrintStream(os.next(dir,name + ".fragment"), false, "UTF-8");
 		fps.print(r.properties.get(PShader.FRAGMENT));
 		}
-	
 	}
 
 	static class FontEefWriter extends DataPropWriter
@@ -555,11 +553,11 @@ public class EFileWriter
 		Font fnt = (Font) r;
 		PrintStream ps = new PrintStream(os);
 
-		for (CharacterRange cr : fnt.characterRanges) {
+		for (CharacterRange cr : fnt.characterRanges)
+			{
 			ps.println(cr.properties.get(PCharacterRange.RANGE_MIN) + "," +
 					cr.properties.get(PCharacterRange.RANGE_MAX));
-		}
-	
+			}
 		}
 	}
 
@@ -579,31 +577,30 @@ public class EFileWriter
 			GmObject obj = (GmObject) r;
 			PrintStream ps = new PrintStream(os, false, "UTF-8");
 			int numEvents = 0;
-		
+
 			// Write the Events super-key
 			for (MainEvent me : obj.mainEvents)
 				numEvents += me.events.size();
 			ps.println("Events{" + numEvents + "}");
-		
+
 			// Write the events
 			for (MainEvent me : obj.mainEvents) {
 				for (Event ev : me.events)
 				{
 				ps.print("  Event (");
-		
+
 				if (ev.mainId == MainEvent.EV_COLLISION)
 					ps.print(getName(ev.other,NONE));
 				else
 					ps.print(ev.id);
-		
+
 				ps.println("," + ev.mainId + "): " + "Actions{" + ev.actions.size() + "}");
 					printActions(ps, ev.actions);
 				}
 			}
 		}
-	
 	}
-	
+
 	static class TimelineEefWriter extends DataPropWriter
 		{
 		@Override
@@ -612,19 +609,17 @@ public class EFileWriter
 			return ".tml"; //$NON-NLS-1$
 			}
 
-		
-
 		@Override
 		public void writeData(OutputStream os, Resource<?,?> r) throws IOException
 			{
 			Timeline tml = (Timeline) r;
 			PrintStream ps = new PrintStream(os, false, "UTF-8");
-			
+
 			// Write the Moments super-key
 			ps.println("Moments{" + tml.moments.size() + "}");
 
 			// Write the events
-			for (Moment mom : tml.moments) 
+			for (Moment mom : tml.moments)
 			{
 				ps.println("  Moment (" + mom.stepNo + "): " + "Actions{" + mom.actions.size() + "}");
 				printActions(ps, mom.actions);
@@ -757,14 +752,14 @@ public class EFileWriter
 			{
 			Room rm = (Room) r;
 			GmStreamEncoder out = new GmStreamEncoder(os);
-			
+
 			//FIXME: UTF-8 Encode the creation code then reset the charset, since the code
 			// has not been tested to use it explicitly.
 			Charset cs = out.getCharset();
 			out.setCharset(Charset.forName("UTF-8"));
 			out.writeStr(rm.getCode());
 			out.setCharset(cs);
-			
+
 			out.write4(rm.backgroundDefs.size());
 			for (BackgroundDef back : rm.backgroundDefs)
 				{
@@ -802,7 +797,7 @@ public class EFileWriter
 				out.setCharset(Charset.forName("UTF-8"));
 				out.writeStr(in.getCreationCode());
 				out.setCharset(cs);
-				
+
 				out.writeBool(in.isLocked());
 				}
 			out.write4(rm.tiles.size());
@@ -948,7 +943,7 @@ public class EFileWriter
 				List<String> dir) throws IOException {
 			this.write(os, gf, (String)child.getUserObject(), dir);
 		}
-		
+
 		public void write(EGMOutputStream os, ProjectFile gf, String name, List<String> dir)
 				throws IOException
 			{
@@ -999,7 +994,7 @@ public class EFileWriter
 		Resource<?,?> r = Util.deRef(rr);
 		return r == null ? def : r.getName();
 	}
-	
+
 	public static void printActions(PrintStream ps, List<Action> actions) {
 		final String NONE = "none", OTHER = "other";
 		for (Action action : actions)

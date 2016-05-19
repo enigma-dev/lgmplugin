@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Steve Purcell
  * Originally part of jargs.
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.

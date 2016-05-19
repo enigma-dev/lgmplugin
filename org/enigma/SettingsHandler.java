@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -103,7 +103,7 @@ public final class SettingsHandler
 	private static boolean ValueIsBoolean(String val) {
 		return !(val.startsWith("0") || val.startsWith("f") || val.startsWith("n"));
 	}
-	
+
 	private static void parseOptions() throws YamlException
 		{
 		optionGroups = new ArrayList<OptionGroupSetting>();
@@ -161,7 +161,7 @@ public final class SettingsHandler
 				try
 					{
 					String def = on.getMC("Default-" + TargetHandler.getOS(),"");
-					if (def == null || def.equals("")) 
+					if (def == null || def.equals(""))
 						def = on.getMC("Default","0");
 					opt = new OptionSetting(on.name,on.getMC("Label",null), //$NON-NLS-1$
 							on.getMC("Type",null), //$NON-NLS-1$
@@ -203,7 +203,7 @@ public final class SettingsHandler
 					String icon = yn.getMC("icon",null); //$NON-NLS-1$
 					String desc = yn.getMC("description"); //$NON-NLS-1$
 					String def = yn.getMC("Default-" + TargetHandler.getOS(),"");
-					if (def == null || def.equals("")) 
+					if (def == null || def.equals(""))
 						def = yn.getMC("Default","1");
 					extensions.add(new ExtensionSetting(icon == null ? null : new File(f,icon),path,name,
 							desc,ValueIsBoolean(def)));

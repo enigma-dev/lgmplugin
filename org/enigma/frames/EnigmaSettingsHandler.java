@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2008-2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2014 Robert B. Colton
- * 
+ *
  * This file is part of Enigma Plugin.
- * 
+ *
  * Enigma Plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Enigma Plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License (COPYING) for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -102,7 +102,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 	private static final ImageIcon CODE_ICON = LGM.getIconForKey("Resource.SCRIPT"); //$NON-NLS-1$
 	private static final String[] labels = { "Compiler: ","Platform: ","Graphics: ","Audio: ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"Collision: ","Widgets: ","Networking: " }; //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	/** The resource this frame is editing (feel free to change it as you wish) */
 	public EnigmaSettings res;
 	/** Backup of res as it was before changes were made */
@@ -211,7 +211,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			if (name != null) cChoices[0] = new JLabel(name);
 			cChoices[name == null ? 0 : 1] = combo = new JComboBox<String>(choices);
 			}
-		
+
 		void populateCheckbox(String name, boolean enabled)
 		{
 			cChoices = new JComponent[1];
@@ -219,7 +219,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			checkbox.setSelected(enabled);
 			cChoices[0] = checkbox;
 		}
-		
+
 		void populateTextfield(String name, String def)
 		{
 			cChoices = new JComponent[2];
@@ -234,7 +234,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			if (val == null) return;
 			try
 			{
-				if (checkbox != null) { 
+				if (checkbox != null) {
 					checkbox.setSelected(Boolean.parseBoolean(val));
 				} else if (textfield != null) {
 					textfield.setText(val);
@@ -255,25 +255,25 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			else if (combo != null) combo.setSelectedIndex(val);
 			else if (textfield != null) textfield.setText(Integer.toString(val));
 			}
-		
+
 		void setValue(boolean val)
 		{
-		
+
 		}
 
 		String getValue()
 		{
 			if (ibg != null) return Integer.toString(ibg.getValue());
 			if (combo != null) return Integer.toString(combo.getSelectedIndex());
-			
+
 			if (checkbox != null) {
 				return Boolean.toString(checkbox.isSelected());
 			}
-			
+
 			if (textfield != null) {
 				return textfield.getText();
 			}
-				
+
 			return other;
 		}
 	}
@@ -282,45 +282,45 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 	{
 		this.res = es;
 		resOriginal = res.clone();
-		
+
 		fc = new CustomFileChooser("/org/enigma","LAST_SETTINGS_DIR"); //$NON-NLS-1$ //$NON-NLS-2$
 		fc.setFileFilter(new CustomFileFilter(
 				".ey",Messages.getString("EnigmaSettingsFrame.EY_DESCRIPTION"))); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		GameSettingFrame gsf = LGM.getGameSettings();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) gsf.tree.getModel().getRoot();
 		DefaultMutableTreeNode enode = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_ENIGMA"));
 		JPanel pane = makeENIGMAPane();
 		root.add(enode);
 		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_ENIGMA"));
-		
+
 		gsf.setFrameListener(this);
-		
+
 		pane = makeSettings();
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_GENERAL"));
 		enode.add(node);
 		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_GENERAL"));
-		
+
 		pane = makeAPI();
 		node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_API"));
 		enode.add(node);
 		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_API"));
-		
+
 		pane = makeExtensions();
 		node = new DefaultMutableTreeNode(Messages.getString("EnigmaSettingsFrame.TAB_EXTENSIONS"));
 		enode.add(node);
 		gsf.cardPane.add(pane,Messages.getString("EnigmaSettingsFrame.TAB_EXTENSIONS"));
-		
+
 		// reload after adding all root children to make sure its children are visible
 		((DefaultTreeModel)gsf.tree.getModel()).reload();
-		
+
 		gsf.pack();
 		}
 
 	private JPanel makeENIGMAPane()
 		{
 		JPanel pane = new JPanel();
-		
+
 		// Setup the buttons
 		loadFile = new JButton(Messages.getString("EnigmaSettingsFrame.LOAD"),LGM.getIconForKey("Toolbar.OPEN")); //$NON-NLS-1$
 		loadFile.setToolTipText(Messages.getString("EnigmaSettingsFrame.LOAD_TIP")); //$NON-NLS-1$
@@ -515,7 +515,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 		{
 		private static final long serialVersionUID = 1L;
 		public final int defrowheight = 36;
-		
+
 		public ExtensionSelector()
 			{
 			super(new ExtTableModel(extensions));
@@ -529,7 +529,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			getColumnModel().getColumn(2).setMaxWidth(defrowheight);
 			getColumnModel().getColumn(2).setMinWidth(12);
 			setRowHeight(defrowheight);
-			
+
 			this.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent arg0) {
@@ -540,7 +540,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 							//ds.getPreferredRowHeight());
 				}
 			});
-			
+
 			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			setShowVerticalLines(false);
@@ -841,7 +841,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 	 * can offer Win32 and X11 assuming we have a MinGW cross compiler and the Linux
 	 * GCC installed. If we have locked the compiler to MinGW-cross, the only option
 	 * for the windowing API is Win32.
-	 * 
+	 *
 	 * Use this function whenever anything should change about the available or locked
 	 * systems that would affect the combo box contents.
 	 */
@@ -860,10 +860,10 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 					}
 				if (addMe) options.add(combo.get(target.getValue())); // If the system meets all criteria, add it to the list.
 				}
-			//			target.getKey().setModel(new DefaultComboBoxModel(options.toArray(new TargetSelection[0])));
+			//	target.getKey().setModel(new DefaultComboBoxModel(options.toArray(new TargetSelection[0])));
 			// Finally, set the values of the combobox to the list we just generated.
 			// Since we iterated the main combo list linearly, and that list was sorted by score,
-			//   we can assume that the new list is likewise sorted by score.
+			// we can assume that the new list is likewise sorted by score.
 			((TargetCombo) target.getKey().getModel()).setData(options);
 			}
 		}
@@ -1064,8 +1064,8 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 		if (cfClean != null)
 			cfClean.dispose();
 	}
-	
-	@Override 
+
+	@Override
 	public void setVisible(boolean visible) {
 		//TODO: This here needs worked out because if you close the frame
 		//then the associated windows should be closed as well. But there is
@@ -1082,5 +1082,4 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 			cfClean.setVisible(false);
 		*/
 	}
-	
 }

@@ -2,7 +2,7 @@
  * Copyright (C) 2011 IsmAvatar <IsmAvatar@gmail.com>
  * Copyright (C) 2011 Josh Ventura <JoshV10@gmail.com>
  * Copyright (C) 2013-2014 Robert B. Colton
- * 
+ *
  * This file is part of Enigma Plugin.
  * Enigma Plugin is free software and comes with ABSOLUTELY NO WARRANTY.
  * See LICENSE for details.
@@ -116,7 +116,7 @@ public class EFileReader
 	{
 	public static final String EY = ".ey"; //$NON-NLS-1$
 	public static final boolean ADD_EY_ORPHANS = true;
-	
+
 	static Queue<PostponedRef> postpone = new LinkedList<PostponedRef>();
 
 	static interface PostponedRef
@@ -180,7 +180,7 @@ public class EFileReader
 		public abstract boolean isDirectory(String pathname);
 
 		public abstract InputStream asInputStream() throws IOException;
-		
+
 		public abstract InputStreamReader asInputStreamReader(String encoding) throws IOException;
 
 		public abstract SortedSet<String> getEntries();
@@ -238,7 +238,7 @@ public class EFileReader
 			{
 			return z.getInputStream(ent);
 			}
-		
+
 		public InputStreamReader asInputStreamReader(String encoding) throws IOException
 			{
 			return new InputStreamReader(z.getInputStream(ent), encoding);
@@ -318,7 +318,7 @@ public class EFileReader
 			{
 			return new FileInputStream(last);
 			}
-		
+
 		public InputStreamReader asInputStreamReader(String encoding) throws IOException
 			{
 			return new InputStreamReader(new FileInputStream(last), encoding);
@@ -342,10 +342,9 @@ public class EFileReader
 			}
 
 
-		public void close() {
-			
-		}
-		
+		public void close()
+			{
+			}
 		}
 
 	static class EgmEntry
@@ -507,7 +506,7 @@ public class EFileReader
 			});
 		if (chooser.showOpenDialog(LGM.frame) != JFileChooser.APPROVE_OPTION) return;
 		File f = chooser.getSelectedFile();
-		//FIXME: If this folder doesn't contain a toc.txt, ask for confirmation 
+		//FIXME: If this folder doesn't contain a toc.txt, ask for confirmation
 		importEgmFolder(f);
 		}
 
@@ -541,7 +540,7 @@ public class EFileReader
 		catch (IOException e)
 			{
 			throw new GmFormatException(gf,e);
-			} 
+			}
 		finally {
 			if (zip) {
 				epf.close();
@@ -555,16 +554,16 @@ public class EFileReader
 		JProgressBar progressBar = LGM.getProgressDialogBar();
 		progressBar.setMaximum(f.getEntries().size());
 		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
-		
+
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		readNodeChildren(f,gf,root,null,new String());
-		
+
 		readResource(f,gf,null,EnigmaSettings.class,
 				f.getEntry("Enigma Settings.ey").asInputStream(),"","Enigma Settings");
-		
+
 		while (!postpone.isEmpty())
 			postpone.remove().invoke();
-		
+
 		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
@@ -586,7 +585,7 @@ public class EFileReader
 			{
 			orphans.remove("toc.txt");
 			BufferedReader in = new BufferedReader(new InputStreamReader(f.asInputStream()));
-			
+
 			for (String entry = in.readLine(); entry != null; entry = in.readLine())
 				{
 				Class<? extends Resource<?,?>> ck = k;
@@ -756,7 +755,7 @@ public class EFileReader
 				}
 			}
 			}
-		
+
 		@Override
 		protected void put(ProjectFile gf, PropertyMap<PPath> p, PPath key, String val)
 			{
@@ -767,7 +766,6 @@ public class EFileReader
 				}
 			super.put(gf,p,key,val);
 			}
-		
 		}
 
 	static class ScriptReader extends DataPropReader<Script,PScript>
@@ -799,25 +797,27 @@ public class EFileReader
 	protected void readDataFile(EProjectFile f, ProjectFile gf, Shader sh, Properties i, String dir)
 			throws IOException
 		{
-		try {
+		try
+			{
 			InputStream in = f.getEntry("Shaders/" + sh.getFragmentCode()).asInputStream();
-		    sh.setFragmentCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
-		        
-		    in = f.getEntry("Shaders/" + sh.getVertexCode()).asInputStream();
+			sh.setFragmentCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
+
+			in = f.getEntry("Shaders/" + sh.getVertexCode()).asInputStream();
 			sh.setVertexCode(new String(Util.readFully(in).toByteArray(), "UTF-8"));
-		} catch (FileNotFoundException e) {
+			}
+		catch (FileNotFoundException e)
+			{
 			EnigmaRunner.showDefaultExceptionHandler(e);
+			}
 		}
 
-		}
-	
 	@Override
 	protected void readData(ProjectFile gf, Shader sh, InputStream in)
 		{
 
 		}
 	}
-	
+
 	static class FontEefReader extends DataPropReader<Font,PFont>
 		{
 
@@ -826,24 +826,24 @@ public class EFileReader
 		{
 			String str="";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-	        try {
-				while ((str = reader.readLine()) != null) { 
-				    String[] split = str.split(",");
-				    r.addRange(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+			try {
+				while ((str = reader.readLine()) != null) {
+					String[] split = str.split(",");
+					r.addRange(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
 				}
 			} catch (IOException e) {
 				EnigmaRunner.showDefaultExceptionHandler(e);
 			}
 		}
 	}
-	
+
 	static class TimelineEefReader extends DataPropReader<Timeline,PTimeline>
 	{
 		protected void readData(ProjectFile gf, Timeline r, InputStream in)
 		{
 			EEFNode mn = EEFReader.parse(in);
 			System.out.println("EEF Contents:");
-			
+
 			Timeline tml = (Timeline) r;
 			for (EEFNode mmnode : mn.children) {
 				for (EEFNode momnode : mmnode.children)
@@ -855,17 +855,16 @@ public class EFileReader
 						}
 					Moment mom = tml.addMoment();
 					mom.stepNo = Integer.parseInt(momnode.id[0]);
-						
+
 					readActions(gf, mom, momnode.children);
 				}
 			}
 		}
-	
+
 		protected void put(ProjectFile gf, PropertyMap<PTimeline> p, PTimeline key, String val)
 		{
 			super.put(gf,p,key,val);
 		}
-	
 	}
 
 	static class ObjectEefReader extends DataPropReader<GmObject,PGmObject>
@@ -904,26 +903,25 @@ public class EFileReader
 						}
 
 					obj.mainEvents.get(mid).events.add(e);
-						
+
 					readActions(gf, e, evnode.children);
 					}
 			}
-		
+
 		protected void put(ProjectFile gf, PropertyMap<PGmObject> p, PGmObject key, String val)
-		{
-			if (key == PGmObject.SPRITE || key == PGmObject.MASK)
-				{
-				putRef(gf.resMap.getList(Sprite.class),p,key,val.toString());
-				return;
-				}
-			if (key == PGmObject.PARENT)
-				{
-				putRef(gf.resMap.getList(GmObject.class),p,key,val.toString());
-				return;
-				}
-			super.put(gf,p,key,val);
-		}
-		
+			{
+				if (key == PGmObject.SPRITE || key == PGmObject.MASK)
+					{
+					putRef(gf.resMap.getList(Sprite.class),p,key,val.toString());
+					return;
+					}
+				if (key == PGmObject.PARENT)
+					{
+					putRef(gf.resMap.getList(GmObject.class),p,key,val.toString());
+					return;
+					}
+				super.put(gf,p,key,val);
+			}
 		}
 
 	static class RoomEefReader extends DataPropReader<Room,PRoom>
@@ -1147,7 +1145,7 @@ public class EFileReader
 				in.setCharset(Charset.forName("UTF-8"));
 				rm.setCode(in.readStr());
 				in.setCharset(cs);
-				
+
 				int nobackgrounds = in.read4();
 				for (int j = 0; j < nobackgrounds; j++)
 					{
@@ -1186,19 +1184,19 @@ public class EFileReader
 					inst.setColor(color);
 					inst.setAlpha(color.getAlpha());
 					inst.setRotation(in.readD());
-					
+
 					putRef(gf.resMap.getList(GmObject.class),inst.properties,PInstance.OBJECT,in.readStr());
 					//					GmObject temp = f.gmObjects.getUnsafe(in.read4());
 					//					if (temp != null) inst.properties.put(PInstance.OBJECT,temp.reference);
 					inst.properties.put(PInstance.ID,in.read4());
-					
+
 					//FIXME: UTF-8 Decode the creation code then reset the charset, since the code
 					// has not been tested to use it explicitly.
 					cs = in.getCharset();
 					in.setCharset(Charset.forName("UTF-8"));
 					inst.setCreationCode(in.readStr());
 					in.setCharset(cs);
-					
+
 					inst.setLocked(in.readBool());
 					}
 				int notiles = in.read4();
@@ -1480,7 +1478,7 @@ public class EFileReader
 		};
 	if (!pr.invoke()) postpone.add(pr);
 	}
-	
+
 	public static void readActions(ProjectFile gf, ActionContainer container, ArrayList<EEFNode> children) {
 		for (EEFNode actnode : children)
 		{
@@ -1495,7 +1493,7 @@ public class EFileReader
 			//Action action = new Action(la,args);
 			System.out.println("actnode(" + actnode.id[0] + " in " + actnode.id[1] + "): "
 					+ actnode.lineAttribs.size() + " arguments");
-	
+
 			LibAction la = LibManager.getLibAction(lid,aid);
 			if (la == null)
 				{
@@ -1503,13 +1501,13 @@ public class EFileReader
 				return;
 				}
 			Action a = container.addAction(la); //assuming the Library was found and la != null
-	
+
 			Map<String,String[]> attribs = actnode.namedAttributes;
 			if (attribs.containsKey("not")) a.setNot(true);
 			if (attribs.containsKey("relative")) a.setRelative(true);
 			String[] targets = attribs.get("applies");
 			if (targets != null && targets.length == 1) putAppliesRef(gf,a,targets[0]);
-	
+
 			Argument args[];
 			if (la.interfaceKind != LibAction.INTERFACE_CODE)
 				{
