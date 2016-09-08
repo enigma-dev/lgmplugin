@@ -199,7 +199,7 @@ public final class SettingsHandler
 					{
 					String path = "Universal_System/Extensions/" + f.getName(); //$NON-NLS-1$
 					YamlNode yn = YamlParser.parse(ey);
-					String name = yn.getMC("id"); //$NON-NLS-1$
+					String name = yn.getMC("name"); //$NON-NLS-1$
 					String icon = yn.getMC("icon",null); //$NON-NLS-1$
 					String desc = yn.getMC("description"); //$NON-NLS-1$
 					String def = yn.getMC("Default-" + TargetHandler.getOS(),"");
