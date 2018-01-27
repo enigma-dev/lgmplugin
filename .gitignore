@@ -1,4 +1,10 @@
-*~
-*.class
-enigma.jar
-*.jar
+# Build files
+/target/
+
+# Eclipse files (auto-generated from pom.xml)
+/.project
+/.classpath
+
+# IDEA files
+/lgmplugin.iml
+/.idea/
