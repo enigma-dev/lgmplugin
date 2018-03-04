@@ -22,6 +22,7 @@ package org.enigma.utility;
 import java.awt.Point;
 import java.io.File;
 
+import org.enigma.messages.Messages;
 import org.lateralgm.file.GmFormatException;
 import org.lateralgm.file.GmStreamDecoder;
 import org.lateralgm.main.LGM;
@@ -29,8 +30,6 @@ import org.lateralgm.resources.GmObject;
 import org.lateralgm.resources.Room;
 import org.lateralgm.resources.sub.Instance;
 import org.lateralgm.resources.sub.Instance.PInstance;
-
-import com.sun.xml.internal.bind.marshaller.Messages;
 
 public final class EnigmaBuildReader
 	{
