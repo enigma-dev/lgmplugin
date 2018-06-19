@@ -274,14 +274,15 @@ public final class TargetHandler
 			try
 				{
 				YamlNode node = YamlParser.parse(file);
+				YamlNode exeVarsNode = (YamlNode) node.getM("EXE-Vars");
 
 				TargetSelection ps = new TargetSelection();
 				ps.id = ey.substring(0,ey.length() - 3);
 				ps.name = node.getMC("Name"); //$NON-NLS-1$
 				ps.desc = node.getMC("Description",null); //$NON-NLS-1$
 				ps.auth = node.getMC("Maintainer",null); //$NON-NLS-1$
-				ps.ext = node.getMC("Build-Extension",null); //$NON-NLS-1$
-				ps.outputexe = node.getMC("Run-output",null); //$NON-NLS-1$
+				ps.ext = exeVarsNode.getMC("Build-Extension",null); //$NON-NLS-1$
+				ps.outputexe = exeVarsNode.getMC("Run-output",null); //$NON-NLS-1$
 				ps.depends = new HashMap<String,Set<String>>();
 				Set<String> target = new HashSet<String>();
 				String targplat = node.getMC("Target-platform",null); //$NON-NLS-1$
