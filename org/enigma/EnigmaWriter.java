@@ -49,8 +49,6 @@ import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 
 import javax.swing.JOptionPane;
-import javax.xml.bind.DatatypeConverter;
-
 import org.enigma.backend.EnigmaStruct;
 import org.enigma.backend.other.Constant;
 import org.enigma.backend.other.Extension;
@@ -195,13 +193,22 @@ public final class EnigmaWriter {
 		o.lastTileId = i.lastTileId;
 	}
 
-	// make sure we replace these md5 sum'd icons if they are in anybodies
-	// project
-	byte[][] icoBlackList = new byte[][] {
-			DatatypeConverter
-					.parseHexBinary("1f742f5c692b84bbe6e522233555e291"),
-			DatatypeConverter
-					.parseHexBinary("08aa73a35d0c8f45bcad79b0635007de") };
+	// The following array of byte arrays contains md5 checksums of GameMaker-default game
+	// icons and logos. These md5 checksums are used to remove these specific graphics to ensure
+	// that the default graphics (which are Yoyo IP and GM-specific) does not accidentally persist
+	// into an ENIGMA game file/binary.
+	private byte[][] icoBlackList = new byte[][] {
+		{
+		0x1F, 0x74, 0x2F, 0x5C, 0x69, 0x2B, (byte) 0x84,
+		(byte) 0xBB, (byte) 0xE6, (byte) 0xE5, 0x22, 0x23,
+		0x35, 0x55, (byte) 0xE2, (byte) 0x91 
+		},
+		{
+		0x08, (byte) 0xAA, 0x73, (byte) 0xA3, 0x5D, 0x0C,
+		(byte) 0x8F, 0x45, (byte) 0xBC, (byte) 0xAD, 0x79,
+		(byte) 0xB0, 0x63, 0x50, 0x07, (byte) 0xDE
+		},
+	};
 
 	protected void populateInformation() {
 		org.lateralgm.resources.GameInformation ig = i.gameInfo;
@@ -306,7 +313,7 @@ public final class EnigmaWriter {
 				File f = File.createTempFile("egm_ico", ".ico");
 
 				// if the icon has been black listed, replace it with the
-				// defualt one
+				// default one
 				byte[] hash = ico.getDigest("MD5");
 				for (byte[] blhash : icoBlackList) {
 					if (Arrays.equals(hash, blhash)) {
