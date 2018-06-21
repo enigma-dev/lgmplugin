@@ -48,7 +48,16 @@ public final class TargetHandler
 
 	static
 		{
-		load();
+		try
+			{
+			load();
+			}
+		catch (Throwable e)
+			{
+			// keep the plugin in a usable state even if this
+			// happens to fail to find any target compilers
+			EnigmaRunner.showDefaultExceptionHandler(e);
+			}
 		}
 
 	public static void load()
@@ -271,18 +280,15 @@ public final class TargetHandler
 			{
 			String ey = file.getName();
 			if (!ey.endsWith(".ey")) continue; //$NON-NLS-1$
+			TargetSelection ps = null;
 			try
 				{
 				YamlNode node = YamlParser.parse(file);
-				YamlNode exeVarsNode = (YamlNode) node.getM("EXE-Vars");
-
-				TargetSelection ps = new TargetSelection();
+				ps = new TargetSelection();
 				ps.id = ey.substring(0,ey.length() - 3);
 				ps.name = node.getMC("Name"); //$NON-NLS-1$
 				ps.desc = node.getMC("Description",null); //$NON-NLS-1$
 				ps.auth = node.getMC("Maintainer",null); //$NON-NLS-1$
-				ps.ext = exeVarsNode.getMC("Build-Extension",null); //$NON-NLS-1$
-				ps.outputexe = exeVarsNode.getMC("Run-output",null); //$NON-NLS-1$
 				ps.depends = new HashMap<String,Set<String>>();
 				Set<String> target = new HashSet<String>();
 				String targplat = node.getMC("Target-platform",null); //$NON-NLS-1$
@@ -290,10 +296,27 @@ public final class TargetHandler
 				target.add(targplat);
 				ps.depends.put("target",target); //$NON-NLS-1$
 				if (node.getBool("Native",false)) defCompiler = ps; //$NON-NLS-1$
-				tCompilers.add(ps);
+				try
+					{
+					YamlNode exeVarsNode = (YamlNode) node.getM("EXE-Vars"); //$NON-NLS-1$
+					ps.ext = exeVarsNode.getMC("Build-Extension",null); //$NON-NLS-1$
+					ps.outputexe = exeVarsNode.getMC("Run-output",null); //$NON-NLS-1$
+					}
+				catch (IndexOutOfBoundsException e)
+					{ // there was no "EXE-Vars" key, which is optional
+					ps.ext = null;
+					ps.outputexe = null;
+					}
+
+				// only add the target if there were no errors
+				if (ps != null) tCompilers.add(ps);
 				}
 			catch (FileNotFoundException e)
 				{
+				}
+			catch (Exception e)
+				{
+				EnigmaRunner.showDefaultExceptionHandler(e);
 				}
 			}
 		return tCompilers;
