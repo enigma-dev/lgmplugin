@@ -620,6 +620,14 @@ public final class EnigmaWriter {
 	}
 
 	protected void populateFonts() {
+		// no dpi scaling, since 96 is the Windows default
+		// it is the default for GM8, GMS1.4, and GMS2 and
+		// is independent of the current monitor or IDE settings
+		final int screenRes = 96;
+
+		// the size of the default font
+		final int defaultFontSize = 12;
+
 		int size = i.resMap.getList(org.lateralgm.resources.Font.class).size() + 1;
 		o.fontCount = size;
 
@@ -628,12 +636,12 @@ public final class EnigmaWriter {
 
 		// Populate the default font, called "EnigmaDefault", id -1
 		java.awt.Font iF = new java.awt.Font(java.awt.Font.DIALOG,
-				java.awt.Font.PLAIN, 12);
+				java.awt.Font.PLAIN, (int) Math.round(defaultFontSize * screenRes / 72.0));
 		Font oF = ofl[0];
 		oF.name = "EnigmaDefault"; //$NON-NLS-1$
 		oF.id = -1;
 		oF.fontName = iF.getFontName();
-		oF.size = iF.getSize();
+		oF.size = defaultFontSize;
 		oF.bold = false;
 		oF.italic = false;
 		GlyphRange.ByReference oFglyphranges = new GlyphRange.ByReference();
@@ -663,8 +671,6 @@ public final class EnigmaWriter {
 			of.bold = ifont.get(PFont.BOLD);
 			of.italic = ifont.get(PFont.ITALIC);
 
-			// no dpi scaling, since 72 is used by GM and ENIGMA's TTF extension
-			final int screenRes = 72;
 			GlyphRange.ByReference glyphranges = new GlyphRange.ByReference();
 			if (ifont.characterRanges.size() > 0) {
 				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges
