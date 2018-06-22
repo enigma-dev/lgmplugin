@@ -663,11 +663,8 @@ public final class EnigmaWriter {
 			of.bold = ifont.get(PFont.BOLD);
 			of.italic = ifont.get(PFont.ITALIC);
 
-			int screenRes;
-			if (GraphicsEnvironment.isHeadless())
-				screenRes = 72;
-			else
-				screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
+			// no dpi scaling, since 72 is used by GM and ENIGMA's TTF extension
+			final int screenRes = 72;
 			GlyphRange.ByReference glyphranges = new GlyphRange.ByReference();
 			if (ifont.characterRanges.size() > 0) {
 				GlyphRange[] ofgrl = (GlyphRange[]) glyphranges
