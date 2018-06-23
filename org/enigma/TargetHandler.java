@@ -303,9 +303,11 @@ public final class TargetHandler
 					ps.outputexe = exeVarsNode.getMC("Run-output",null); //$NON-NLS-1$
 					}
 				catch (IndexOutOfBoundsException e)
-					{ // there was no "EXE-Vars" key, which is optional
-					ps.ext = null;
-					ps.outputexe = null;
+					{
+					// there was no "EXE-Vars" key, which is optional
+					// but still check under the old location
+					ps.ext = node.getMC("Build-Extension",null); //$NON-NLS-1$
+					ps.outputexe = node.getMC("Run-output",null); //$NON-NLS-1$
 					}
 
 				// only add the target if there were no errors
