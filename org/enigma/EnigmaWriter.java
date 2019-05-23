@@ -23,9 +23,7 @@ import static org.lateralgm.main.Util.deRef;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Point2D;
@@ -49,9 +47,11 @@ import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 
 import javax.swing.JOptionPane;
+
 import org.enigma.backend.EnigmaStruct;
 import org.enigma.backend.other.Constant;
 import org.enigma.backend.other.Extension;
+import org.enigma.backend.other.Include;
 import org.enigma.backend.resources.Background;
 import org.enigma.backend.resources.Font;
 import org.enigma.backend.resources.GameInformation;
@@ -81,6 +81,7 @@ import org.enigma.backend.util.Polygon;
 import org.enigma.utility.Masker.Mask;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
+import org.lateralgm.file.ResourceList;
 import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.main.LGM;
 import org.lateralgm.resources.Background.PBackground;
@@ -88,6 +89,7 @@ import org.lateralgm.resources.Font.PFont;
 import org.lateralgm.resources.GameInformation.PGameInformation;
 import org.lateralgm.resources.GameSettings.PGameSettings;
 import org.lateralgm.resources.GmObject.PGmObject;
+import org.lateralgm.resources.Include.PInclude;
 import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Path.PPath;
 import org.lateralgm.resources.Resource;
@@ -169,14 +171,20 @@ public final class EnigmaWriter {
 		// TODO: Populate constants from chosen configuration on the main
 		// toolbar.
 
-		// TODO: Fixme
-		o.includeCount = 0;// i.includes.size();
-		/*
-		 * if (o.includeCount != 0) { o.includes = new Include.ByReference();
-		 * Include[] oil = (Include[]) o.includes.toArray(o.includeCount); for
-		 * (int inc = 0; inc < o.includeCount; inc++) { oil[inc].filepath =
-		 * i.includes.get(inc).filepath; } }
-		 */
+		ResourceList<org.lateralgm.resources.Include> includeList = i.resMap.getList(org.lateralgm.resources.Include.class);
+		org.lateralgm.resources.Include iil[] = includeList.toArray(new org.lateralgm.resources.Include[0]);
+		o.includeCount = includeList.size();
+		if (o.includeCount != 0)
+			{
+			o.includes = new Include.ByReference();
+			Include[] oil = (Include[]) o.includes.toArray(o.includeCount);
+			for (int inc = 0; inc < o.includeCount; inc++)
+				{
+				org.lateralgm.resources.Include ii = iil[inc];
+				oil[inc].filepath = ii.get(PInclude.FILEPATH);
+				}
+			}
+
 		// packages not implemented
 		o.packageCount = 0;
 		// o.packageCount = packages.length;
@@ -201,7 +209,7 @@ public final class EnigmaWriter {
 		{
 		0x1F, 0x74, 0x2F, 0x5C, 0x69, 0x2B, (byte) 0x84,
 		(byte) 0xBB, (byte) 0xE6, (byte) 0xE5, 0x22, 0x23,
-		0x35, 0x55, (byte) 0xE2, (byte) 0x91 
+		0x35, 0x55, (byte) 0xE2, (byte) 0x91
 		},
 		{
 		0x08, (byte) 0xAA, 0x73, (byte) 0xA3, 0x5D, 0x0C,
