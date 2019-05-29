@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="Enigma/enigma.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/Enigma/description.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="lgmplugin/enigma.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/lgmplugin/description.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="false" manifestLocation="/Enigma/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+    <manifest generateManifest="false" manifestLocation="/lgmplugin/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <file path="/Enigma/.classpath"/>
-        <file path="/Enigma/description.jardesc"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.utility"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.file"/>
-        <folder path="/Enigma/META-INF"/>
-        <file path="/Enigma/COPYING"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.sub"/>
-        <file path="/Enigma/Makefile"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.util"/>
-        <file path="/Enigma/LICENSE"/>
-        <file path="/Enigma/.gitignore"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.messages"/>
-        <file path="/Enigma/README.md"/>
-        <file path="/Enigma/.project"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.other"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.frames"/>
-        <javaElement handleIdentifier="=Enigma/&lt;org.enigma.backend.resources"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.frames"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.other"/>
+        <file path="/lgmplugin/org/enigma/enigma.png"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{SettingsHandler.java"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.util"/>
+        <file path="/lgmplugin/.classpath"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{EnigmaThread.java"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.resources"/>
+        <folder path="/lgmplugin/META-INF"/>
+        <file path="/lgmplugin/COPYING"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.messages"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{TargetHandler.java"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.utility"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.file"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{EnigmaWriter.java"/>
+        <file path="/lgmplugin/LICENSE"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend.sub"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{EnigmaRunner.java"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma.backend"/>
+        <file path="/lgmplugin/README.md"/>
+        <file path="/lgmplugin/org/enigma/syntax.png"/>
+        <javaElement handleIdentifier="=lgmplugin/&lt;org.enigma{EnigmaCli.java"/>
     </selectedElements>
 </jardesc>
