@@ -1204,7 +1204,6 @@ public final class EnigmaWriter {
 				ResourceReference<org.lateralgm.resources.GmObject> apto = act
 						.getAppliesTo();
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
-					if (la.question) {
 						/* Question action using with statement */
 						if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
 							code.append("with (other) "); //$NON-NLS-1$
@@ -1212,15 +1211,8 @@ public final class EnigmaWriter {
 							code.append("with (").append(org.lateralgm.resources.GmObject.refAsInt(apto)).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
 						else
 							code.append("/*null with!*/"); //$NON-NLS-1$
-
-					} else {
-						if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
-							code.append("with (other) {"); //$NON-NLS-1$
-						else if (apto.get() != null)
-							code.append("with (").append(org.lateralgm.resources.GmObject.refAsInt(apto)).append(") {"); //$NON-NLS-1$ //$NON-NLS-2$
-						else
-							code.append("/*null with!*/{"); //$NON-NLS-1$
-					}
+						if (!la.question)
+							code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
 					code.append("if "); //$NON-NLS-1$
