@@ -1215,7 +1215,7 @@ public final class EnigmaWriter {
 							code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
-					code.append("if "); //$NON-NLS-1$
+					code.append("__if__ = "); //$NON-NLS-1$
 					numberOfIfs++;
 				}
 				if (act.isNot())
@@ -1241,6 +1241,8 @@ public final class EnigmaWriter {
 				}
 				if (la.allowRelative)
 					code.append(la.question ? ')' : "\n}"); //$NON-NLS-1$
+				if (la.question)
+					code.append("\nif (__if__)");
 				code.append(nl);
 
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF
@@ -1255,6 +1257,12 @@ public final class EnigmaWriter {
 			for (int i = 0; i < numberOfBraces; i++)
 				code.append("\n}"); //$NON-NLS-1$
 		}
+
+		// use reserved local to store result of conditional expressions
+		// and optimize nested actions with different applies to
+		if (numberOfIfs > 0)
+			code.insert(0, "var __if__ = false\n");
+
 		return code.toString();
 	}
 
