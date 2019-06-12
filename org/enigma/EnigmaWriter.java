@@ -1204,15 +1204,15 @@ public final class EnigmaWriter {
 				ResourceReference<org.lateralgm.resources.GmObject> apto = act
 						.getAppliesTo();
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
-						/* Question action using with statement */
-						if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
-							code.append("with (other) "); //$NON-NLS-1$
-						else if (apto.get() != null)
-							code.append("with (").append(org.lateralgm.resources.GmObject.refAsInt(apto)).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-						else
-							code.append("/*null with!*/"); //$NON-NLS-1$
-						if (!la.question)
-							code.append("{"); //$NON-NLS-1$
+					/* Question action using with statement */
+					if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
+						code.append("with (other) "); //$NON-NLS-1$
+					else if (apto.get() != null)
+						code.append("with (").append(org.lateralgm.resources.GmObject.refAsInt(apto)).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
+					else
+						code.append("/*null with!*/"); //$NON-NLS-1$
+					if (!la.question)
+						code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
 					code.append("__if__ = "); //$NON-NLS-1$
@@ -1242,7 +1242,7 @@ public final class EnigmaWriter {
 				if (la.allowRelative)
 					code.append(la.question ? ')' : "\n}"); //$NON-NLS-1$
 				if (la.question)
-					code.append("\nif (__if__)");
+					code.append("\nif (__if__)"); //$NON-NLS-1$
 				code.append(nl);
 
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF
@@ -1261,7 +1261,7 @@ public final class EnigmaWriter {
 		// use reserved local to store result of conditional expressions
 		// and optimize nested actions with different applies to
 		if (numberOfIfs > 0)
-			code.insert(0, "var __if__ = false\n");
+			code.insert(0, "var __if__ = false\n"); //$NON-NLS-1$
 
 		return code.toString();
 	}
