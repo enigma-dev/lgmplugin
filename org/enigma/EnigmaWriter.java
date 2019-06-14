@@ -1204,6 +1204,10 @@ public final class EnigmaWriter {
 				ResourceReference<org.lateralgm.resources.GmObject> apto = act
 						.getAppliesTo();
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
+					if (la.question) {
+						numberOfBraces++;
+						code.append("{\n"); //$NON-NLS-1$
+					}
 					/* Question action using with statement */
 					if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
 						code.append("with (other) "); //$NON-NLS-1$
@@ -1215,7 +1219,10 @@ public final class EnigmaWriter {
 						code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
-					code.append("__if__ = "); //$NON-NLS-1$
+					if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
+						code.append("\n__if__ = "); //$NON-NLS-1$
+					else
+						code.append("if "); //$NON-NLS-1$
 					numberOfIfs++;
 				}
 				if (act.isNot())
@@ -1241,8 +1248,8 @@ public final class EnigmaWriter {
 				}
 				if (la.allowRelative)
 					code.append(la.question ? ')' : "\n}"); //$NON-NLS-1$
-				if (la.question)
-					code.append("\nif (__if__)"); //$NON-NLS-1$
+				if (la.question && apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
+					code.append("\nif __if__"); //$NON-NLS-1$
 				code.append(nl);
 
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF
