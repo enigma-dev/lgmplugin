@@ -1142,6 +1142,7 @@ public final class EnigmaWriter {
 										// 1 if, so its important to track the
 										// number
 	private static int numberOfOtherIfs = 0; // gm doesn't inherit applies to scope
+	private static int numberOfOtherBraces = 0; // don't mix brace types
 
 	public static String getActionsCode(ActionContainer ac) {
 		final String nl = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -1150,6 +1151,7 @@ public final class EnigmaWriter {
 		numberOfBraces = 0;
 		numberOfIfs = 0;
 		numberOfOtherIfs = 0;
+		numberOfOtherBraces = 0;
 
 		for (Action act : ac.actions) {
 			LibAction la = act.getLibAction();
@@ -1207,8 +1209,10 @@ public final class EnigmaWriter {
 						.getAppliesTo();
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
 					if (la.question) {
-						numberOfBraces++;
+						numberOfOtherIfs++; // declare reserved local
 						code.append("{\n"); //$NON-NLS-1$
+						numberOfOtherBraces++; // close after non-question action
+						numberOfBraces++; // just in case
 					}
 					/* Question action using with statement */
 					if (apto == org.lateralgm.resources.GmObject.OBJECT_OTHER)
@@ -1221,10 +1225,9 @@ public final class EnigmaWriter {
 						code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
-					if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
+					if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
 						code.append("\n__if__ = "); //$NON-NLS-1$
-						numberOfOtherIfs++;
-					} else
+					else
 						code.append("if "); //$NON-NLS-1$
 					numberOfIfs++;
 				}
@@ -1252,7 +1255,7 @@ public final class EnigmaWriter {
 				if (la.allowRelative)
 					code.append(la.question ? ')' : "\n}"); //$NON-NLS-1$
 				if (la.question && apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
-					code.append("\nif __if__"); //$NON-NLS-1$
+						code.append("\nif __if__"); //$NON-NLS-1$
 				code.append(nl);
 
 				if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF
@@ -1261,6 +1264,15 @@ public final class EnigmaWriter {
 			}
 				break;
 			}
+
+			// time to close the applies to other condition
+			// blocks if there are any
+			if (!la.question && la.actionKind != Action.ACT_ELSE)
+				while (numberOfOtherBraces > 0) {
+					code.append("\n}"); //$NON-NLS-1$
+					numberOfOtherBraces--;
+					numberOfBraces--;
+				}
 		}
 		if (numberOfBraces > 0) {
 			// someone forgot the closing block action
