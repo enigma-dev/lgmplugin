@@ -1141,6 +1141,7 @@ public final class EnigmaWriter {
 	private static int numberOfIfs = 0; // gm allows multipe else actions after
 										// 1 if, so its important to track the
 										// number
+	private static int numberOfOtherIfs = 0; // gm doesn't inherit applies to scope
 
 	public static String getActionsCode(ActionContainer ac) {
 		final String nl = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -1148,6 +1149,7 @@ public final class EnigmaWriter {
 
 		numberOfBraces = 0;
 		numberOfIfs = 0;
+		numberOfOtherIfs = 0;
 
 		for (Action act : ac.actions) {
 			LibAction la = act.getLibAction();
@@ -1219,9 +1221,10 @@ public final class EnigmaWriter {
 						code.append("{"); //$NON-NLS-1$
 				}
 				if (la.question) {
-					if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF)
+					if (apto != org.lateralgm.resources.GmObject.OBJECT_SELF) {
 						code.append("\n__if__ = "); //$NON-NLS-1$
-					else
+						numberOfOtherIfs++;
+					} else
 						code.append("if "); //$NON-NLS-1$
 					numberOfIfs++;
 				}
@@ -1265,9 +1268,9 @@ public final class EnigmaWriter {
 				code.append("\n}"); //$NON-NLS-1$
 		}
 
-		// use reserved local to store result of conditional expressions
-		// and optimize nested actions with different applies to
-		if (numberOfIfs > 0)
+		// declare reserved local to store result of conditional
+		// expressions with different applies to
+		if (numberOfOtherIfs > 0)
 			code.insert(0, "var __if__ = false\n"); //$NON-NLS-1$
 
 		return code.toString();
