@@ -78,6 +78,7 @@ import org.enigma.backend.sub.View;
 import org.enigma.backend.util.Image;
 import org.enigma.backend.util.Point;
 import org.enigma.backend.util.Polygon;
+import org.enigma.messages.Messages;
 import org.enigma.utility.Masker.Mask;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.ProjectFile;
@@ -112,8 +113,6 @@ import org.lateralgm.resources.sub.CharacterRange.PCharacterRange;
 import org.lateralgm.resources.sub.Instance.PInstance;
 import org.lateralgm.resources.sub.Tile.PTile;
 import org.lateralgm.resources.sub.View.PView;
-
-import com.sun.xml.internal.bind.marshaller.Messages;
 
 public final class EnigmaWriter {
 	protected ProjectFile i;
