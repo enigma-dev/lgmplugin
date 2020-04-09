@@ -21,6 +21,7 @@
 package org.enigma;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,11 +35,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
@@ -97,6 +100,8 @@ import org.lateralgm.subframes.ResourceFrame.ResourceFrameFactory;
 import org.lateralgm.subframes.ScriptFrame;
 import org.lateralgm.subframes.SubframeInformer;
 import org.lateralgm.subframes.SubframeInformer.SubframeListener;
+import org.lateralgm.subframes.PreferencesFrame;
+import org.lateralgm.subframes.PreferencesFrame.PreferencesGroup;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -113,6 +118,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public static final int MODE_RUN = 0, MODE_DEBUG = 1, MODE_DESIGN = 2;
 	public static final int MODE_COMPILE = 3, MODE_REBUILD = 4;
 	public static final File WORKDIR = LGM.workDir.getParentFile();
+	private static final Preferences PREFS = Preferences.userRoot().node("/org/enigma");
 
 	/** This is static because it belongs to EnigmaStruct's dll, which is statically loaded. */
 	public static EnigmaDriver DRIVER;
@@ -125,6 +131,38 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 	public JButton stopb, runb, debugb, compileb;
 	public JMenuItem showFunctions, showGlobals, showTypes;
 
+	private static class GeneralPrefsGroup extends PreferencesGroup
+		{
+		private JCheckBox secureMode;
+
+		protected GeneralPrefsGroup()
+			{
+			super(Messages.getString("PreferencesFrame.TAB_ENIGMA")); //$NON-NLS-1$
+			}
+
+		@Override
+		public JPanel makePanel()
+			{
+			JPanel panel = new JPanel();
+			panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			secureMode = new JCheckBox(Messages.getString("PreferencesFrame.ENABLE_SECURE_MODE"));
+			panel.add(secureMode);
+			return panel;
+			}
+
+		@Override
+		public void load()
+			{
+			secureMode.setSelected(PREFS.getBoolean("enableSecureMode", true));
+			}
+
+		@Override
+		public void save()
+			{
+			PREFS.putBoolean("enableSecureMode", secureMode.isSelected());
+			}
+		}
+	
 	public EnigmaRunner()
 		{
 		// Create the uncaught exception handler so that users will be displayed with a generic form
@@ -141,6 +179,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 		populateMenu();
 		populateTree();
+		PreferencesFrame.groups.add(new GeneralPrefsGroup());
 
 		esh = new EnigmaSettingsHandler(rh.getResource());
 		esh.revertResource();
