@@ -146,7 +146,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		esh.revertResource();
 
 		rh = LGM.currentFile.resMap.get(EnigmaSettings.class);
-		final String makedir = rh.getResource().getOption("make-directory");
 
 		LGM.addReloadListener(this);
 		SubframeInformer.addSubframeListener(this);
@@ -188,7 +187,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 						}
 
 					System.out.println(Messages.getString("EnigmaRunner.INITIALIZING")); //$NON-NLS-1$
-					DRIVER.libSetMakeDirectory(makedir);
 					String err = DRIVER.libInit(ec);
 					if (err != null)
 					{
