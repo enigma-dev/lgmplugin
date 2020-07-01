@@ -30,6 +30,8 @@ public interface EnigmaDriver extends Library
 			}
 		}
 
+	public void libStopBuild();
+
 	public String libInit(EnigmaCallbacks ef);
 
 	public SyntaxError definitionsModified(String wscode, String yaml);
