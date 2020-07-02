@@ -160,8 +160,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 			});
 
 		setMenuEnabled(false);
-		//stop.setVisible(false);
-		//stopb.setVisible(false);
 
 		final Thread initthread = new Thread()
 			{
@@ -397,27 +395,28 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	public void populateMenu()
 		{
-		//stopb = new JButton(); //$NON-NLS-1$
-		//stopb.addActionListener(this);
-		//stopb.setToolTipText(Messages.getString("EnigmaRunner.MENU_STOP"));
-		//stopb.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
-		//LGM.tool.add(stopb, 5);
+		int toolPos = 4; // <- After "Save As" separator.
+		stopb = new JButton(); //$NON-NLS-1$
+		stopb.addActionListener(this);
+		stopb.setToolTipText(Messages.getString("EnigmaRunner.MENU_STOP"));
+		stopb.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
+		LGM.tool.add(stopb, ++toolPos);
 		runb = new JButton(); //$NON-NLS-1$
 		runb.addActionListener(this);
 		runb.setToolTipText(Messages.getString("EnigmaRunner.MENU_RUN"));
 		runb.setIcon(LGM.getIconForKey("EnigmaPlugin.EXECUTE"));
-		LGM.tool.add(runb, 5);
+		LGM.tool.add(runb, ++toolPos);
 		debugb = new JButton(); //$NON-NLS-1$
 		debugb.addActionListener(this);
 		debugb.setToolTipText(Messages.getString("EnigmaRunner.MENU_DEBUG"));
 		debugb.setIcon(LGM.getIconForKey("EnigmaPlugin.DEBUG"));
-		LGM.tool.add(debugb, 6);
+		LGM.tool.add(debugb, ++toolPos);
 		compileb = new JButton(); //$NON-NLS-1$
 		compileb.addActionListener(this);
 		compileb.setToolTipText(Messages.getString("EnigmaRunner.MENU_COMPILE"));
 		compileb.setIcon(LGM.getIconForKey("EnigmaPlugin.COMPILE"));
-		LGM.tool.add(compileb, 7);
-		LGM.tool.add(new JToolBar.Separator(), 8);
+		LGM.tool.add(compileb, ++toolPos);
+		LGM.tool.add(new JToolBar.Separator(), ++toolPos);
 
 		JMenu menu = new GmMenu(Messages.getString("EnigmaRunner.MENU_BUILD")); //$NON-NLS-1$
 		menu.setMnemonic('B');
@@ -445,11 +444,11 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		compile.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.COMPILE")));
 		menu.add(compile);
 		menu.addSeparator();
-		//stop = addItem(Messages.getString("EnigmaRunner.MENU_STOP")); //$NON-NLS-1$
-		//stop.addActionListener(this);
-		//stop.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
-		//stop.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.STOP")));
-		//menu.add(stop);
+		stop = addItem(Messages.getString("EnigmaRunner.MENU_STOP")); //$NON-NLS-1$
+		stop.addActionListener(this);
+		stop.setIcon(LGM.getIconForKey("EnigmaPlugin.STOP"));
+		stop.setAccelerator(KeyStroke.getKeyStroke(Messages.getKeyboardString("EnigmaRunner.STOP")));
+		menu.add(stop);
 		rebuild = addItem(Messages.getString("EnigmaRunner.MENU_REBUILD_ALL")); //$NON-NLS-1$
 		rebuild.addActionListener(this);
 		rebuild.setIcon(LGM.getIconForKey("EnigmaPlugin.REBUILD_ALL"));
@@ -631,10 +630,10 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		run.setEnabled(en);
 		debug.setEnabled(en);
 		design.setEnabled(en);
-		//stop.setEnabled(!en);
+		stop.setEnabled(!en);
 		compile.setEnabled(en);
 		rebuild.setEnabled(en);
-		//stopb.setEnabled(!en);
+		stopb.setEnabled(!en);
 		runb.setEnabled(en);
 		debugb.setEnabled(en);
 		compileb.setEnabled(en);
@@ -653,19 +652,22 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		}
 
 		public void run() {
-			EnigmaRunner.addDefaultExceptionHandler();
-			ef.open();
-			ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
-			EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
-			ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
-			System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
-			System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
-			setupBaseKeywords();
-			populateKeywords();
-
-			setMenuEnabled(true);
-			//stop.setEnabled(false);
-			//stopb.setEnabled(false);
+			try {
+				EnigmaRunner.addDefaultExceptionHandler();
+				ef.open();
+				ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
+				EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
+				if (Thread.currentThread().isInterrupted()) return;
+				ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
+				System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
+				System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
+				setupBaseKeywords();
+				populateKeywords();
+			} finally {
+				if (!stop.isEnabled())
+					ef.progress(0, Messages.getString("EnigmaRunner.BUILD_STOPPED"));
+				setMenuEnabled(true);
+			}
 		}
 	}
 
@@ -674,8 +676,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		{
 		if (!assertReady()) return;
 
-		//stop.setEnabled(true);
-		//stopb.setEnabled(true);
 		EnigmaSettings es = LGM.currentFile.resMap.get(EnigmaSettings.class).getResource();
 
 		if (es.targets.get(TargetHandler.COMPILER) == null)
@@ -723,7 +723,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				outname = new File(outname.getPath());
 		}
 
-		setMenuEnabled(false);
 		LGM.commitAll();
 		//TODO: commit changes, have to do it because it's attached to game settings frame
 		//and doesn't get told.
@@ -732,12 +731,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		//System.out.println("Compiling with " + enigma);
 
 		cthread = new CompilerThread(mode, outname);
-		try {
-			cthread.join();
-		} catch (InterruptedException e1) {
-			EnigmaRunner.showDefaultExceptionHandler(e1);
-		}
-		//cthread.run(outname);
+		setMenuEnabled(false); // <- stop button needs cthread instance
 		cthread.start();
 
 		if (mode == MODE_DESIGN) //design
@@ -768,10 +762,17 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		{
 		if (!assertReady()) return;
 		Object s = e.getSource();
-		//if (s == stop || s == stopb) {
-		//	cthread.interrupt();
-		//	setMenuEnabled(true);
-		//}
+		if (s == stop || s == stopb) {
+			if (cthread != null) cthread.interrupt();
+			try {
+				DRIVER.libStopBuild();
+			} catch (UnsatisfiedLinkError err) {
+				// enigma only added this recently
+				// sink the error for now
+			}
+			stop.setEnabled(false);
+			stopb.setEnabled(false);
+		}
 		if (s == run || s == runb) compile(MODE_RUN);
 		if (s == debug || s == debugb) compile(MODE_DEBUG);
 		if (s == design) compile(MODE_DESIGN);
