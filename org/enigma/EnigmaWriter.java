@@ -162,6 +162,10 @@ public final class EnigmaWriter {
 		populateTimelines();
 		populateObjects();
 		populateRooms();
+		
+		// leave if we were interrupted while writing any
+		// resource group above
+		if (Thread.currentThread().isInterrupted()) return;
 
 		// triggers not implemented
 		o.triggerCount = 0;
@@ -371,6 +375,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Sprite.class).toArray(
 				new org.lateralgm.resources.Sprite[0]);
 		for (int s = 0; s < size; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Sprite os = osl[s];
 			org.lateralgm.resources.Sprite is = isl[s];
 
@@ -467,6 +472,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Sound.class).toArray(
 				new org.lateralgm.resources.Sound[0]);
 		for (int s = 0; s < size; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Sound os = osl[s];
 			org.lateralgm.resources.Sound is = isl[s];
 
@@ -507,6 +513,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Background.class).toArray(
 				new org.lateralgm.resources.Background[0]);
 		for (int s = 0; s < size; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Background ob = obl[s];
 			org.lateralgm.resources.Background ib = ibl[s];
 
@@ -542,6 +549,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Path.class).toArray(
 				new org.lateralgm.resources.Path[0]);
 		for (int p = 0; p < size; p++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Path op = opl[p];
 			org.lateralgm.resources.Path ip = ipl[p];
 
@@ -585,6 +593,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Script.class).toArray(
 				new org.lateralgm.resources.Script[0]);
 		for (int s = 0; s < isl.length; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Script oo = osl[s];
 			org.lateralgm.resources.Script io = isl[s];
 
@@ -594,6 +603,7 @@ public final class EnigmaWriter {
 		}
 
 		for (int s = 0; s < qs.size(); s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Script oo = osl[s + isl.length];
 			oo.name = "lib" + qs.get(s).parentId + "_action" + qs.get(s).id; //$NON-NLS-1$ //$NON-NLS-2$
 			oo.id = -s - 2;
@@ -614,6 +624,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Shader.class).toArray(
 				new org.lateralgm.resources.Shader[0]);
 		for (int s = 0; s < isl.length; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Shader oo = osl[s];
 			org.lateralgm.resources.Shader io = isl[s];
 
@@ -667,6 +678,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Font.class).toArray(
 				new org.lateralgm.resources.Font[0]);
 		for (int f = 1; f < size; f++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Font of = ofl[f];
 			org.lateralgm.resources.Font ifont = ifl[f - 1];
 
@@ -778,6 +790,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.Timeline.class).toArray(
 				new org.lateralgm.resources.Timeline[0]);
 		for (int t = 0; t < size; t++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Timeline ot = otl[t];
 			org.lateralgm.resources.Timeline it = itl[t];
 
@@ -810,6 +823,7 @@ public final class EnigmaWriter {
 				org.lateralgm.resources.GmObject.class).toArray(
 				new org.lateralgm.resources.GmObject[0]);
 		for (int s = 0; s < size; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			GmObject oo = ool[s];
 			org.lateralgm.resources.GmObject io = iol[s];
 
@@ -888,6 +902,7 @@ public final class EnigmaWriter {
 		org.lateralgm.resources.Room[] irl = irooms
 				.toArray(new org.lateralgm.resources.Room[0]);
 		for (int s = 0; s < size; s++) {
+			if (Thread.currentThread().isInterrupted()) return;
 			Room or = orly[s];
 			org.lateralgm.resources.Room is = irl[s];
 
@@ -989,6 +1004,7 @@ public final class EnigmaWriter {
 
 			or.instanceCount = ri.size();
 			if (or.instanceCount != 0) {
+				if (Thread.currentThread().isInterrupted()) return;
 				or.instances = new Instance.ByReference();
 				Instance[] oil = (Instance[]) or.instances.toArray(ri.size());
 				int i = 0;
@@ -1051,6 +1067,7 @@ public final class EnigmaWriter {
 
 			or.tileCount = is.tiles.size();
 			if (or.tileCount != 0) {
+				if (Thread.currentThread().isInterrupted()) return;
 				or.tiles = new Tile.ByReference();
 				Tile[] otl = (Tile[]) or.tiles.toArray(or.tileCount);
 				for (int t = 0; t < otl.length; t++) {

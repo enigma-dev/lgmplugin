@@ -651,17 +651,22 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		}
 
 		public void run() {
-			EnigmaRunner.addDefaultExceptionHandler();
-			ef.open();
-			ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
-			EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
-			ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
-			System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
-			System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
-			setupBaseKeywords();
-			populateKeywords();
-
-			setMenuEnabled(true);
+			try {
+				EnigmaRunner.addDefaultExceptionHandler();
+				ef.open();
+				ef.progress(10,Messages.getString("EnigmaRunner.POPULATING")); //$NON-NLS-1$
+				EnigmaStruct es = EnigmaWriter.prepareStruct(LGM.currentFile,LGM.root);
+				if (Thread.currentThread().isInterrupted()) return;
+				ef.progress(20,Messages.getString("EnigmaRunner.CALLING")); //$NON-NLS-1$
+				System.out.println("Plugin: Delegating to ENIGMA (out of my hands now)");
+				System.out.println(DRIVER.compileEGMf(es,efi == null ? null : getUnixPath(efi.getAbsolutePath()),mode));
+				setupBaseKeywords();
+				populateKeywords();
+			} finally {
+				if (!stop.isEnabled())
+					ef.progress(0, Messages.getString("EnigmaRunner.BUILD_STOPPED"));
+				setMenuEnabled(true);
+			}
 		}
 	}
 
@@ -717,7 +722,6 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 				outname = new File(outname.getPath());
 		}
 
-		setMenuEnabled(false);
 		LGM.commitAll();
 		//TODO: commit changes, have to do it because it's attached to game settings frame
 		//and doesn't get told.
@@ -726,12 +730,7 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		//System.out.println("Compiling with " + enigma);
 
 		cthread = new CompilerThread(mode, outname);
-		try {
-			cthread.join();
-		} catch (InterruptedException e1) {
-			EnigmaRunner.showDefaultExceptionHandler(e1);
-		}
-		//cthread.run(outname);
+		setMenuEnabled(false); // <- stop button needs cthread instance
 		cthread.start();
 
 		if (mode == MODE_DESIGN) //design
@@ -762,7 +761,17 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		{
 		if (!assertReady()) return;
 		Object s = e.getSource();
-		if (s == stop || s == stopb) DRIVER.libStopBuild();
+		if (s == stop || s == stopb) {
+			if (cthread != null) cthread.interrupt();
+			try {
+				DRIVER.libStopBuild();
+			} catch (UnsatisfiedLinkError err) {
+				// enigma only added this recently
+				// sink the error for now
+			}
+			stop.setEnabled(false);
+			stopb.setEnabled(false);
+		}
 		if (s == run || s == runb) compile(MODE_RUN);
 		if (s == debug || s == debugb) compile(MODE_DEBUG);
 		if (s == design) compile(MODE_DESIGN);
