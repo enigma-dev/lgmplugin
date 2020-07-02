@@ -737,9 +737,21 @@ public final class EnigmaWriter {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB };
 		if (aa < 0 || aa >= aaHints.length)
 			aa = 0;
-		GlyphVector gv = fnt.createGlyphVector(new FontRenderContext(null,
-				aaHints[aa], RenderingHints.VALUE_FRACTIONALMETRICS_OFF),
-				new String(Character.toChars(c)));
+		
+		// This is a workaround to an unreported JDK bug for
+		// createGlyphVector sinking the interrupted status of the
+		// calling thread causing the ENIGMA build to continue
+		// until it causes native memory exceptions because the
+		// resources were only half written.
+		GlyphVector gv = null;
+		synchronized (Thread.currentThread()) {
+			if (Thread.currentThread().isInterrupted()) return;
+			gv = fnt.createGlyphVector(new FontRenderContext(null,
+					aaHints[aa], RenderingHints.VALUE_FRACTIONALMETRICS_OFF),
+					new String(Character.toChars(c)));
+		}
+		if (gv == null) return;
+
 		Rectangle2D r = gv.getPixelBounds(null, 0, 0); // don't know why it
 														// needs coordinates
 		if (r.getWidth() <= 0 || r.getHeight() <= 0)
