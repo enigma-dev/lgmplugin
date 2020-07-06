@@ -133,17 +133,7 @@ public class EnigmaCallbacks extends Structure
 					public void run()
 						{
 						EnigmaRunner.addDefaultExceptionHandler();
-						InputStream in = null;
-						try
-							{
-							in = new FileInputStream(file);
-							}
-						catch (FileNotFoundException e)
-							{
-							if (!running) return;
-							EnigmaRunner.showDefaultExceptionHandler(e);
-							}
-						try
+						try (InputStream in = new FileInputStream(file))
 							{
 							StringBuilder sb = new StringBuilder();
 							while (true)
@@ -168,6 +158,7 @@ public class EnigmaCallbacks extends Structure
 									}
 								else
 									{
+									if (!running) return;
 									try
 										{
 										Thread.sleep(100);
@@ -178,7 +169,6 @@ public class EnigmaCallbacks extends Structure
 									}
 								}
 							out.append(sb.toString() + '\n');
-							in.close();
 							}
 						catch (IOException e)
 							{
