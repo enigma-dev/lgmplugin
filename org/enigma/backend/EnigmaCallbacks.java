@@ -122,12 +122,14 @@ public class EnigmaCallbacks extends Structure
 
 	public static class OpenFile extends OutputHolder implements Callback
 		{
-		static boolean running = true;
+		// ENIGMA is still redirecting output, and it's not safe
+		// to finish reading yet if we encounter an EOF.
+		static boolean enigma_redirecting = true;
 
 		public void callback(final String filename)
 			{
 			final File file = new File(filename);
-			running = true;
+			enigma_redirecting = true;
 			new Thread()
 				{
 					public void run()
@@ -145,7 +147,7 @@ public class EnigmaCallbacks extends Structure
 									{
 									data = new byte[size];
 									size = in.read(data,0,size);
-									if (size == -1) break;
+									if (size == -1 && !enigma_redirecting) break; // EOF
 									sb.append(new String(data,0,size,"UTF-8")); //$NON-NLS-1$
 									int p = sb.indexOf("\n"); //$NON-NLS-1$
 									while (p != -1)
@@ -158,7 +160,6 @@ public class EnigmaCallbacks extends Structure
 									}
 								else
 									{
-									if (!running) break;
 									try
 										{
 										Thread.sleep(100);
@@ -184,7 +185,7 @@ public class EnigmaCallbacks extends Structure
 		@SuppressWarnings("static-method")
 		public void callback()
 			{
-			OpenFile.running = false;
+			OpenFile.enigma_redirecting = false;
 			}
 		}
 
