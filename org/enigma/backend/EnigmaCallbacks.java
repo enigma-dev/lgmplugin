@@ -158,7 +158,7 @@ public class EnigmaCallbacks extends Structure
 									}
 								else
 									{
-									if (!running) return;
+									if (!running) break;
 									try
 										{
 										Thread.sleep(100);
