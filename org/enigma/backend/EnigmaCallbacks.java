@@ -134,27 +134,14 @@ public class EnigmaCallbacks extends Structure
 						{
 						EnigmaRunner.addDefaultExceptionHandler();
 						InputStream in = null;
-						while (in == null)
+						try
 							{
-							try
-								{
-								in = new FileInputStream(file);
-								}
-							catch (FileNotFoundException e)
-								{
-								if (!running)
-									{
-									EnigmaRunner.showDefaultExceptionHandler(e);
-									return;
-									}
-								try
-									{
-									Thread.sleep(100);
-									}
-								catch (InterruptedException e1)
-									{
-									}
-								}
+							in = new FileInputStream(file);
+							}
+						catch (FileNotFoundException e)
+							{
+							if (!running) return;
+							EnigmaRunner.showDefaultExceptionHandler(e);
 							}
 						try
 							{
