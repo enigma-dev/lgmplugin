@@ -33,8 +33,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
-import javax.swing.JProgressBar;
-
 import org.enigma.EnigmaRunner;
 import org.enigma.backend.EnigmaSettings;
 import org.enigma.messages.Messages;
@@ -346,9 +344,7 @@ public class EFileWriter
 
 	public static void writeEProjectFile(EGMOutputStream os, ProjectFile gf, ResNode tree) throws IOException
 		{
-		JProgressBar progressBar = LGM.getProgressDialogBar();
-		progressBar.setMaximum(tree.getChildCount());
-		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
+		LGM.initProgressDialog(0, tree.getChildCount(), Messages.getString("ProgressDialog.EGM_LOADING"));
 
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		writeNodeChildren(os,gf,tree,new ArrayList<String>());
@@ -356,7 +352,7 @@ public class EFileWriter
 		EnigmaSettingsWriter esw = new EnigmaSettingsWriter();
 		esw.write(os, gf, "Enigma Settings", new ArrayList<String>());
 
-		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
+		LGM.setProgress(tree.getChildCount(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
 	// Workhorse methods
@@ -378,7 +374,9 @@ public class EFileWriter
 			{
 			ResNode child = ((ResNode) node.getChildAt(i));
 
-			if (child.status == ResNode.STATUS_SECONDARY)
+			if (child.status == ResNode.STATUS_PRIMARY)
+				LGM.setProgress(i,Messages.getString("ProgressDialog.ENTRIES"));
+			else if (child.status == ResNode.STATUS_SECONDARY)
 				{
 				writeResource(os,gf,child,dir);
 				}
@@ -392,8 +390,6 @@ public class EFileWriter
 				writeNodeChildren(os,gf,child,newDir);
 				}
 			}
-		if (node.status == ResNode.STATUS_PRIMARY)
-			LGM.setProgress(LGM.getProgressDialogBar().getValue()+1,Messages.getString("ProgressDialog.ENTRIES"));
 		}
 
 	/**

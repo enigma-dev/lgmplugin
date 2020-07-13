@@ -49,7 +49,6 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileView;
 
 import org.enigma.EnigmaRunner;
@@ -551,9 +550,8 @@ public class EFileReader
 	public static void readEgmFile(EProjectFile f, ProjectFile gf, ResNode root) throws IOException
 		{
 		gf.format = EFileWriter.FLAVOR_EGM;
-		JProgressBar progressBar = LGM.getProgressDialogBar();
-		progressBar.setMaximum(f.getEntries().size());
-		LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
+		int workSize = f.getEntries().size();
+		LGM.initProgressDialog(0, workSize, Messages.getString("ProgressDialog.EGM_LOADING"));
 
 		LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		readNodeChildren(f,gf,root,null,new String());
@@ -564,7 +562,7 @@ public class EFileReader
 		while (!postpone.isEmpty())
 			postpone.remove().invoke();
 
-		LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
+		LGM.setProgress(workSize,Messages.getString("ProgressDialog.FINISHED"));
 		}
 
 	// Workhorse methods
@@ -624,6 +622,7 @@ public class EFileReader
 	public static void processEntries(EProjectFile f, ProjectFile gf, ResNode parent,
 			List<EgmEntry> entries, String dir) throws IOException
 		{
+		int i = 0;
 		for (EgmEntry e : entries)
 			{
 			String entry = e.name;
@@ -647,7 +646,7 @@ public class EFileReader
 				else
 					System.out.println("Extraneous TOC entry: " + e.name + " (" + e.kind + ")");
 				}
-			LGM.setProgress(LGM.getProgressDialogBar().getValue() + 1,Messages.getString("ProgressDialog.ENTRIES"));
+			LGM.setProgress(++i,Messages.getString("ProgressDialog.ENTRIES"));
 			}
 		}
 
