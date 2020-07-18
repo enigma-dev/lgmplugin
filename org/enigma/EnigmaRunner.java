@@ -341,8 +341,8 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 		FileChooser.readers.add(io);
 		FileChooser.writers.add(io);
 
-		Listener.getInstance().fc.addOpenFilters(io);
-		Listener.getInstance().fc.addSaveFilters(io);
+		//Listener.getInstance().fc.addOpenFilters(io);
+		//Listener.getInstance().fc.addSaveFilters(io);
 
 		LGM.addPluginResource(new EnigmaSettingsPluginResource());
 		}
