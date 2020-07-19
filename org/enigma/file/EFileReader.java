@@ -639,7 +639,6 @@ public class EFileReader
 				else
 					System.out.println("Extraneous TOC entry: " + e.name + " (" + e.kind + ")");
 				}
-			//LGM.setProgress(LGM.getProgressDialogBar().getValue() + 1,Messages.getString("ProgressDialog.ENTRIES"));
 			}
 		}
 
