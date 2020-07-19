@@ -336,15 +336,15 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 
 	void addResourceHook()
 		{
-		EgmIO io = new EgmIO();
-		FileChooser.fileViews.add(io);
-		FileChooser.readers.add(io);
-		FileChooser.writers.add(io);
-
 		// TODO: Disabled until somebody can figure out what the HELL is going on!
 		// Old EGM was a bad mix of binary and text serialization that led to extreme
 		// frustrations, and it should not be enabled until it is cleaned up,
 		// converted to text, versions the binaries, or is replaced with the new libEGM
+		//EgmIO io = new EgmIO();
+		//FileChooser.fileViews.add(io);
+		//FileChooser.readers.add(io);
+		//FileChooser.writers.add(io);
+
 		//Listener.getInstance().fc.addOpenFilters(io);
 		//Listener.getInstance().fc.addSaveFilters(io);
 
