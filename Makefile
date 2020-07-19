@@ -1,5 +1,5 @@
 JC = javac
-JFLAGS = -source 1.7 -target 1.7 -cp .:jna.jar:lateralgm.jar
+JFLAGS = -source 1.7 -target 1.7 -cp .:jna.jar:../LateralGM/org/lateralgm/main
 OUTPUT_FILE = enigma.jar
 
 %.class: %.java
