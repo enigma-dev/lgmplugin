@@ -550,11 +550,6 @@ public class EFileReader
 	public static void readEgmFile(EProjectFile f, ProjectFile gf, ResNode root) throws IOException
 		{
 		gf.format = EFileWriter.FLAVOR_EGM;
-		//JProgressBar progressBar = LGM.getProgressDialogBar();
-		//progressBar.setMaximum(f.getEntries().size());
-		//LGM.setProgressTitle(Messages.getString("ProgressDialog.EGM_LOADING"));
-
-		//LGM.setProgress(0,Messages.getString("ProgressDialog.ENTRIES"));
 		readNodeChildren(f,gf,root,null,new String());
 
 		readResource(f,gf,null,EnigmaSettings.class,
@@ -562,8 +557,6 @@ public class EFileReader
 
 		while (!postpone.isEmpty())
 			postpone.remove().invoke();
-
-		//LGM.setProgress(progressBar.getMaximum(),Messages.getString("ProgressDialog.FINISHED"));
 		}
 
 	// Workhorse methods
