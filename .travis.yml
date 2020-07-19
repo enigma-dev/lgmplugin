@@ -12,5 +12,9 @@ os: linux
 dist: xenial
 
 script:
+  - cd ..
+  - git clone --recursive https://github.com/IsmAvatar/LateralGM.git
+  - cd $TRAVIS_REPO_SLUG
+  - curl -o jna.jar https://enigma-dev.org/bin/jna.jar
   - make
 
