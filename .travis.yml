@@ -1,0 +1,18 @@
+# competition for Thundercleese
+notifications:
+  irc: "chat.freenode.net#enigma"
+# don't build "feature" branches
+branches:
+  only:
+    - "master"
+# obviously this is java duh
+language: java
+
+os: linux
+dist: xenial
+
+script:
+  - git clone --recursive https://github.com/IsmAvatar/LateralGM.git ../LateralGM
+  - curl -o jna.jar https://enigma-dev.org/bin/jna.jar
+  - make
+
