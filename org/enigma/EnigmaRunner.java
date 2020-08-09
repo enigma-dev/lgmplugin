@@ -193,6 +193,13 @@ public class EnigmaRunner implements ActionListener,SubframeListener,ReloadListe
 						return;
 					}
 
+					try {
+						DRIVER.libEnableStopAPI();
+					} catch (UnsatisfiedLinkError ule) {
+						// enigma only added this recently
+						// sink the error for now
+					}
+
 					while (LGM.LOADING_PROJECT) {
 						try {
 							Thread.sleep(100);
