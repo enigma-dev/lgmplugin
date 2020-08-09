@@ -30,6 +30,7 @@ public interface EnigmaDriver extends Library
 			}
 		}
 
+	public void libEnableStopAPI();
 	public void libStopBuild();
 
 	public String libInit(EnigmaCallbacks ef);
