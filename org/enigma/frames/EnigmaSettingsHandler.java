@@ -1050,7 +1050,7 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 
 	@Override
 	public void setResourceChanged() {
-		res.changed = true;
+		LGM.setWindowModified(true);
 	}
 
 	@Override
