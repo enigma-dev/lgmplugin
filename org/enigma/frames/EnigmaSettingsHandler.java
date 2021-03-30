@@ -1002,7 +1002,6 @@ public class EnigmaSettingsHandler implements ActionListener,FocusListener,Popup
 						{
 						res.commitToDriver(EnigmaRunner.DRIVER);
 						EnigmaRunner.populateKeywords();
-						CodeTextArea.updateKeywords();
 						}
 					}
 				cfDef = null;
