@@ -106,14 +106,12 @@ public class YamlParser
 		// Implicitly behave as a string
 		public String toString()
 			{
-			if (rawValue == null) return "";
 			return rawValue;
 			}
 
 		public String getValue()
 			{
 			if (escValue == null) escValue = escape(rawValue);
-			if (escValue == null) return "";
 			return escValue;
 			}
 
