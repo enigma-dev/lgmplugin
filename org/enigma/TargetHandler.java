@@ -415,8 +415,10 @@ public final class TargetHandler
 		YamlNode n = ((YamlNode) e);
 		for (YamlElement el : n.chronos)
 			{
+			String value = ((YamlContent) el).getValue();
+			if (value == null) continue;
 			Set<String> dep = new HashSet<String>();
-			for (String s : SPLITTER.split(((YamlContent) el).getValue().toLowerCase()))
+			for (String s : SPLITTER.split(value.toLowerCase()))
 				if (!s.isEmpty()) dep.add(s);
 			map.put(el.name,dep);
 			}
